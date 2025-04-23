@@ -157,11 +157,40 @@ BoundedContext GestaoEventos implements GestaoEventos {
     
     
     Aggregate Calendario {
-    	//TODO
+        Entity Calendario {
+            aggregateRoot
+            
+            -CalendarioId id
+            -UsuarioId usuarioId
+            List<Evento> eventos
+            Map<LocalDate, List<Evento>> eventosPorData
+            
+            def void adicionarEvento(@Evento evento);
+            def void removerEvento(@Evento evento);
+            def List<Evento> listarEventosPorData(LocalDate data);
+            def List<Evento> listarEventosPorPeriodo(LocalDate dataInicio, LocalDate dataFim);
+            def void sincronizarEventos();
+            
+            Repository CalendarioRepository {
+                void salvar(@Calendario calendario);
+                @Calendario buscarPorUsuarioId(@UsuarioId usuarioId);
+                void atualizar(@Calendario calendario);
+            }
+        }
+        
+        ValueObject CalendarioId {
+            long id
+        }
+        
+        Service CalendarioService {
+            @Calendario criarCalendario(@UsuarioId usuarioId);
+            void sincronizarCalendario(@CalendarioId calendarioId);
+            List<@Evento> listarEventosProximos(@UsuarioId usuarioId, int dias);
+        }
     }
-    
-    
-    
+
+
+
     Aggregate Relatorio {
     	Entity DashboardEvento {
     		aggregateRoot
