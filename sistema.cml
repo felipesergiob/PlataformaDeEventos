@@ -1,33 +1,30 @@
 Domain Eventos {
-    Subdomain GestaoUsuarios
+	Subdomain GestaoUsuarios
     Subdomain GestaoEventos
-    Subdomain Interacoes
-    Subdomain Relatorios
 }
 
 ContextMap EventosContextMap {
-    contains GestaoUsuarios
-    contains GestaoEventos
-    contains Interacoes
-    contains Relatorios
+	contains GestaoUsuarios
+	contains GestaoEventos
 
-    GestaoUsuarios [SK]<->[SK] GestaoEventos
-    GestaoEventos [SK]<->[SK] Interacoes
-    GestaoUsuarios [SK]<->[SK] Interacoes
-    GestaoEventos [SK]<->[SK] Relatorios
+
+	GestaoUsuarios Shared-Kernel GestaoEventos
+
 }
 
-Bounded Context GestaoUsuarios implements GestaoUsuarios {
+BoundedContext GestaoUsuarios implements GestaoUsuarios {
     Aggregate Usuario {
         Entity Usuario {
             aggregateRoot
-            - UsuarioId id
+            
+            -UsuarioId id
             String nome
-            String email
+            String emailUsuario //mudança aqui
             String senha
             LocalDateTime dataCadastro
-            List<@Usuario> seguindo
-            List<@Usuario> seguidores
+            List<Usuario> seguindo
+            List<Usuario> seguidores
+            Boolean isOrganizador
 
             def void seguirUsuario(@Usuario usuario);
             def void pararSeguir(@Usuario usuario);
@@ -46,27 +43,43 @@ Bounded Context GestaoUsuarios implements GestaoUsuarios {
     }
 }
 
-Bounded Context GestaoEventos implements GestaoEventos {
+BoundedContext GestaoEventos implements GestaoEventos {
     Aggregate Evento {
         Entity Evento {
             aggregateRoot
-            - EventoId id
+            
+            -EventoId id
             String titulo
             String descricao
             LocalDateTime dataHora
             String local
             BigDecimal preco
             String genero
-            - Usuario organizador
-            List<@Usuario> participantes
-            List<@Usuario> interessados
-            List<@Usuario> talvezVao
+            -Usuario organizador
+            List<Usuario> participantes
+            List<Usuario> interessados
+            List<Usuario> talvezVao
             int limiteParticipantes
+            -UsuarioId criadorId
+            String status
+            int totalConfirmacoes
+            int totalTalvez
+            int totalAvaliacoes
+            double mediaNotas
+            int totalComentarios
+            Set<Usuario> usuariosConfirmados
+            String data
 
-            def boolean adicionarParticipante(@Usuario usuario);
+            def boolean adicionarParticipante(@Usuario participante);
             def boolean adicionarInteressado(@Usuario usuario);
             def boolean adicionarTalvezVai(@Usuario usuario);
+            def void adicionarUsuarioConfirmado(@Usuario usuario);
             def boolean verificarDisponibilidade();
+            def void marcarInteresse(@Usuario interessado);
+            def void marcarTalvez(@Usuario usuario);
+            def boolean isFinalizado();
+            def Map<String, Object> gerarRelatorio();
+            def Map<String, Object> gerarRelatorio(String periodo);
 
             Repository EventoRepository {
                 void adicionar(@Evento evento);
@@ -78,76 +91,118 @@ Bounded Context GestaoEventos implements GestaoEventos {
                 List<@Evento> filtrarPorPreco(BigDecimal precoMin, BigDecimal precoMax);
             }
         }
-
-        ValueObject EventoId {
-            long id
-        }
-    }
-}
-
-Bounded Context Interacoes implements Interacoes {
-    Aggregate Interacao {
+        
         Entity Avaliacao {
-            - EventoId eventoId
-            - UsuarioId usuarioId
-            int nota
-            String comentario
-            LocalDateTime dataAvaliacao
-
-            def boolean validarNota();
-        }
-
-        Entity Relato {
-            - EventoId eventoId
-            - UsuarioId usuarioId
+    		-EventoId eventoId
+    		-UsuarioId usuarioId
+    		int nota
+    		String comentario
+    		LocalDateTime dataAvaliacao
+    		
+    		def boolean validarNota();
+    	}
+    	
+    	Entity Relato {
+            -EventoId eventoId
+            -UsuarioId usuarioId
             String texto
             List<String> fotos
             LocalDateTime dataRelato
 
             def void adicionarFoto(String foto);
         }
-
+        
         Entity ItemPerdido {
-            - EventoId eventoId
-            - UsuarioId usuarioId
+            -EventoId eventoId
+            -UsuarioId usuarioId
+            String tipo
+            String cor
             String descricao
-            String localEncontrado
-            LocalDateTime dataEncontrado
+            String localAproximado
+            String foto
+            LocalDateTime dataReporte
             boolean devolvido
 
             def void marcarComoDevolvido();
+            def boolean isValid();
         }
-
+        
         Entity Comentario {
-            - EventoId eventoId
-            - UsuarioId usuarioId
-            String texto
-            LocalDateTime dataComentario
-            List<@Comentario> respostas
+            -Usuario usuario
+            String conteudo
+            LocalDateTime data
+            List<Resposta> respostas
 
-            def void adicionarResposta(@Comentario resposta);
+            def void adicionarResposta(@Resposta resposta);
+            def void removerResposta(@Resposta resposta);
         }
-    }
-}
+        
+        Entity Resposta{
+        	-Usuario autor
+        	String conteudo
+        	LocalDateTime data
+        	
+        }
 
-Bounded Context Relatorios implements Relatorios {
+        ValueObject EventoId {
+            long id
+        }
+        
+        ValueObject Usuario { //added
+        	Usuario usuario
+        }
+        
+    }
+    
+    
+    
+    Aggregate Calendario {
+    	//TODO
+    }
+    
+    
+    
     Aggregate Relatorio {
-        Entity DashboardEvento {
-            - EventoId eventoId
+    	Entity DashboardEvento {
+    		aggregateRoot
+    		
+            -EventoId eventoId
             int totalParticipantes
             int totalInteressados
             double mediaAvaliacoes
-            List<@Avaliacao> avaliacoes
-            List<@Relato> relatos
-            List<@ItemPerdido> itensPerdidos
+            List<Avaliacao> avaliacoes
+            List<Relato> relatos
+            List<ItemPerdido> itensPerdidos
 
             def void atualizarMetricas();
             def void gerarRelatorio();
         }
-
+        
         Service RelatorioService {
             List<@Evento> listarEventosDestaque();
             @DashboardEvento gerarDashboard(@EventoId eventoId);
         }
     }
-} 
+    
+    Aggregate Relato {
+    	Entity Relato{
+    		aggregateRoot
+    		
+    		String titulo
+    		String conteudo
+    		-Usuario autor
+    		LocalDateTime dataCriacao
+    		List<Foto> fotos
+    		String eventoId
+    		
+    		def void adicionarFoto(Foto foto);
+    		def boolean isValid();
+    	}
+    	
+    	Entity Foto {
+    		String urlFoto //added
+    		String descricao
+    		
+    	}
+    }
+}
