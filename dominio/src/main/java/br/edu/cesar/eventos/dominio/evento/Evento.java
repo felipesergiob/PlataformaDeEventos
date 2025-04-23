@@ -32,6 +32,7 @@ public class Evento {
     private double mediaNotas;
     private int totalComentarios;
     private Set<UsuarioId> usuariosConfirmados;
+    private String data;
 
     public Evento() {
         this.participantes = new ArrayList<>();
@@ -214,6 +215,14 @@ public class Evento {
 
     public boolean isFinalizado() {
         return "FINALIZADO".equals(status);
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
     }
 
     public Map<String, Object> gerarRelatorio() {

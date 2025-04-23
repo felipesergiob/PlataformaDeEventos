@@ -1,7 +1,13 @@
 package br.edu.cesar.eventos.dominio.usuario;
 
+import java.util.UUID;
+
 public class UsuarioId {
-    private String id;
+    private final String id;
+
+    public UsuarioId() {
+        this.id = UUID.randomUUID().toString();
+    }
 
     public UsuarioId(String id) {
         this.id = id;
@@ -12,10 +18,10 @@ public class UsuarioId {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UsuarioId usuarioId = (UsuarioId) o;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        UsuarioId usuarioId = (UsuarioId) obj;
         return id.equals(usuarioId.id);
     }
 
