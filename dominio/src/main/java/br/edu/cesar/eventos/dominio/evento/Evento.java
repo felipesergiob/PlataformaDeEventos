@@ -31,7 +31,7 @@ public class Evento {
     private int totalAvaliacoes;
     private double mediaNotas;
     private int totalComentarios;
-    private Set<UsuarioId> usuariosConfirmados;
+    private Set<Usuario> usuariosConfirmados;
     private String data;
 
     public Evento() {
@@ -205,12 +205,13 @@ public class Evento {
         this.totalComentarios = totalComentarios;
     }
 
-    public void setUsuarioConfirmado(UsuarioId usuarioId) {
-        usuariosConfirmados.add(usuarioId);
+    public Set<Usuario> getUsuariosConfirmados() {
+        return usuariosConfirmados;
     }
 
-    public boolean isUsuarioConfirmado(UsuarioId usuarioId) {
-        return usuariosConfirmados.contains(usuarioId);
+    public void adicionarUsuarioConfirmado(Usuario usuario) {
+        this.usuariosConfirmados.add(usuario);
+        this.totalConfirmacoes = this.usuariosConfirmados.size();
     }
 
     public boolean isFinalizado() {

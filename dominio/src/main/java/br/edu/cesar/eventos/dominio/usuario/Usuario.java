@@ -20,6 +20,11 @@ public class Usuario {
         this.id = new UsuarioId();
     }
 
+    public Usuario(String nome) {
+        this();
+        this.nome = nome;
+    }
+
     public String getNome() {
         return nome;
     }

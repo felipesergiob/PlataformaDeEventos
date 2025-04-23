@@ -1,17 +1,20 @@
 # language: pt
 
-Funcionalidade: Avaliação de Eventos
+Funcionalidade: Avaliar evento
   Como usuário da plataforma
-  Quero poder avaliar eventos que participei
-  Para compartilhar minha experiência com outros usuários
+  Quero avaliar eventos que participei
+  Para compartilhar minha experiência e ajudar outros usuários
 
   Cenário: Avaliar evento com sucesso
-    Dado que sou um usuário que confirmou presença em um evento finalizado
-    Quando acesso a página de avaliação do evento
-    E preencho a avaliação com nota 4 e comentário "Evento muito bom, organização impecável"
-    E submeto a avaliação
-    Então a avaliação deve ser registrada com sucesso
-    E devo ver uma mensagem de confirmação
+    Dado que sou um usuário que participou do evento
+    Quando avalio o evento com nota 5
+    Então a avaliação deve ser registrada
+
+  Cenário: Tentar avaliar evento sem ter participado
+    Dado que sou um usuário que não participou do evento
+    Quando avalio o evento com nota 4
+    Então devo ver a mensagem de erro de avaliação "Apenas participantes podem avaliar o evento"
+    E a avaliação não deve ser registrada
 
   Cenário: Avaliar evento sem comentário
     Dado que sou um usuário que confirmou presença em um evento finalizado
