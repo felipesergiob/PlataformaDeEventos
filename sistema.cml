@@ -1,0 +1,153 @@
+Domain Eventos {
+    Subdomain GestaoUsuarios
+    Subdomain GestaoEventos
+    Subdomain Interacoes
+    Subdomain Relatorios
+}
+
+ContextMap EventosContextMap {
+    contains GestaoUsuarios
+    contains GestaoEventos
+    contains Interacoes
+    contains Relatorios
+
+    GestaoUsuarios [SK]<->[SK] GestaoEventos
+    GestaoEventos [SK]<->[SK] Interacoes
+    GestaoUsuarios [SK]<->[SK] Interacoes
+    GestaoEventos [SK]<->[SK] Relatorios
+}
+
+Bounded Context GestaoUsuarios implements GestaoUsuarios {
+    Aggregate Usuario {
+        Entity Usuario {
+            aggregateRoot
+            - UsuarioId id
+            String nome
+            String email
+            String senha
+            LocalDateTime dataCadastro
+            List<@Usuario> seguindo
+            List<@Usuario> seguidores
+
+            def void seguirUsuario(@Usuario usuario);
+            def void pararSeguir(@Usuario usuario);
+
+            Repository UsuarioRepository {
+                void adicionar(@Usuario usuario);
+                void remover(@Usuario usuario);
+                @Usuario buscarPorId(@UsuarioId id);
+                List<@Usuario> listarUsuarios();
+            }
+        }
+
+        ValueObject UsuarioId {
+            long id
+        }
+    }
+}
+
+Bounded Context GestaoEventos implements GestaoEventos {
+    Aggregate Evento {
+        Entity Evento {
+            aggregateRoot
+            - EventoId id
+            String titulo
+            String descricao
+            LocalDateTime dataHora
+            String local
+            BigDecimal preco
+            String genero
+            - Usuario organizador
+            List<@Usuario> participantes
+            List<@Usuario> interessados
+            List<@Usuario> talvezVao
+            int limiteParticipantes
+
+            def boolean adicionarParticipante(@Usuario usuario);
+            def boolean adicionarInteressado(@Usuario usuario);
+            def boolean adicionarTalvezVai(@Usuario usuario);
+            def boolean verificarDisponibilidade();
+
+            Repository EventoRepository {
+                void adicionar(@Evento evento);
+                void remover(@Evento evento);
+                @Evento buscarPorId(@EventoId id);
+                List<@Evento> listarEventos();
+                List<@Evento> filtrarPorData(LocalDate data);
+                List<@Evento> filtrarPorGenero(String genero);
+                List<@Evento> filtrarPorPreco(BigDecimal precoMin, BigDecimal precoMax);
+            }
+        }
+
+        ValueObject EventoId {
+            long id
+        }
+    }
+}
+
+Bounded Context Interacoes implements Interacoes {
+    Aggregate Interacao {
+        Entity Avaliacao {
+            - EventoId eventoId
+            - UsuarioId usuarioId
+            int nota
+            String comentario
+            LocalDateTime dataAvaliacao
+
+            def boolean validarNota();
+        }
+
+        Entity Relato {
+            - EventoId eventoId
+            - UsuarioId usuarioId
+            String texto
+            List<String> fotos
+            LocalDateTime dataRelato
+
+            def void adicionarFoto(String foto);
+        }
+
+        Entity ItemPerdido {
+            - EventoId eventoId
+            - UsuarioId usuarioId
+            String descricao
+            String localEncontrado
+            LocalDateTime dataEncontrado
+            boolean devolvido
+
+            def void marcarComoDevolvido();
+        }
+
+        Entity Comentario {
+            - EventoId eventoId
+            - UsuarioId usuarioId
+            String texto
+            LocalDateTime dataComentario
+            List<@Comentario> respostas
+
+            def void adicionarResposta(@Comentario resposta);
+        }
+    }
+}
+
+Bounded Context Relatorios implements Relatorios {
+    Aggregate Relatorio {
+        Entity DashboardEvento {
+            - EventoId eventoId
+            int totalParticipantes
+            int totalInteressados
+            double mediaAvaliacoes
+            List<@Avaliacao> avaliacoes
+            List<@Relato> relatos
+            List<@ItemPerdido> itensPerdidos
+
+            def void atualizarMetricas();
+            def void gerarRelatorio();
+        }
+
+        Service RelatorioService {
+            List<@Evento> listarEventosDestaque();
+            @DashboardEvento gerarDashboard(@EventoId eventoId);
+        }
+    }
+} 
