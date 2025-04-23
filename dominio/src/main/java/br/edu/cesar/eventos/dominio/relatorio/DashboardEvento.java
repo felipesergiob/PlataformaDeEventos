@@ -3,7 +3,7 @@ package br.edu.cesar.eventos.dominio.relatorio;
 import br.edu.cesar.eventos.dominio.evento.EventoId;
 import br.edu.cesar.eventos.dominio.interacao.Avaliacao;
 import br.edu.cesar.eventos.dominio.interacao.ItemPerdido;
-import br.edu.cesar.eventos.dominio.interacao.Relato;
+import br.edu.cesar.eventos.dominio.relato.Relato;
 import java.util.List;
 
 public class DashboardEvento {
