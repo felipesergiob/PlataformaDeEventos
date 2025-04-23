@@ -1,4 +1,2 @@
-br/edu/cesar/eventos/dominio/evento/EventoTest.class
-br/edu/cesar/eventos/dominio/interacao/AvaliacaoTest.class
-br/edu/cesar/eventos/dominio/relatorio/DashboardEventoTest.class
-br/edu/cesar/eventos/dominio/usuario/UsuarioTest.class
+br/edu/cesar/steps/CriarEventoSteps.class
+br/edu/cesar/runners/CucumberRunner.class

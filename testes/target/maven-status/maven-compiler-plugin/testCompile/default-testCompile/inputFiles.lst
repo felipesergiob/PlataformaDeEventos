@@ -1,4 +1,2 @@
-/Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/testes/src/test/java/br/edu/cesar/eventos/dominio/usuario/UsuarioTest.java
-/Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/testes/src/test/java/br/edu/cesar/eventos/dominio/interacao/AvaliacaoTest.java
-/Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/testes/src/test/java/br/edu/cesar/eventos/dominio/relatorio/DashboardEventoTest.java
-/Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/testes/src/test/java/br/edu/cesar/eventos/dominio/evento/EventoTest.java
+/Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/testes/src/test/java/br/edu/cesar/steps/CriarEventoSteps.java
+/Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/testes/src/test/java/br/edu/cesar/runners/CucumberRunner.java
