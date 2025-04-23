@@ -242,4 +242,4 @@ public class Evento {
         // Aqui seria implementada a lógica de filtragem por período
         return relatorio;
     }
-} 
+}

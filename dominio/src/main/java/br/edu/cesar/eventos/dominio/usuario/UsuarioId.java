@@ -29,4 +29,4 @@ public class UsuarioId {
     public int hashCode() {
         return id.hashCode();
     }
-} 
+}

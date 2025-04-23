@@ -35,4 +35,4 @@ public class Resposta {
     public void setData(LocalDateTime data) {
         this.data = data;
     }
-} 
+}

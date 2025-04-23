@@ -3,7 +3,6 @@ package br.edu.cesar.steps;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Quando;
 import io.cucumber.java.pt.Entao;
-import io.cucumber.java.pt.E;
 import org.junit.jupiter.api.Assertions;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +14,9 @@ import br.edu.cesar.eventos.dominio.interacao.Resposta;
 
 public class ResponderComentariosSteps {
     private Usuario organizador;
-    private Evento evento;
     private List<Comentario> comentarios;
     private Comentario comentarioSelecionado;
     private Resposta respostaAtual;
-    private String mensagemExibida;
 
     @Dado("que sou um organizador da plataforma")
     public void queSouUmOrganizadorDaPlataforma() {
@@ -30,9 +27,9 @@ public class ResponderComentariosSteps {
 
     @Dado("existe um evento meu com comentários")
     public void existeUmEventoMeuComComentarios() {
-        evento = new Evento();
+        new Evento();
         comentarios = new ArrayList<>();
-        
+
         Comentario comentario = new Comentario();
         comentario.setUsuario(new Usuario("João Silva"));
         comentario.setConteudo("Ótimo evento!");
@@ -45,7 +42,7 @@ public class ResponderComentariosSteps {
             .filter(c -> c.getUsuario().getNome().equals(nomeUsuario))
             .findFirst()
             .orElse(null);
-        
+
         respostaAtual = new Resposta();
         respostaAtual.setAutor(organizador);
         respostaAtual.setConteudo("Resposta anterior");
@@ -54,9 +51,9 @@ public class ResponderComentariosSteps {
 
     @Dado("existe um evento meu com múltiplos comentários:")
     public void existeUmEventoMeuComMultiplosComentarios(io.cucumber.datatable.DataTable dataTable) {
-        evento = new Evento();
+        new Evento();
         comentarios = new ArrayList<>();
-        
+
         List<Map<String, String>> comentariosData = dataTable.asMaps();
         for (Map<String, String> comentarioData : comentariosData) {
             Comentario comentario = new Comentario();
@@ -100,8 +97,8 @@ public class ResponderComentariosSteps {
             // Atualiza a resposta existente
         } else if (acao.equals("Excluir")) {
             comentarioSelecionado.removerResposta(respostaAtual);
-            respostaAtual = null; // Limpa a referência da resposta excluída
-            comentarioSelecionado = null; // Limpa a referência do comentário selecionado
+            respostaAtual = null;
+            comentarioSelecionado = null;
         }
     }
 
@@ -183,4 +180,4 @@ public class ResponderComentariosSteps {
             }
         }
     }
-} 
+}

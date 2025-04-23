@@ -67,4 +67,4 @@ public class Relato {
                conteudo != null && !conteudo.isEmpty() &&
                autor != null && eventoId != null;
     }
-} 
+}

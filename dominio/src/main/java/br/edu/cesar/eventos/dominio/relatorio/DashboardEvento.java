@@ -84,4 +84,4 @@ public class DashboardEvento {
         atualizarMetricas();
         // Aqui seria implementada a lógica para gerar o relatório completo
     }
-} 
+}

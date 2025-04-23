@@ -26,7 +26,7 @@ public class VisualizarHistoricoEventosSteps {
     @Dado("existe um organizador com eventos passados")
     public void existeUmOrganizadorComEventosPassados() {
         eventos = new ArrayList<>();
-        
+
         Evento showRock = new Evento();
         showRock.setId(new EventoId("1"));
         showRock.setTitulo("Show de Rock");
@@ -64,7 +64,7 @@ public class VisualizarHistoricoEventosSteps {
     @Dado("existe um organizador com eventos passados sem avaliações")
     public void existeUmOrganizadorComEventosPassadosSemAvaliacoes() {
         eventos = new ArrayList<>();
-        
+
         Evento showRock = new Evento();
         showRock.setId(new EventoId("1"));
         showRock.setTitulo("Show de Rock");
@@ -93,17 +93,17 @@ public class VisualizarHistoricoEventosSteps {
 
     @Quando("clico em um evento específico")
     public void clicoEmUmEventoEspecifico() {
-        eventoSelecionado = eventos.get(0); // Seleciona o primeiro evento
+        eventoSelecionado = eventos.get(0);
     }
 
     @Entao("devo ver a lista de eventos passados com:")
     public void devoVerAListaDeEventosPassadosCom(io.cucumber.datatable.DataTable dataTable) {
         List<Map<String, String>> eventosEsperados = dataTable.asMaps();
-        
+
         for (int i = 0; i < eventosEsperados.size(); i++) {
             Map<String, String> eventoEsperado = eventosEsperados.get(i);
             Evento eventoAtual = eventos.get(i);
-            
+
             Assertions.assertEquals(eventoEsperado.get("Evento"), eventoAtual.getTitulo());
             Assertions.assertEquals(eventoEsperado.get("Data"), eventoAtual.getData());
             Assertions.assertEquals(Double.parseDouble(eventoEsperado.get("Média")), eventoAtual.getMediaNotas());
@@ -115,14 +115,14 @@ public class VisualizarHistoricoEventosSteps {
     @Entao("devo ver os detalhes do evento no histórico:")
     public void devoVerOsDetalhesDoEventoNoHistorico(io.cucumber.datatable.DataTable dataTable) {
         Map<String, String> detalhes = dataTable.asMap();
-        
+
         Assertions.assertEquals(detalhes.get("Nome"), eventoSelecionado.getTitulo());
         Assertions.assertEquals(detalhes.get("Data"), eventoSelecionado.getData());
         Assertions.assertEquals(Double.parseDouble(detalhes.get("Média de Notas")), eventoSelecionado.getMediaNotas());
         Assertions.assertEquals(Integer.parseInt(detalhes.get("Total de Avaliações")), eventoSelecionado.getTotalAvaliacoes());
         Assertions.assertEquals(Integer.parseInt(detalhes.get("Total de Comentários")), eventoSelecionado.getTotalComentarios());
         Assertions.assertEquals(Integer.parseInt(detalhes.get("Participantes Confirmados")), eventoSelecionado.getTotalConfirmacoes());
-        
+
         double taxaEngajamento = (double) eventoSelecionado.getTotalAvaliacoes() / eventoSelecionado.getTotalConfirmacoes() * 100;
         Assertions.assertEquals(Double.parseDouble(detalhes.get("Taxa de Engajamento").replace("%", "")), taxaEngajamento);
     }
@@ -130,13 +130,13 @@ public class VisualizarHistoricoEventosSteps {
     @Entao("devo ver os comentários dos participantes:")
     public void devoVerOsComentariosDosParticipantes(io.cucumber.datatable.DataTable dataTable) {
         List<Map<String, String>> comentariosEsperados = dataTable.asMaps();
-        
+
         for (int i = 0; i < comentariosEsperados.size(); i++) {
             Map<String, String> comentarioEsperado = comentariosEsperados.get(i);
             Avaliacao avaliacao = avaliacoes.get(i);
-            
+
             Assertions.assertEquals(comentarioEsperado.get("Usuário"), avaliacao.getUsuarioId().getId());
             Assertions.assertEquals(comentarioEsperado.get("Comentário"), avaliacao.getComentario());
         }
     }
-} 
+}

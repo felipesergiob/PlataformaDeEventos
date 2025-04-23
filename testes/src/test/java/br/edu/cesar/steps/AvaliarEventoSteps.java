@@ -3,7 +3,6 @@ package br.edu.cesar.steps;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Quando;
 import io.cucumber.java.pt.Entao;
-import io.cucumber.java.pt.E;
 import org.junit.jupiter.api.Assertions;
 import br.edu.cesar.eventos.dominio.evento.Evento;
 import br.edu.cesar.eventos.dominio.usuario.Usuario;
@@ -20,7 +19,7 @@ public class AvaliarEventoSteps {
     public void queSouUmUsuarioQueParticipouDoEvento() {
         usuario = new Usuario();
         usuario.setNome("João Silva");
-        
+
         evento = new Evento();
         evento.setTitulo("Workshop de Java");
         evento.adicionarUsuarioConfirmado(usuario);
@@ -30,7 +29,7 @@ public class AvaliarEventoSteps {
     public void queSouUmUsuarioQueNaoParticipouDoEvento() {
         usuario = new Usuario();
         usuario.setNome("João Silva");
-        
+
         evento = new Evento();
         evento.setTitulo("Workshop de Java");
     }
@@ -39,7 +38,7 @@ public class AvaliarEventoSteps {
     public void queSouUmUsuarioQueConfirmouPresencaEmUmEventoFinalizado() {
         usuario = new Usuario();
         usuario.setNome("João Silva");
-        
+
         evento = new Evento();
         evento.setTitulo("Workshop de Java");
         evento.adicionarUsuarioConfirmado(usuario);
@@ -51,7 +50,7 @@ public class AvaliarEventoSteps {
     public void queSouUmUsuarioQueConfirmouPresencaEmUmEvento() {
         usuario = new Usuario();
         usuario.setNome("João Silva");
-        
+
         evento = new Evento();
         evento.setTitulo("Workshop de Java");
         evento.adicionarUsuarioConfirmado(usuario);
@@ -63,7 +62,7 @@ public class AvaliarEventoSteps {
     public void queSouUmUsuarioQueNaoConfirmouPresencaEmUmEventoFinalizado() {
         usuario = new Usuario();
         usuario.setNome("João Silva");
-        
+
         evento = new Evento();
         evento.setTitulo("Workshop de Java");
         eventoFinalizado = true;
@@ -102,9 +101,7 @@ public class AvaliarEventoSteps {
     }
 
     @Quando("submeto a avaliação")
-    public void submetoAAvaliacao() {
-        // Nada a fazer aqui, a avaliação já foi registrada no passo anterior
-    }
+    public void submetoAAvaliacao() {}
 
     @Quando("tento acessar a página de avaliação do evento")
     public void tentoAcessarAPaginaDeAvaliacaoDoEvento() {
@@ -152,4 +149,4 @@ public class AvaliarEventoSteps {
     public void devoVerUmaMensagemInformandoQuePrecisoTerConfirmadoPresencaParaAvaliar() {
         Assertions.assertEquals("Você precisa ter confirmado presença para avaliar o evento", mensagemErro);
     }
-} 
+}

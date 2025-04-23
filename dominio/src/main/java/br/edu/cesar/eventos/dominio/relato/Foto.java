@@ -19,4 +19,4 @@ public class Foto {
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
-} 
+}

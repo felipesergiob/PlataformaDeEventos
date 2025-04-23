@@ -7,20 +7,17 @@ import io.cucumber.datatable.DataTable;
 import br.edu.cesar.eventos.dominio.evento.Evento;
 import br.edu.cesar.eventos.dominio.evento.EventoId;
 import br.edu.cesar.eventos.dominio.interacao.ItemPerdido;
-import br.edu.cesar.eventos.dominio.usuario.Usuario;
 import br.edu.cesar.eventos.dominio.usuario.UsuarioId;
-import java.time.LocalDateTime;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ReportarItemPerdidoSteps {
-    
-    private Usuario usuario;
+
     private Evento evento;
     private ItemPerdido itemPerdido;
     private boolean registroSucesso;
     private String mensagemErro;
-    
+
     @Dado("que sou um usuário logado na plataforma")
     public void queSouUmUsuarioLogadoNaPlataforma() {
         // Implementação do login do usuário
@@ -79,7 +76,7 @@ public class ReportarItemPerdidoSteps {
         itemPerdido.setCor(dados.get("cor"));
         itemPerdido.setDescricao(dados.get("descrição"));
         itemPerdido.setLocalAproximado(dados.get("localAproximado"));
-        
+
         registroSucesso = itemPerdido.isValid();
     }
 
@@ -120,4 +117,4 @@ public class ReportarItemPerdidoSteps {
         assertFalse(registroSucesso, "O registro não deve ser bem sucedido");
         assertNotNull(mensagemErro, "Deve receber uma mensagem de erro");
     }
-} 
+}

@@ -7,11 +7,11 @@ import io.cucumber.datatable.DataTable;
 import static org.junit.Assert.*;
 
 public class CriarEventoSteps {
-    
+
     private boolean organizadorAutenticado = false;
     private boolean eventoCriado = false;
     private boolean erroRecebido = false;
-    
+
     @Dado("que eu sou um organizador")
     public void queEuSouUmOrganizador() {
         organizadorAutenticado = true;
@@ -45,4 +45,4 @@ public class CriarEventoSteps {
     public void devoReceberUmaMensagemDeErroInformandoQueONomeEObrigatorio() {
         assertTrue("Deveria ter recebido uma mensagem de erro", erroRecebido);
     }
-} 
+}

@@ -18,4 +18,4 @@ public class Relato {
     public void adicionarFoto(String foto) {
         fotos.add(foto);
     }
-} 
+}

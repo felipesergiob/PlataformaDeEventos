@@ -3,7 +3,6 @@ package br.edu.cesar.steps;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Quando;
 import io.cucumber.java.pt.Entao;
-import io.cucumber.java.pt.E;
 import org.junit.jupiter.api.Assertions;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,16 +82,15 @@ public class CriarRelatoEventoSteps {
     public void oRelatoDeveConter(io.cucumber.datatable.DataTable dataTable) {
         List<Map<String, String>> dados = dataTable.asMaps();
         Map<String, String> dadosEsperados = dados.get(0);
-        
+
         Assertions.assertEquals(dadosEsperados.get("Valor"), relatoAtual.getTitulo());
         Assertions.assertEquals(dados.get(1).get("Valor"), relatoAtual.getAutor().getNome());
         Assertions.assertEquals(dados.get(2).get("Valor"), "Hoje");
-        
-        // Normaliza as quebras de linha antes de comparar o conteúdo
+
         String conteudoEsperado = dados.get(3).get("Valor").replaceAll("\\s+", " ").trim();
         String conteudoAtual = relatoAtual.getConteudo().replaceAll("\\s+", " ").trim();
         Assertions.assertEquals(conteudoEsperado, conteudoAtual);
-        
+
         Assertions.assertEquals(Integer.parseInt(dados.get(4).get("Valor")), relatoAtual.getFotos().size());
     }
 
@@ -105,4 +103,4 @@ public class CriarRelatoEventoSteps {
     public void oRelatoNaoDeveSerPublicado() {
         Assertions.assertFalse(relatos.contains(relatoAtual));
     }
-} 
+}

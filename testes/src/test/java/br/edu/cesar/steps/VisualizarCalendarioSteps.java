@@ -8,18 +8,16 @@ import br.edu.cesar.eventos.dominio.evento.Evento;
 import br.edu.cesar.eventos.dominio.interacao.Calendario;
 import br.edu.cesar.eventos.dominio.usuario.Usuario;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import static org.junit.Assert.*;
 
 public class VisualizarCalendarioSteps {
-    
     private Usuario usuario;
     private Calendario calendario;
     private List<Evento> eventosExibidos;
     private Evento eventoSelecionado;
-    
+
     @Dado("que eu sou um usuário da plataforma")
     public void queEuSouUmUsuarioDaPlataforma() {
         usuario = new Usuario();
@@ -112,18 +110,18 @@ public class VisualizarCalendarioSteps {
     @Então("devo ver os detalhes do evento:")
     public void devoVerOsDetalhesDoEvento(DataTable dataTable) {
         assertNotNull("O evento selecionado não deve ser nulo", eventoSelecionado);
-        
+
         Map<String, String> detalhesEsperados = dataTable.asMap(String.class, String.class);
-        
-        assertEquals("O nome do evento deve corresponder", 
+
+        assertEquals("O nome do evento deve corresponder",
             detalhesEsperados.get("nome"), eventoSelecionado.getTitulo());
-        assertEquals("O local do evento deve corresponder", 
+        assertEquals("O local do evento deve corresponder",
             detalhesEsperados.get("local"), eventoSelecionado.getLocal());
-        assertEquals("A data do evento deve corresponder", 
+        assertEquals("A data do evento deve corresponder",
             detalhesEsperados.get("data"), eventoSelecionado.getDataHora().toLocalDate().toString());
-        assertEquals("O horário do evento deve corresponder", 
+        assertEquals("O horário do evento deve corresponder",
             detalhesEsperados.get("horário"), eventoSelecionado.getDataHora().toLocalTime().toString());
-        assertEquals("A descrição do evento deve corresponder", 
+        assertEquals("A descrição do evento deve corresponder",
             detalhesEsperados.get("descrição"), eventoSelecionado.getDescricao());
     }
 
@@ -143,8 +141,8 @@ public class VisualizarCalendarioSteps {
             default:
                 throw new IllegalArgumentException("Período inválido: " + periodo);
         }
-        
+
         assertEquals("A visualização do calendário deve corresponder ao período selecionado",
             visualizacaoEsperada, calendario.getVisualizacaoAtual());
     }
-} 
+}

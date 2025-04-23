@@ -3,7 +3,6 @@ package br.edu.cesar.steps;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Quando;
 import io.cucumber.java.pt.Entao;
-import io.cucumber.java.pt.E;
 import org.junit.jupiter.api.Assertions;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,16 +11,14 @@ import br.edu.cesar.eventos.dominio.usuario.Usuario;
 import br.edu.cesar.eventos.dominio.evento.Evento;
 
 public class SeguirUsuariosSteps {
-    private Usuario usuarioAtual;
     private Usuario organizador;
     private List<Usuario> usuariosSeguidos;
     private Evento novoEvento;
-    private boolean botaoSeguirClicado;
     private String mensagemExibida;
 
     @Dado("que sou um usuário da plataforma que deseja seguir outros usuários")
     public void queSouUmUsuarioDaPlataformaQueDesejaSeguirOutrosUsuarios() {
-        usuarioAtual = new Usuario();
+        new Usuario();
         usuariosSeguidos = new ArrayList<>();
     }
 
@@ -50,13 +47,11 @@ public class SeguirUsuariosSteps {
 
     @Quando("acesso o perfil do organizador {string}")
     public void acessoOPerfilDoOrganizador(String nome) {
-        // Simula o acesso ao perfil
         Assertions.assertEquals(nome, organizador.getNome());
     }
 
     @Quando("clico no botão {string}")
     public void clicoNoBotao(String botao) {
-        botaoSeguirClicado = true;
         if (botao.equals("Seguir")) {
             usuariosSeguidos.add(organizador);
             mensagemExibida = "Você está seguindo " + organizador.getNome();
@@ -110,11 +105,11 @@ public class SeguirUsuariosSteps {
     public void devoVerOsOrganizadores(io.cucumber.datatable.DataTable dataTable) {
         List<Map<String, String>> organizadoresEsperados = dataTable.asMaps();
         Assertions.assertEquals(organizadoresEsperados.size(), usuariosSeguidos.size());
-        
+
         for (Map<String, String> org : organizadoresEsperados) {
             boolean encontrado = usuariosSeguidos.stream()
                 .anyMatch(u -> u.getNome().equals(org.get("Nome")));
             Assertions.assertTrue(encontrado);
         }
     }
-} 
+}

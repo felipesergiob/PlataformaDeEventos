@@ -15,10 +15,10 @@ import java.math.BigDecimal;
 import static org.junit.Assert.*;
 
 public class FiltrarEventosSteps {
-    
+
     private List<Evento> eventos = new ArrayList<>();
     private List<Evento> eventosFiltrados = new ArrayList<>();
-    
+
     @Dado("que existem eventos cadastrados na plataforma")
     public void queExistemEventosCadastradosNaPlataforma() {
         // Criando alguns eventos de exemplo
@@ -26,17 +26,17 @@ public class FiltrarEventosSteps {
         evento1.setGenero("Música");
         evento1.setDataHora(LocalDateTime.of(2024, 12, 1, 20, 0)); // Noite
         evento1.setPreco(new BigDecimal("50.00"));
-        
+
         Evento evento2 = new Evento();
         evento2.setGenero("Palestra");
         evento2.setDataHora(LocalDateTime.of(2024, 12, 1, 10, 0)); // Manhã
         evento2.setPreco(new BigDecimal("0.00"));
-        
+
         Evento evento3 = new Evento();
         evento3.setGenero("Música");
         evento3.setDataHora(LocalDateTime.of(2024, 12, 2, 20, 0)); // Noite
         evento3.setPreco(new BigDecimal("150.00"));
-        
+
         eventos.add(evento1);
         eventos.add(evento2);
         eventos.add(evento3);
@@ -53,7 +53,7 @@ public class FiltrarEventosSteps {
     public void euFiltrarEventosPorHorario(String horario) {
         LocalTime inicioNoite = LocalTime.of(18, 0);
         LocalTime fimNoite = LocalTime.of(23, 59);
-        
+
         eventosFiltrados = eventos.stream()
             .filter(e -> {
                 LocalTime horaEvento = e.getDataHora().toLocalTime();
@@ -77,7 +77,7 @@ public class FiltrarEventosSteps {
     public void euFiltrarEventosComPrecoEntre(String precoMinimo, String precoMaximo) {
         BigDecimal min = new BigDecimal(precoMinimo);
         BigDecimal max = new BigDecimal(precoMaximo);
-        
+
         eventosFiltrados = eventos.stream()
             .filter(e -> e.getPreco().compareTo(min) >= 0 && e.getPreco().compareTo(max) <= 0)
             .collect(Collectors.toList());
@@ -86,33 +86,33 @@ public class FiltrarEventosSteps {
     @Quando("eu filtrar eventos com os seguintes critérios:")
     public void euFiltrarEventosComOsSeguintesCriterios(DataTable dataTable) {
         Map<String, String> criterios = dataTable.asMap(String.class, String.class);
-        
+
         eventosFiltrados = eventos.stream()
             .filter(e -> {
                 boolean match = true;
-                
+
                 if (criterios.containsKey("gênero")) {
                     match = match && e.getGenero().equals(criterios.get("gênero"));
                 }
-                
+
                 if (criterios.containsKey("horário") && criterios.get("horário").equals("Noite")) {
                     LocalTime horaEvento = e.getDataHora().toLocalTime();
                     LocalTime inicioNoite = LocalTime.of(18, 0);
                     LocalTime fimNoite = LocalTime.of(23, 59);
                     match = match && horaEvento.isAfter(inicioNoite) && horaEvento.isBefore(fimNoite);
                 }
-                
+
                 if (criterios.containsKey("data")) {
                     LocalDateTime dataFiltro = LocalDateTime.parse(criterios.get("data") + "T00:00:00");
                     match = match && e.getDataHora().toLocalDate().equals(dataFiltro.toLocalDate());
                 }
-                
+
                 if (criterios.containsKey("preçoMínimo") && criterios.containsKey("preçoMáximo")) {
                     BigDecimal min = new BigDecimal(criterios.get("preçoMínimo"));
                     BigDecimal max = new BigDecimal(criterios.get("preçoMáximo"));
                     match = match && e.getPreco().compareTo(min) >= 0 && e.getPreco().compareTo(max) <= 0;
                 }
-                
+
                 return match;
             })
             .collect(Collectors.toList());
@@ -157,7 +157,7 @@ public class FiltrarEventosSteps {
             .map(Evento::getPreco)
             .max(BigDecimal::compareTo)
             .orElse(BigDecimal.ZERO);
-        
+
         assertTrue("Todos os eventos devem estar dentro da faixa de preço",
             eventosFiltrados.stream().allMatch(e -> 
                 e.getPreco().compareTo(precoMinimo) >= 0 && 
@@ -169,4 +169,4 @@ public class FiltrarEventosSteps {
         assertFalse("Deveria haver eventos filtrados", eventosFiltrados.isEmpty());
         // A validação específica é feita no método de filtragem
     }
-} 
+}

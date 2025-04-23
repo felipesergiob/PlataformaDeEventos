@@ -57,12 +57,11 @@ public class VisualizarRelatorioEventoSteps {
     @Entao("devo ver as seguintes informações:")
     public void devoVerAsSeguintesInformacoes(Map<String, String> metricasEsperadas) {
         Assertions.assertNotNull(relatorio, "O relatório não deve ser nulo");
-        
+
         metricasEsperadas.forEach((chave, valorEsperado) -> {
             Object valorAtual = relatorio.get(chave);
             Assertions.assertNotNull(valorAtual, "A métrica " + chave + " não deve ser nula");
-            
-            // Formata o valor atual para String, removendo zeros decimais desnecessários
+
             String valorAtualFormatado = formatarValor(valorAtual);
             Assertions.assertEquals(valorEsperado, valorAtualFormatado, 
                 "Valor incorreto para a métrica " + chave);
@@ -88,4 +87,4 @@ public class VisualizarRelatorioEventoSteps {
         Assertions.assertEquals(periodoSelecionado, relatorio.get("periodo"),
             "O período no relatório deve corresponder ao selecionado");
     }
-} 
+}

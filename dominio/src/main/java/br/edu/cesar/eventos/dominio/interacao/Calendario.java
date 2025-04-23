@@ -2,7 +2,6 @@ package br.edu.cesar.eventos.dominio.interacao;
 
 import br.edu.cesar.eventos.dominio.evento.Evento;
 import br.edu.cesar.eventos.dominio.usuario.Usuario;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +9,6 @@ import java.util.HashMap;
 import java.util.stream.Collectors;
 
 public class Calendario {
-    private Usuario usuario;
     private Map<Evento, TipoInteracao> eventos;
     private TipoVisualizacao visualizacaoAtual;
 
@@ -37,7 +35,6 @@ public class Calendario {
     }
 
     public Calendario(Usuario usuario) {
-        this.usuario = usuario;
         this.eventos = new HashMap<>();
         this.visualizacaoAtual = TipoVisualizacao.MENSAL;
     }
@@ -68,4 +65,4 @@ public class Calendario {
     public List<Evento> getEventos() {
         return new ArrayList<>(eventos.keySet());
     }
-} 
+}

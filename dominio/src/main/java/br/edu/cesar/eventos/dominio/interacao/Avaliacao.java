@@ -54,4 +54,4 @@ public class Avaliacao {
     public boolean validarNota() {
         return nota >= 1 && nota <= 5;
     }
-} 
+}

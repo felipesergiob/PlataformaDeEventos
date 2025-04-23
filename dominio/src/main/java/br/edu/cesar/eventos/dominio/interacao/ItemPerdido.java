@@ -99,4 +99,4 @@ public class ItemPerdido {
                descricao != null && !descricao.isEmpty() &&
                localAproximado != null && !localAproximado.isEmpty();
     }
-} 
+}

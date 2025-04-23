@@ -14,4 +14,4 @@ public class RelatorioService {
         // Aqui seria implementada a lógica para gerar o dashboard do evento
         return null;
     }
-} 
+}
