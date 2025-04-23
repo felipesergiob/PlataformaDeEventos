@@ -1,2 +1,5 @@
 br/edu/cesar/steps/CriarEventoSteps.class
+br/edu/cesar/steps/FiltrarEventosSteps.class
+br/edu/cesar/steps/ReportarItemPerdidoSteps.class
+br/edu/cesar/steps/VisualizarCalendarioSteps.class
 br/edu/cesar/runners/CucumberRunner.class

@@ -1,10 +1,13 @@
-br/edu/cesar/eventos/dominio/usuario/UsuarioId.class
 br/edu/cesar/eventos/dominio/relatorio/DashboardEvento.class
-br/edu/cesar/eventos/dominio/interacao/Relato.class
 br/edu/cesar/eventos/dominio/interacao/ItemPerdido.class
 br/edu/cesar/eventos/dominio/evento/Evento.class
-br/edu/cesar/eventos/dominio/relatorio/RelatorioService.class
 br/edu/cesar/eventos/dominio/evento/EventoId.class
+br/edu/cesar/eventos/dominio/interacao/Avaliacao.class
+br/edu/cesar/eventos/dominio/usuario/UsuarioId.class
+br/edu/cesar/eventos/dominio/interacao/Calendario$TipoInteracao.class
+br/edu/cesar/eventos/dominio/interacao/Relato.class
+br/edu/cesar/eventos/dominio/relatorio/RelatorioService.class
+br/edu/cesar/eventos/dominio/interacao/Calendario.class
 br/edu/cesar/eventos/dominio/interacao/Comentario.class
 br/edu/cesar/eventos/dominio/usuario/Usuario.class
-br/edu/cesar/eventos/dominio/interacao/Avaliacao.class
+br/edu/cesar/eventos/dominio/interacao/Calendario$TipoVisualizacao.class

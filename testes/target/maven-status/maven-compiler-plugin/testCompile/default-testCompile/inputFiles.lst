@@ -1,2 +1,5 @@
+/Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/testes/src/test/java/br/edu/cesar/steps/ReportarItemPerdidoSteps.java
 /Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/testes/src/test/java/br/edu/cesar/steps/CriarEventoSteps.java
 /Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/testes/src/test/java/br/edu/cesar/runners/CucumberRunner.java
+/Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/testes/src/test/java/br/edu/cesar/steps/VisualizarCalendarioSteps.java
+/Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/testes/src/test/java/br/edu/cesar/steps/FiltrarEventosSteps.java

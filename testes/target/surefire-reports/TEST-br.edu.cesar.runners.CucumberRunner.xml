@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="br.edu.cesar.runners.CucumberRunner" time="0.464" tests="2" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="br.edu.cesar.runners.CucumberRunner" time="0.363" tests="15" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="23"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -12,7 +12,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="BR"/>
     <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/23.0.2/libexec/openjdk.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/testes/target/surefire/surefirebooter-20250423014006796_3.jar /Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/testes/target/surefire 2025-04-23T01-40-06_753-jvmRun1 surefire-20250423014006796_1tmp surefire_0-20250423014006796_2tmp"/>
+    <property name="sun.java.command" value="/Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/testes/target/surefire/surefirebooter-20250423025415547_3.jar /Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/testes/target/surefire 2025-04-23T02-54-15_521-jvmRun1 surefire-20250423025415547_1tmp surefire_0-20250423025415547_2tmp"/>
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/testes/target/test-classes:/Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/testes/target/classes:/Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/dominio/target/plataforma-eventos-dominio-1.0-SNAPSHOT.jar:/Users/felipesergio/.m2/repository/io/cucumber/cucumber-java/7.15.0/cucumber-java-7.15.0.jar:/Users/felipesergio/.m2/repository/io/cucumber/cucumber-core/7.15.0/cucumber-core-7.15.0.jar:/Users/felipesergio/.m2/repository/io/cucumber/cucumber-gherkin/7.15.0/cucumber-gherkin-7.15.0.jar:/Users/felipesergio/.m2/repository/io/cucumber/cucumber-gherkin-messages/7.15.0/cucumber-gherkin-messages-7.15.0.jar:/Users/felipesergio/.m2/repository/io/cucumber/gherkin/26.2.0/gherkin-26.2.0.jar:/Users/felipesergio/.m2/repository/io/cucumber/messages/22.0.0/messages-22.0.0.jar:/Users/felipesergio/.m2/repository/io/cucumber/tag-expressions/6.0.0/tag-expressions-6.0.0.jar:/Users/felipesergio/.m2/repository/io/cucumber/cucumber-expressions/17.0.1/cucumber-expressions-17.0.1.jar:/Users/felipesergio/.m2/repository/io/cucumber/datatable/7.15.0/datatable-7.15.0.jar:/Users/felipesergio/.m2/repository/io/cucumber/cucumber-plugin/7.15.0/cucumber-plugin-7.15.0.jar:/Users/felipesergio/.m2/repository/io/cucumber/docstring/7.15.0/docstring-7.15.0.jar:/Users/felipesergio/.m2/repository/io/cucumber/html-formatter/20.4.0/html-formatter-20.4.0.jar:/Users/felipesergio/.m2/repository/io/cucumber/junit-xml-formatter/0.2.0/junit-xml-formatter-0.2.0.jar:/Users/felipesergio/.m2/repository/io/cucumber/ci-environment/10.0.0/ci-environment-10.0.0.jar:/Users/felipesergio/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/felipesergio/.m2/repository/io/cucumber/cucumber-junit/7.15.0/cucumber-junit-7.15.0.jar:/Users/felipesergio/.m2/repository/junit/junit/4.13.2/junit-4.13.2.jar:/Users/felipesergio/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/Users/felipesergio/.m2/repository/org/junit/jupiter/junit-jupiter/5.10.2/junit-jupiter-5.10.2.jar:/Users/felipesergio/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2.jar:/Users/felipesergio/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/felipesergio/.m2/repository/org/junit/platform/junit-platform-commons/1.10.2/junit-platform-commons-1.10.2.jar:/Users/felipesergio/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.10.2/junit-jupiter-params-5.10.2.jar:/Users/felipesergio/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar:/Users/felipesergio/.m2/repository/org/junit/platform/junit-platform-engine/1.10.2/junit-platform-engine-1.10.2.jar:"/>
@@ -29,7 +29,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/testes/target/surefire/surefirebooter-20250423014006796_3.jar"/>
+    <property name="surefire.real.class.path" value="/Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/testes/target/surefire/surefirebooter-20250423025415547_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.runtime.version" value="23.0.2"/>
@@ -58,7 +58,7 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="67.0"/>
   </properties>
-  <testcase name="Criar evento com sucesso" classname="Criar Evento" time="0.052">
+  <testcase name="Criar evento com sucesso" classname="Criar Evento" time="0.039">
     <system-out><![CDATA[
 Cenário: Criar evento com sucesso                   # src/test/resources/features/CriarEvento.feature:7
   Dado que eu sou um organizador                    # br.edu.cesar.steps.CriarEventoSteps.queEuSouUmOrganizador()
@@ -71,12 +71,153 @@ Cenário: Criar evento com sucesso                   # src/test/resources/featur
   E devo receber uma confirmação                    # br.edu.cesar.steps.CriarEventoSteps.devoReceberUmaConfirmacao()
 ]]></system-out>
   </testcase>
-  <testcase name="Tentar criar evento sem nome" classname="Criar Evento" time="0.0">
+  <testcase name="Tentar criar evento sem nome" classname="Criar Evento" time="0.001">
     <system-out><![CDATA[
 Cenário: Tentar criar evento sem nome                                         # src/test/resources/features/CriarEvento.feature:17
   Dado que eu sou um organizador                                              # br.edu.cesar.steps.CriarEventoSteps.queEuSouUmOrganizador()
   Quando eu tentar criar um evento sem nome                                   # br.edu.cesar.steps.CriarEventoSteps.euTentarCriarUmEventoSemNome()
   Então devo receber uma mensagem de erro informando que o nome é obrigatório # br.edu.cesar.steps.CriarEventoSteps.devoReceberUmaMensagemDeErroInformandoQueONomeEObrigatorio()
+]]></system-out>
+  </testcase>
+  <testcase name="Filtrar eventos por gênero" classname="Filtrar Eventos" time="0.009">
+    <system-out><![CDATA[
+Cenário: Filtrar eventos por gênero                  # src/test/resources/features/FiltrarEventos.feature:7
+  Dado que existem eventos cadastrados na plataforma # br.edu.cesar.steps.FiltrarEventosSteps.queExistemEventosCadastradosNaPlataforma()
+  Quando eu filtrar eventos por gênero "Música"      # br.edu.cesar.steps.FiltrarEventosSteps.euFiltrarEventosPorGenero(java.lang.String)
+  Então devo ver apenas eventos do gênero "Música"   # br.edu.cesar.steps.FiltrarEventosSteps.devoVerApenasEventosDoGenero(java.lang.String)
+]]></system-out>
+  </testcase>
+  <testcase name="Filtrar eventos por horário" classname="Filtrar Eventos" time="0.003">
+    <system-out><![CDATA[
+Cenário: Filtrar eventos por horário                  # src/test/resources/features/FiltrarEventos.feature:12
+  Dado que existem eventos cadastrados na plataforma  # br.edu.cesar.steps.FiltrarEventosSteps.queExistemEventosCadastradosNaPlataforma()
+  Quando eu filtrar eventos por horário "Noite"       # br.edu.cesar.steps.FiltrarEventosSteps.euFiltrarEventosPorHorario(java.lang.String)
+  Então devo ver apenas eventos que acontecem à noite # br.edu.cesar.steps.FiltrarEventosSteps.devoVerApenasEventosQueAcontecemANoite()
+]]></system-out>
+  </testcase>
+  <testcase name="Filtrar eventos por data" classname="Filtrar Eventos" time="0.003">
+    <system-out><![CDATA[
+Cenário: Filtrar eventos por data                        # src/test/resources/features/FiltrarEventos.feature:17
+  Dado que existem eventos cadastrados na plataforma     # br.edu.cesar.steps.FiltrarEventosSteps.queExistemEventosCadastradosNaPlataforma()
+  Quando eu filtrar eventos pela data "2024-12-01"       # br.edu.cesar.steps.FiltrarEventosSteps.euFiltrarEventosPelaData(java.lang.String)
+  Então devo ver apenas eventos que acontecem nesta data # br.edu.cesar.steps.FiltrarEventosSteps.devoVerApenasEventosQueAcontecemNestaData()
+]]></system-out>
+  </testcase>
+  <testcase name="Filtrar eventos por faixa de preço" classname="Filtrar Eventos" time="0.004">
+    <system-out><![CDATA[
+Cenário: Filtrar eventos por faixa de preço                 # src/test/resources/features/FiltrarEventos.feature:22
+  Dado que existem eventos cadastrados na plataforma        # br.edu.cesar.steps.FiltrarEventosSteps.queExistemEventosCadastradosNaPlataforma()
+  Quando eu filtrar eventos com preço entre "0" e "100"     # br.edu.cesar.steps.FiltrarEventosSteps.euFiltrarEventosComPrecoEntre(java.lang.String,java.lang.String)
+  Então devo ver apenas eventos dentro desta faixa de preço # br.edu.cesar.steps.FiltrarEventosSteps.devoVerApenasEventosDentroDestaFaixaDePreco()
+]]></system-out>
+  </testcase>
+  <testcase name="Filtrar eventos com múltiplos critérios" classname="Filtrar Eventos" time="0.006">
+    <system-out><![CDATA[
+Cenário: Filtrar eventos com múltiplos critérios                 # src/test/resources/features/FiltrarEventos.feature:27
+  Dado que existem eventos cadastrados na plataforma             # br.edu.cesar.steps.FiltrarEventosSteps.queExistemEventosCadastradosNaPlataforma()
+  Quando eu filtrar eventos com os seguintes critérios:          # br.edu.cesar.steps.FiltrarEventosSteps.euFiltrarEventosComOsSeguintesCriterios(io.cucumber.datatable.DataTable)
+    | gênero      | Música     |
+    | horário     | Noite      |
+    | data        | 2024-12-01 |
+    | preçoMínimo | 0          |
+    | preçoMáximo | 100        |
+  Então devo ver apenas eventos que atendem a todos os critérios # br.edu.cesar.steps.FiltrarEventosSteps.devoVerApenasEventosQueAtendemATodosOsCriterios()
+]]></system-out>
+  </testcase>
+  <testcase name="Reportar item perdido com sucesso" classname="Reportar Item Perdido" time="0.008">
+    <system-out><![CDATA[
+Cenário: Reportar item perdido com sucesso                # src/test/resources/features/ReportarItemPerdido.feature:7
+  Dado que eu sou um participante de um evento finalizado # br.edu.cesar.steps.ReportarItemPerdidoSteps.queEuSouUmParticipanteDeUmEventoFinalizado()
+  Quando eu acessar a área de Achados e Perdidos          # br.edu.cesar.steps.ReportarItemPerdidoSteps.euAcessarAAreaDeAchadosEPerdidos()
+  E preencher o formulário com os seguintes dados:        # br.edu.cesar.steps.ReportarItemPerdidoSteps.preencherOFormularioComOsSeguintesDados(io.cucumber.datatable.DataTable)
+    | campo           | valor                    |
+    | tipo            | Carteira                 |
+    | cor             | Marrom                   |
+    | descrição       | Carteira de couro marrom |
+    | localAproximado | Área de alimentação      |
+  Então o item perdido deve ser registrado com sucesso    # br.edu.cesar.steps.ReportarItemPerdidoSteps.oItemPerdidoDeveSerRegistradoComSucesso()
+  E devo receber uma confirmação do registro              # br.edu.cesar.steps.ReportarItemPerdidoSteps.devoReceberUmaConfirmacaoDoRegistro()
+]]></system-out>
+  </testcase>
+  <testcase name="Reportar item perdido com foto" classname="Reportar Item Perdido" time="0.003">
+    <system-out><![CDATA[
+Cenário: Reportar item perdido com foto                   # src/test/resources/features/ReportarItemPerdido.feature:19
+  Dado que eu sou um participante de um evento finalizado # br.edu.cesar.steps.ReportarItemPerdidoSteps.queEuSouUmParticipanteDeUmEventoFinalizado()
+  Quando eu acessar a área de Achados e Perdidos          # br.edu.cesar.steps.ReportarItemPerdidoSteps.euAcessarAAreaDeAchadosEPerdidos()
+  E preencher o formulário com os seguintes dados:        # br.edu.cesar.steps.ReportarItemPerdidoSteps.preencherOFormularioComOsSeguintesDados(io.cucumber.datatable.DataTable)
+    | campo           | valor           |
+    | tipo            | Celular         |
+    | cor             | Preto           |
+    | descrição       | iPhone 12       |
+    | localAproximado | Palco principal |
+  E anexar uma foto do item                               # br.edu.cesar.steps.ReportarItemPerdidoSteps.anexarUmaFotoDoItem()
+  Então o item perdido deve ser registrado com sucesso    # br.edu.cesar.steps.ReportarItemPerdidoSteps.oItemPerdidoDeveSerRegistradoComSucesso()
+  E a foto deve ser salva junto com o registro            # br.edu.cesar.steps.ReportarItemPerdidoSteps.aFotoDeveSerSalvaJuntoComORegistro()
+]]></system-out>
+  </testcase>
+  <testcase name="Tentar reportar item perdido sem dados obrigatórios" classname="Reportar Item Perdido" time="0.003">
+    <system-out><![CDATA[
+Cenário: Tentar reportar item perdido sem dados obrigatórios                # src/test/resources/features/ReportarItemPerdido.feature:32
+  Dado que eu sou um participante de um evento finalizado                   # br.edu.cesar.steps.ReportarItemPerdidoSteps.queEuSouUmParticipanteDeUmEventoFinalizado()
+  Quando eu acessar a área de Achados e Perdidos                            # br.edu.cesar.steps.ReportarItemPerdidoSteps.euAcessarAAreaDeAchadosEPerdidos()
+  E tentar submeter o formulário sem preencher os campos obrigatórios       # br.edu.cesar.steps.ReportarItemPerdidoSteps.tentarSubmeterOFormularioSemPreencherOsCamposObrigatorios()
+  Então devo receber uma mensagem de erro informando os campos obrigatórios # br.edu.cesar.steps.ReportarItemPerdidoSteps.devoReceberUmaMensagemDeErroInformandoOsCamposObrigatorios()
+]]></system-out>
+  </testcase>
+  <testcase name="Visualizar eventos salvos no calendário" classname="Visualizar Calendário Pessoal" time="0.003">
+    <system-out><![CDATA[
+Cenário: Visualizar eventos salvos no calendário             # src/test/resources/features/VisualizarCalendario.feature:7
+  Dado que eu sou um usuário da plataforma                   # br.edu.cesar.steps.VisualizarCalendarioSteps.queEuSouUmUsuarioDaPlataforma()
+  E tenho eventos salvos como interesse                      # br.edu.cesar.steps.VisualizarCalendarioSteps.tenhoEventosSalvosComoInteresse()
+  Quando eu acessar meu calendário pessoal                   # br.edu.cesar.steps.VisualizarCalendarioSteps.euAcessarMeuCalendarioPessoal()
+  Então devo ver os eventos salvos destacados com a cor azul # br.edu.cesar.steps.VisualizarCalendarioSteps.devoVerOsEventosSalvosDestacadosComACorAzul()
+]]></system-out>
+  </testcase>
+  <testcase name="Visualizar eventos confirmados no calendário" classname="Visualizar Calendário Pessoal" time="0.002">
+    <system-out><![CDATA[
+Cenário: Visualizar eventos confirmados no calendário              # src/test/resources/features/VisualizarCalendario.feature:13
+  Dado que eu sou um usuário da plataforma                         # br.edu.cesar.steps.VisualizarCalendarioSteps.queEuSouUmUsuarioDaPlataforma()
+  E tenho eventos confirmados                                      # br.edu.cesar.steps.VisualizarCalendarioSteps.tenhoEventosConfirmados()
+  Quando eu acessar meu calendário pessoal                         # br.edu.cesar.steps.VisualizarCalendarioSteps.euAcessarMeuCalendarioPessoal()
+  Então devo ver os eventos confirmados destacados com a cor verde # br.edu.cesar.steps.VisualizarCalendarioSteps.devoVerOsEventosConfirmadosDestacadosComACorVerde()
+]]></system-out>
+  </testcase>
+  <testcase name="Visualizar eventos marcados como &quot;talvez&quot; no calendário" classname="Visualizar Calendário Pessoal" time="0.003">
+    <system-out><![CDATA[
+Cenário: Visualizar eventos marcados como "talvez" no calendário                # src/test/resources/features/VisualizarCalendario.feature:19
+  Dado que eu sou um usuário da plataforma                                      # br.edu.cesar.steps.VisualizarCalendarioSteps.queEuSouUmUsuarioDaPlataforma()
+  E tenho eventos marcados como "talvez"                                        # br.edu.cesar.steps.VisualizarCalendarioSteps.tenhoEventosMarcadosComo(java.lang.String)
+  Quando eu acessar meu calendário pessoal                                      # br.edu.cesar.steps.VisualizarCalendarioSteps.euAcessarMeuCalendarioPessoal()
+  Então devo ver os eventos marcados como "talvez" destacados com a cor amarela # br.edu.cesar.steps.VisualizarCalendarioSteps.devoVerOsEventosMarcadosComoDestacadosComACorAmarela(java.lang.String)
+]]></system-out>
+  </testcase>
+  <testcase name="Visualizar detalhes de um evento no calendário" classname="Visualizar Calendário Pessoal" time="0.002">
+    <system-out><![CDATA[
+Cenário: Visualizar detalhes de um evento no calendário # src/test/resources/features/VisualizarCalendario.feature:25
+  Dado que eu sou um usuário da plataforma              # br.edu.cesar.steps.VisualizarCalendarioSteps.queEuSouUmUsuarioDaPlataforma()
+  E tenho eventos no meu calendário                     # br.edu.cesar.steps.VisualizarCalendarioSteps.tenhoEventosNoMeuCalendario()
+  Quando eu clicar em um evento no calendário           # br.edu.cesar.steps.VisualizarCalendarioSteps.euClicarEmUmEventoNoCalendario()
+  Então devo ver os detalhes do evento:                 # br.edu.cesar.steps.VisualizarCalendarioSteps.devoVerOsDetalhesDoEvento(io.cucumber.datatable.DataTable)
+    | campo     | valor esperado  |
+    | nome      | Show de Rock    |
+    | local     | Arena Rock      |
+    | data      | 2024-12-01      |
+    | horário   | 20:00           |
+    | descrição | Show da banda X |
+    | link      | /eventos/123    |
+]]></system-out>
+  </testcase>
+  <testcase name="Alternar entre visualizações do calendário" classname="Visualizar Calendário Pessoal" time="0.004">
+    <system-out><![CDATA[
+Cenário: Alternar entre visualizações do calendário              # src/test/resources/features/VisualizarCalendario.feature:38
+  Dado que eu sou um usuário da plataforma                       # br.edu.cesar.steps.VisualizarCalendarioSteps.queEuSouUmUsuarioDaPlataforma()
+  E tenho eventos no meu calendário                              # br.edu.cesar.steps.VisualizarCalendarioSteps.tenhoEventosNoMeuCalendario()
+  Quando eu alternar a visualização do calendário para "semanal" # br.edu.cesar.steps.VisualizarCalendarioSteps.euAlternarAVisualizacaoDoCalendarioPara(java.lang.String)
+  Então devo ver os eventos organizados por "semana"             # br.edu.cesar.steps.VisualizarCalendarioSteps.devoVerOsEventosOrganizadosPor(java.lang.String)
+  Quando eu alternar a visualização do calendário para "diária"  # br.edu.cesar.steps.VisualizarCalendarioSteps.euAlternarAVisualizacaoDoCalendarioPara(java.lang.String)
+  Então devo ver os eventos organizados por "dia"                # br.edu.cesar.steps.VisualizarCalendarioSteps.devoVerOsEventosOrganizadosPor(java.lang.String)
+  Quando eu alternar a visualização do calendário para "mensal"  # br.edu.cesar.steps.VisualizarCalendarioSteps.euAlternarAVisualizacaoDoCalendarioPara(java.lang.String)
+  Então devo ver os eventos organizados por "mês"                # br.edu.cesar.steps.VisualizarCalendarioSteps.devoVerOsEventosOrganizadosPor(java.lang.String)
 ]]></system-out>
   </testcase>
 </testsuite>
