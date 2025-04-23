@@ -11,3 +11,4 @@ br/edu/cesar/eventos/dominio/interacao/Calendario.class
 br/edu/cesar/eventos/dominio/interacao/Comentario.class
 br/edu/cesar/eventos/dominio/usuario/Usuario.class
 br/edu/cesar/eventos/dominio/interacao/Calendario$TipoVisualizacao.class
+br/edu/cesar/eventos/dominio/avaliacao/Avaliacao.class

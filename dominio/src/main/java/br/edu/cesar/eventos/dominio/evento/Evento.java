@@ -1,10 +1,15 @@
 package br.edu.cesar.eventos.dominio.evento;
 
 import br.edu.cesar.eventos.dominio.usuario.Usuario;
+import br.edu.cesar.eventos.dominio.usuario.UsuarioId;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Evento {
     private EventoId id;
@@ -19,11 +24,20 @@ public class Evento {
     private List<Usuario> participantes;
     private List<Usuario> interessados;
     private List<Usuario> talvezVao;
+    private UsuarioId criadorId;
+    private String status;
+    private int totalConfirmacoes;
+    private int totalTalvez;
+    private int totalAvaliacoes;
+    private double mediaNotas;
+    private int totalComentarios;
+    private Set<UsuarioId> usuariosConfirmados;
 
     public Evento() {
         this.participantes = new ArrayList<>();
         this.interessados = new ArrayList<>();
         this.talvezVao = new ArrayList<>();
+        this.usuariosConfirmados = new HashSet<>();
     }
 
     public EventoId getId() {
@@ -132,5 +146,90 @@ public class Evento {
 
     public boolean verificarDisponibilidade() {
         return participantes.size() < limiteParticipantes;
+    }
+
+    public UsuarioId getCriadorId() {
+        return criadorId;
+    }
+
+    public void setCriadorId(UsuarioId criadorId) {
+        this.criadorId = criadorId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public int getTotalConfirmacoes() {
+        return totalConfirmacoes;
+    }
+
+    public void setTotalConfirmacoes(int totalConfirmacoes) {
+        this.totalConfirmacoes = totalConfirmacoes;
+    }
+
+    public int getTotalTalvez() {
+        return totalTalvez;
+    }
+
+    public void setTotalTalvez(int totalTalvez) {
+        this.totalTalvez = totalTalvez;
+    }
+
+    public int getTotalAvaliacoes() {
+        return totalAvaliacoes;
+    }
+
+    public void setTotalAvaliacoes(int totalAvaliacoes) {
+        this.totalAvaliacoes = totalAvaliacoes;
+    }
+
+    public double getMediaNotas() {
+        return mediaNotas;
+    }
+
+    public void setMediaNotas(double mediaNotas) {
+        this.mediaNotas = mediaNotas;
+    }
+
+    public int getTotalComentarios() {
+        return totalComentarios;
+    }
+
+    public void setTotalComentarios(int totalComentarios) {
+        this.totalComentarios = totalComentarios;
+    }
+
+    public void setUsuarioConfirmado(UsuarioId usuarioId) {
+        usuariosConfirmados.add(usuarioId);
+    }
+
+    public boolean isUsuarioConfirmado(UsuarioId usuarioId) {
+        return usuariosConfirmados.contains(usuarioId);
+    }
+
+    public boolean isFinalizado() {
+        return "FINALIZADO".equals(status);
+    }
+
+    public Map<String, Object> gerarRelatorio() {
+        Map<String, Object> relatorio = new HashMap<>();
+        relatorio.put("totalConfirmacoes", totalConfirmacoes);
+        relatorio.put("totalTalvez", totalTalvez);
+        relatorio.put("totalAvaliacoes", totalAvaliacoes);
+        relatorio.put("mediaNotas", mediaNotas);
+        relatorio.put("totalComentarios", totalComentarios);
+        return relatorio;
+    }
+
+    public Map<String, Object> gerarRelatorio(String periodo) {
+        Map<String, Object> relatorio = gerarRelatorio();
+        relatorio.put("periodo", periodo);
+        // Aqui seria implementada a lógica de filtragem por período
+        return relatorio;
     }
 } 

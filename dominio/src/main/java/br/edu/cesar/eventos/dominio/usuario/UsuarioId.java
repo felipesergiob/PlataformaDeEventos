@@ -1,17 +1,26 @@
 package br.edu.cesar.eventos.dominio.usuario;
 
-import lombok.Data;
-import java.util.UUID;
-
-@Data
 public class UsuarioId {
-    private final UUID id;
+    private String id;
 
-    public UsuarioId() {
-        this.id = UUID.randomUUID();
+    public UsuarioId(String id) {
+        this.id = id;
     }
 
-    public UsuarioId(UUID id) {
-        this.id = id;
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UsuarioId usuarioId = (UsuarioId) o;
+        return id.equals(usuarioId.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 } 

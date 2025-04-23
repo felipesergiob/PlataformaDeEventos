@@ -7,5 +7,6 @@
 /Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/dominio/src/main/java/br/edu/cesar/eventos/dominio/usuario/Usuario.java
 /Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/dominio/src/main/java/br/edu/cesar/eventos/dominio/evento/Evento.java
 /Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/dominio/src/main/java/br/edu/cesar/eventos/dominio/relatorio/DashboardEvento.java
+/Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/dominio/src/main/java/br/edu/cesar/eventos/dominio/avaliacao/Avaliacao.java
 /Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/dominio/src/main/java/br/edu/cesar/eventos/dominio/interacao/Comentario.java
 /Users/felipesergio/Cesar/REQUISITOS/PlataformaDeEventos/dominio/src/main/java/br/edu/cesar/eventos/dominio/interacao/Calendario.java

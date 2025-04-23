@@ -1,17 +1,26 @@
 package br.edu.cesar.eventos.dominio.evento;
 
-import lombok.Data;
-import java.util.UUID;
-
-@Data
 public class EventoId {
-    private final UUID id;
+    private String id;
 
-    public EventoId() {
-        this.id = UUID.randomUUID();
+    public EventoId(String id) {
+        this.id = id;
     }
 
-    public EventoId(UUID id) {
-        this.id = id;
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EventoId eventoId = (EventoId) o;
+        return id.equals(eventoId.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 } 
