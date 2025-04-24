@@ -5,6 +5,8 @@ import io.cucumber.java.pt.Quando;
 import io.cucumber.java.pt.Então;
 import io.cucumber.datatable.DataTable;
 import br.edu.cesar.eventos.dominio.evento.Evento;
+import br.edu.cesar.eventos.dominio.evento.EventoId;
+import br.edu.cesar.eventos.dominio.usuario.UsuarioId;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -21,18 +23,20 @@ public class FiltrarEventosSteps {
 
     @Dado("que existem eventos cadastrados na plataforma")
     public void queExistemEventosCadastradosNaPlataforma() {
-        // Criando alguns eventos de exemplo
         Evento evento1 = new Evento();
+        evento1.setId(new EventoId("1"));
         evento1.setGenero("Música");
         evento1.setDataHora(LocalDateTime.of(2024, 12, 1, 20, 0)); // Noite
         evento1.setPreco(new BigDecimal("50.00"));
 
         Evento evento2 = new Evento();
+        evento2.setId(new EventoId("2"));
         evento2.setGenero("Palestra");
         evento2.setDataHora(LocalDateTime.of(2024, 12, 1, 10, 0)); // Manhã
         evento2.setPreco(new BigDecimal("0.00"));
 
         Evento evento3 = new Evento();
+        evento3.setId(new EventoId("3"));
         evento3.setGenero("Música");
         evento3.setDataHora(LocalDateTime.of(2024, 12, 2, 20, 0)); // Noite
         evento3.setPreco(new BigDecimal("150.00"));

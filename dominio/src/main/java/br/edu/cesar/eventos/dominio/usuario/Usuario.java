@@ -10,8 +10,8 @@ public class Usuario {
     private String email;
     private String senha;
     private LocalDateTime dataCadastro;
-    private List<Usuario> seguindo;
-    private List<Usuario> seguidores;
+    private List<UsuarioId> seguindo;
+    private List<UsuarioId> seguidores;
     private boolean isOrganizador;
 
     public Usuario() {
@@ -65,11 +65,11 @@ public class Usuario {
         this.dataCadastro = dataCadastro;
     }
 
-    public List<Usuario> getSeguindo() {
+    public List<UsuarioId> getSeguindo() {
         return seguindo;
     }
 
-    public List<Usuario> getSeguidores() {
+    public List<UsuarioId> getSeguidores() {
         return seguidores;
     }
 
@@ -81,17 +81,15 @@ public class Usuario {
         this.isOrganizador = isOrganizador;
     }
 
-    public void seguirUsuario(Usuario usuario) {
-        if (!seguindo.contains(usuario)) {
-            seguindo.add(usuario);
-            usuario.seguidores.add(this);
+    public void seguirUsuario(UsuarioId usuarioId) {
+        if (!seguindo.contains(usuarioId)) {
+            seguindo.add(usuarioId);
         }
     }
 
-    public void pararSeguir(Usuario usuario) {
-        if (seguindo.contains(usuario)) {
-            seguindo.remove(usuario);
-            usuario.seguidores.remove(this);
+    public void pararSeguir(UsuarioId usuarioId) {
+        if (seguindo.contains(usuarioId)) {
+            seguindo.remove(usuarioId);
         }
     }
 

@@ -1,6 +1,5 @@
 package br.edu.cesar.eventos.dominio.evento;
 
-import br.edu.cesar.eventos.dominio.usuario.Usuario;
 import br.edu.cesar.eventos.dominio.usuario.UsuarioId;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,11 +18,11 @@ public class Evento {
     private String local;
     private BigDecimal preco;
     private String genero;
-    private Usuario organizador;
+    private UsuarioId organizadorId;
     private int limiteParticipantes;
-    private List<Usuario> participantes;
-    private List<Usuario> interessados;
-    private List<Usuario> talvezVao;
+    private List<UsuarioId> participantes;
+    private List<UsuarioId> interessados;
+    private List<UsuarioId> talvezVao;
     private UsuarioId criadorId;
     private String status;
     private int totalConfirmacoes;
@@ -31,7 +30,7 @@ public class Evento {
     private int totalAvaliacoes;
     private double mediaNotas;
     private int totalComentarios;
-    private Set<Usuario> usuariosConfirmados;
+    private Set<UsuarioId> usuariosConfirmados;
     private String data;
 
     public Evento() {
@@ -97,12 +96,12 @@ public class Evento {
         this.genero = genero;
     }
 
-    public Usuario getOrganizador() {
-        return organizador;
+    public UsuarioId getOrganizadorId() {
+        return organizadorId;
     }
 
-    public void setOrganizador(Usuario organizador) {
-        this.organizador = organizador;
+    public void setOrganizadorId(UsuarioId organizadorId) {
+        this.organizadorId = organizadorId;
     }
 
     public int getLimiteParticipantes() {
@@ -113,35 +112,36 @@ public class Evento {
         this.limiteParticipantes = limiteParticipantes;
     }
 
-    public List<Usuario> getParticipantes() {
+    public List<UsuarioId> getParticipantes() {
         return participantes;
     }
 
-    public List<Usuario> getInteressados() {
+    public List<UsuarioId> getInteressados() {
         return interessados;
     }
 
-    public List<Usuario> getTalvezVao() {
+    public List<UsuarioId> getTalvezVao() {
         return talvezVao;
     }
 
-    public boolean adicionarParticipante(Usuario participante) {
-        if (participantes.size() < limiteParticipantes && !participantes.contains(participante)) {
-            participantes.add(participante);
+    public boolean adicionarParticipante(UsuarioId participanteId) {
+        if (participantes.size() < limiteParticipantes) {
+            participantes.add(participanteId);
             return true;
         }
         return false;
     }
 
-    public void marcarInteresse(Usuario interessado) {
-        if (!interessados.contains(interessado)) {
-            interessados.add(interessado);
+    public void marcarInteresse(UsuarioId interessadoId) {
+        if (!interessados.contains(interessadoId)) {
+            interessados.add(interessadoId);
         }
     }
 
-    public void marcarTalvez(Usuario usuario) {
-        if (!talvezVao.contains(usuario)) {
-            talvezVao.add(usuario);
+    public void marcarTalvez(UsuarioId usuarioId) {
+        if (!talvezVao.contains(usuarioId)) {
+            talvezVao.add(usuarioId);
+            totalTalvez++;
         }
     }
 
@@ -205,13 +205,12 @@ public class Evento {
         this.totalComentarios = totalComentarios;
     }
 
-    public Set<Usuario> getUsuariosConfirmados() {
+    public Set<UsuarioId> getUsuariosConfirmados() {
         return usuariosConfirmados;
     }
 
-    public void adicionarUsuarioConfirmado(Usuario usuario) {
-        this.usuariosConfirmados.add(usuario);
-        this.totalConfirmacoes = this.usuariosConfirmados.size();
+    public void adicionarUsuarioConfirmado(UsuarioId usuarioId) {
+        usuariosConfirmados.add(usuarioId);
     }
 
     public boolean isFinalizado() {
@@ -229,9 +228,11 @@ public class Evento {
     public Map<String, Object> gerarRelatorio() {
         Map<String, Object> relatorio = new HashMap<>();
         relatorio.put("totalConfirmacoes", totalConfirmacoes);
+        relatorio.put("totalParticipantes", participantes.size());
+        relatorio.put("totalInteressados", interessados.size());
         relatorio.put("totalTalvez", totalTalvez);
-        relatorio.put("totalAvaliacoes", totalAvaliacoes);
         relatorio.put("mediaNotas", mediaNotas);
+        relatorio.put("totalAvaliacoes", totalAvaliacoes);
         relatorio.put("totalComentarios", totalComentarios);
         return relatorio;
     }
@@ -239,7 +240,6 @@ public class Evento {
     public Map<String, Object> gerarRelatorio(String periodo) {
         Map<String, Object> relatorio = gerarRelatorio();
         relatorio.put("periodo", periodo);
-        // Aqui seria implementada a lógica de filtragem por período
         return relatorio;
     }
 }

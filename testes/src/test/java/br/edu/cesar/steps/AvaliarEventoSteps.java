@@ -5,7 +5,9 @@ import io.cucumber.java.pt.Quando;
 import io.cucumber.java.pt.Entao;
 import org.junit.jupiter.api.Assertions;
 import br.edu.cesar.eventos.dominio.evento.Evento;
+import br.edu.cesar.eventos.dominio.evento.EventoId;
 import br.edu.cesar.eventos.dominio.usuario.Usuario;
+import br.edu.cesar.eventos.dominio.usuario.UsuarioId;
 
 public class AvaliarEventoSteps {
     private Evento evento;
@@ -17,53 +19,68 @@ public class AvaliarEventoSteps {
 
     @Dado("que sou um usuário que participou do evento")
     public void queSouUmUsuarioQueParticipouDoEvento() {
-        usuario = new Usuario();
-        usuario.setNome("João Silva");
+        usuario = new Usuario("João Silva");
+        usuario.setEmail("joao@email.com");
+        usuario.setSenha("senha123");
+        usuario.setOrganizador(false);
 
         evento = new Evento();
+        evento.setId(new EventoId("1"));
         evento.setTitulo("Workshop de Java");
-        evento.adicionarUsuarioConfirmado(usuario);
+        evento.adicionarUsuarioConfirmado(usuario.getId());
     }
 
     @Dado("que sou um usuário que não participou do evento")
     public void queSouUmUsuarioQueNaoParticipouDoEvento() {
-        usuario = new Usuario();
-        usuario.setNome("João Silva");
+        usuario = new Usuario("João Silva");
+        usuario.setEmail("joao@email.com");
+        usuario.setSenha("senha123");
+        usuario.setOrganizador(false);
 
         evento = new Evento();
+        evento.setId(new EventoId("1"));
         evento.setTitulo("Workshop de Java");
     }
 
     @Dado("que sou um usuário que confirmou presença em um evento finalizado")
     public void queSouUmUsuarioQueConfirmouPresencaEmUmEventoFinalizado() {
-        usuario = new Usuario();
-        usuario.setNome("João Silva");
+        usuario = new Usuario("João Silva");
+        usuario.setEmail("joao@email.com");
+        usuario.setSenha("senha123");
+        usuario.setOrganizador(false);
 
         evento = new Evento();
+        evento.setId(new EventoId("1"));
         evento.setTitulo("Workshop de Java");
-        evento.adicionarUsuarioConfirmado(usuario);
+        evento.adicionarUsuarioConfirmado(usuario.getId());
         eventoFinalizado = true;
         presencaConfirmada = true;
     }
 
     @Dado("que sou um usuário que confirmou presença em um evento")
     public void queSouUmUsuarioQueConfirmouPresencaEmUmEvento() {
-        usuario = new Usuario();
-        usuario.setNome("João Silva");
+        usuario = new Usuario("João Silva");
+        usuario.setEmail("joao@email.com");
+        usuario.setSenha("senha123");
+        usuario.setOrganizador(false);
 
         evento = new Evento();
+        evento.setId(new EventoId("1"));
         evento.setTitulo("Workshop de Java");
-        evento.adicionarUsuarioConfirmado(usuario);
+        evento.adicionarUsuarioConfirmado(usuario.getId());
         eventoFinalizado = false;
         presencaConfirmada = true;
     }
 
     @Dado("que sou um usuário que não confirmou presença em um evento finalizado")
     public void queSouUmUsuarioQueNaoConfirmouPresencaEmUmEventoFinalizado() {
-        usuario = new Usuario();
-        usuario.setNome("João Silva");
+        usuario = new Usuario("João Silva");
+        usuario.setEmail("joao@email.com");
+        usuario.setSenha("senha123");
+        usuario.setOrganizador(false);
 
         evento = new Evento();
+        evento.setId(new EventoId("1"));
         evento.setTitulo("Workshop de Java");
         eventoFinalizado = true;
         presencaConfirmada = false;
@@ -71,7 +88,7 @@ public class AvaliarEventoSteps {
 
     @Quando("avalio o evento com nota {int}")
     public void avalioOEventoComNota(int nota) {
-        if (evento.getUsuariosConfirmados().contains(usuario)) {
+        if (evento.getUsuariosConfirmados().contains(usuario.getId())) {
             evento.setTotalAvaliacoes(evento.getTotalAvaliacoes() + 1);
             double novaMedia = ((evento.getMediaNotas() * (evento.getTotalAvaliacoes() - 1)) + nota) / evento.getTotalAvaliacoes();
             evento.setMediaNotas(novaMedia);

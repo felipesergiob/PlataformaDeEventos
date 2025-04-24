@@ -24,14 +24,16 @@ public class VisualizarRelatorioEventoSteps {
     @Dado("tenho um evento encerrado que criei para visualizar relatório")
     public void tenhoUmEventoEncerradoQueCrieiParaVisualizarRelatorio() {
         evento = new Evento();
-        evento.setId(new EventoId("123"));
-        evento.setCriadorId(new UsuarioId("456"));
-        evento.setStatus("ENCERRADO");
+        evento.setId(new EventoId("1"));
+        evento.setTitulo("Workshop de Java");
         evento.setTotalConfirmacoes(50);
         evento.setTotalTalvez(20);
         evento.setTotalAvaliacoes(40);
         evento.setMediaNotas(4.5);
         evento.setTotalComentarios(30);
+        evento.setData("2024-05-01");
+        evento.setOrganizadorId(new UsuarioId("organizadorId"));
+        evento.setCriadorId(new UsuarioId("criadorId"));
     }
 
     @Dado("o evento não recebeu avaliações")

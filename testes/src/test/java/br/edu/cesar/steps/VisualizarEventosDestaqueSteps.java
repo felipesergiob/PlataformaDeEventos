@@ -5,6 +5,8 @@ import io.cucumber.java.pt.Quando;
 import io.cucumber.java.pt.Entao;
 import org.junit.jupiter.api.Assertions;
 import br.edu.cesar.eventos.dominio.evento.Evento;
+import br.edu.cesar.eventos.dominio.evento.EventoId;
+import br.edu.cesar.eventos.dominio.usuario.UsuarioId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
@@ -13,26 +15,41 @@ import java.util.Comparator;
 public class VisualizarEventosDestaqueSteps {
     private List<Evento> eventos;
     private List<Evento> eventosDestaque;
+    private Evento evento1;
+    private Evento evento2;
+    private Evento evento3;
+
     @Dado("que existem eventos em destaque cadastrados na plataforma")
     public void queExistemEventosEmDestaqueCadastradosNaPlataforma() {
         eventos = new ArrayList<>();
+        UsuarioId organizadorId = new UsuarioId();
+        UsuarioId criadorId = new UsuarioId();
 
-        Evento evento1 = new Evento();
+        evento1 = new Evento();
+        evento1.setId(new EventoId("1"));
         evento1.setTitulo("Workshop de Java");
         evento1.setTotalConfirmacoes(150);
-        evento1.setData("25/04/2024");
+        evento1.setData("2024-05-01");
+        evento1.setOrganizadorId(organizadorId);
+        evento1.setCriadorId(criadorId);
         eventos.add(evento1);
 
-        Evento evento2 = new Evento();
+        evento2 = new Evento();
+        evento2.setId(new EventoId("2"));
         evento2.setTitulo("Meetup de Python");
-        evento2.setTotalConfirmacoes(120);
-        evento2.setData("26/04/2024");
+        evento2.setTotalConfirmacoes(30);
+        evento2.setData("2024-05-02");
+        evento2.setOrganizadorId(organizadorId);
+        evento2.setCriadorId(criadorId);
         eventos.add(evento2);
 
-        Evento evento3 = new Evento();
+        evento3 = new Evento();
+        evento3.setId(new EventoId("3"));
         evento3.setTitulo("Conferência de TI");
-        evento3.setTotalConfirmacoes(100);
-        evento3.setData("27/04/2024");
+        evento3.setTotalConfirmacoes(20);
+        evento3.setData("2024-05-03");
+        evento3.setOrganizadorId(organizadorId);
+        evento3.setCriadorId(criadorId);
         eventos.add(evento3);
     }
 
