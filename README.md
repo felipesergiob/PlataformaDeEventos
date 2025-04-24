@@ -5,6 +5,14 @@
     src="https://img.shields.io/badge/Status-Em%20desenvolvimento-green?style=flat-square"
     alt="Status"
   />
+  <img
+    src="https://img.shields.io/badge/Java-17-blue?style=flat-square"
+    alt="Java"
+  />
+  <img
+    src="https://img.shields.io/badge/Maven-3.9.6-red?style=flat-square"
+    alt="Maven"
+  />
 </p>
 
 ## 🗪 Visão Geral
@@ -35,37 +43,48 @@ A Plataforma de Eventos é um ambiente digital colaborativo onde qualquer usuár
    - Eventos em destaque
    - Métricas de participação
 
-## ♟️ Estrutura do Projeto
-
-O projeto segue os princípios de Domain-Driven Design (DDD) e está organizado nos seguintes bounded contexts:
-
-- GestaoUsuarios
-- GestaoEventos
-- Interacoes
-- Relatorios
-
 ## 👩‍💻 Tecnologias
 
-- Java
-- Maven
-- JUnit (para testes)
-- Domain-Driven Design
+- Java 17
+- Maven 3.9.6
+- JUnit 5 (para testes)
+- Domain-Driven Design (DDD)
+- Clean Architecture
 
-## 📁 Estrutura de Diretórios
+## 📁 Estrutura do Projeto
+
+O projeto segue os princípios de Domain-Driven Design (DDD) e Clean Architecture, organizado nos seguintes módulos:
 
 ```
 PlataformaDeEventos/
-├── dominio/           # Código do domínio
-├── testes/           # Testes unitários
+├── dominio/           # Código do domínio (entidades, value objects, regras de negócio)
+├── persistencia/      # Implementações de repositórios e acesso a dados
+├── apresentacao/      # Controladores, DTOs e interfaces de usuário
+├── testes/           # Testes unitários e de integração
 ├── sistema.cml       # Modelo de domínio
 └── pom.xml           # Configuração Maven
 ```
+
+## 🚀 Como Executar
+
+1. Clone o repositório
+2. Certifique-se de ter Java 17 e Maven 3.9.6 instalados
+3. Execute `mvn clean install` para compilar o projeto
+4. Execute os testes com `mvn test`
 
 ## 📝 Documentação
 
 - [Modelo de Domínio](sistema.cml)
 - [Descrição do Domínio](docs/dominio.md)
 
-## License
+## 🤝 Contribuindo
 
-[MIT](LICENSE) 
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
+## 📄 Licença
+
+Este projeto está sob a licença [MIT](LICENSE). 
