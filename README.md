@@ -74,10 +74,12 @@ PlataformaDeEventos/
 
 ## 📝 Documentação
 
-- [Modelo de Domínio](sistema.cml)
-- [Documentação Detalhada do Domínio](https://docs.google.com/document/d/1YUaVytl6GA5PXFs6PHMEqKl3QaDEjtxsSOqKD3RUcFE/edit?usp=sharing)
+- [Descrição do Domínio](https://docs.google.com/document/d/1YUaVytl6GA5PXFs6PHMEqKl3QaDEjtxsSOqKD3RUcFE/edit?usp=sharing)
 - [Histórias de Usuário e BDD](https://docs.google.com/document/d/16oGIn57jkQUDBvDI-jhLO2Bh0EmEZtsuZOeUfGvmrSw/edit?tab=t.0)
 - [Personas e Mapa de Histórias](https://miro.com/app/board/uXjVI_nYtro=/?share_link_id=188525928359)
+- [Protótipo de Baixa Fidelidade](https://www.figma.com/design/J3leMrEJF7Uy62RjUHxrMl/Low-prototype?node-id=0-1&t=X3RX3u4DNpBW3Car-1)
+- [Modelo de Domínio (Context Mapper)](sistema.cml)
+- [Diagrama UML](plantuml.png)
 
 ## 📄 Licença
 
