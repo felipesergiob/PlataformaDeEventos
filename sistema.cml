@@ -41,6 +41,27 @@ BoundedContext GestaoUsuarios implements GestaoUsuarios {
             long id
         }
     }
+    Aggregate Relato {
+    	Entity Relato{
+    		aggregateRoot
+    		
+    		String titulo
+    		String conteudo
+    		-Usuario autor
+    		LocalDateTime dataCriacao
+    		List<Foto> fotos
+    		String eventoId
+    		
+    		def void adicionarFoto(Foto foto);
+    		def boolean isValid();
+    	}
+    	
+    	Entity Foto {
+    		String urlFoto //added
+    		String descricao
+    		
+    	}
+    }
 }
 
 BoundedContext GestaoEventos implements GestaoEventos {
@@ -204,25 +225,4 @@ BoundedContext GestaoEventos implements GestaoEventos {
         }
     }
     
-    Aggregate Relato {
-    	Entity Relato{
-    		aggregateRoot
-    		
-    		String titulo
-    		String conteudo
-    		-Usuario autor
-    		LocalDateTime dataCriacao
-    		List<Foto> fotos
-    		String eventoId
-    		
-    		def void adicionarFoto(Foto foto);
-    		def boolean isValid();
-    	}
-    	
-    	Entity Foto {
-    		String urlFoto //added
-    		String descricao
-    		
-    	}
-    }
 }
