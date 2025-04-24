@@ -102,15 +102,6 @@ BoundedContext GestaoEventos implements GestaoEventos {
     		def boolean validarNota();
     	}
     	
-    	Entity Relato {
-            -EventoId eventoId
-            -UsuarioId usuarioId
-            String texto
-            List<String> fotos
-            LocalDateTime dataRelato
-
-            def void adicionarFoto(String foto);
-        }
         
         Entity ItemPerdido {
             -EventoId eventoId
