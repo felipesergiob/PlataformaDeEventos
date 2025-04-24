@@ -7,9 +7,7 @@ ContextMap EventosContextMap {
 	contains GestaoUsuarios
 	contains GestaoEventos
 
-
 	GestaoUsuarios Shared-Kernel GestaoEventos
-
 }
 
 BoundedContext GestaoUsuarios implements GestaoUsuarios {
@@ -19,15 +17,15 @@ BoundedContext GestaoUsuarios implements GestaoUsuarios {
             
             -UsuarioId id
             String nome
-            String emailUsuario //mudança aqui
+            String emailUsuario
             String senha
             LocalDateTime dataCadastro
-            List<Usuario> seguindo
-            List<Usuario> seguidores
+            List<UsuarioId> seguindo
+            List<UsuarioId> seguidores
             Boolean isOrganizador
 
-            def void seguirUsuario(@Usuario usuario);
-            def void pararSeguir(@Usuario usuario);
+            def void seguirUsuario(@UsuarioId usuarioId);
+            def void pararSeguir(@UsuarioId usuarioId);
 
             Repository UsuarioRepository {
                 void adicionar(@Usuario usuario);
@@ -47,7 +45,7 @@ BoundedContext GestaoUsuarios implements GestaoUsuarios {
     		
     		String titulo
     		String conteudo
-    		-Usuario autor
+    		-UsuarioId autorId
     		LocalDateTime dataCriacao
     		List<Foto> fotos
     		String eventoId
@@ -57,9 +55,8 @@ BoundedContext GestaoUsuarios implements GestaoUsuarios {
     	}
     	
     	Entity Foto {
-    		String urlFoto //added
+    		String urlFoto
     		String descricao
-    		
     	}
     }
 }
@@ -76,10 +73,10 @@ BoundedContext GestaoEventos implements GestaoEventos {
             String local
             BigDecimal preco
             String genero
-            -Usuario organizador
-            List<Usuario> participantes
-            List<Usuario> interessados
-            List<Usuario> talvezVao
+            -UsuarioId organizadorId
+            List<UsuarioId> participantes
+            List<UsuarioId> interessados
+            List<UsuarioId> talvezVao
             int limiteParticipantes
             -UsuarioId criadorId
             String status
@@ -88,16 +85,16 @@ BoundedContext GestaoEventos implements GestaoEventos {
             int totalAvaliacoes
             double mediaNotas
             int totalComentarios
-            Set<Usuario> usuariosConfirmados
+            Set<UsuarioId> usuariosConfirmados
             String data
 
-            def boolean adicionarParticipante(@Usuario participante);
-            def boolean adicionarInteressado(@Usuario usuario);
-            def boolean adicionarTalvezVai(@Usuario usuario);
-            def void adicionarUsuarioConfirmado(@Usuario usuario);
+            def boolean adicionarParticipante(@UsuarioId participanteId);
+            def boolean adicionarInteressado(@UsuarioId usuarioId);
+            def boolean adicionarTalvezVai(@UsuarioId usuarioId);
+            def void adicionarUsuarioConfirmado(@UsuarioId usuarioId);
             def boolean verificarDisponibilidade();
-            def void marcarInteresse(@Usuario interessado);
-            def void marcarTalvez(@Usuario usuario);
+            def void marcarInteresse(@UsuarioId interessadoId);
+            def void marcarTalvez(@UsuarioId usuarioId);
             def boolean isFinalizado();
             def Map<String, Object> gerarRelatorio();
             def Map<String, Object> gerarRelatorio(String periodo);
@@ -123,7 +120,6 @@ BoundedContext GestaoEventos implements GestaoEventos {
     		def boolean validarNota();
     	}
     	
-        
         Entity ItemPerdido {
             -EventoId eventoId
             -UsuarioId usuarioId
@@ -140,7 +136,7 @@ BoundedContext GestaoEventos implements GestaoEventos {
         }
         
         Entity Comentario {
-            -Usuario usuario
+            -UsuarioId autorId
             String conteudo
             LocalDateTime data
             List<Resposta> respostas
@@ -150,23 +146,19 @@ BoundedContext GestaoEventos implements GestaoEventos {
         }
         
         Entity Resposta{
-        	-Usuario autor
+        	-UsuarioId autorId
         	String conteudo
         	LocalDateTime data
-        	
         }
 
         ValueObject EventoId {
             long id
         }
         
-        ValueObject Usuario { //added
-        	Usuario usuario
+        ValueObject UsuarioId {
+            long id
         }
-        
     }
-    
-    
     
     Aggregate Calendario {
         Entity Calendario {
@@ -174,13 +166,13 @@ BoundedContext GestaoEventos implements GestaoEventos {
             
             -CalendarioId id
             -UsuarioId usuarioId
-            List<Evento> eventos
-            Map<LocalDate, List<Evento>> eventosPorData
+            List<EventoId> eventos
+            Map<LocalDate, List<EventoId>> eventosPorData
             
-            def void adicionarEvento(@Evento evento);
-            def void removerEvento(@Evento evento);
-            def List<Evento> listarEventosPorData(LocalDate data);
-            def List<Evento> listarEventosPorPeriodo(LocalDate dataInicio, LocalDate dataFim);
+            def void adicionarEvento(@EventoId eventoId);
+            def void removerEvento(@EventoId eventoId);
+            def List<EventoId> listarEventosPorData(LocalDate data);
+            def List<EventoId> listarEventosPorPeriodo(LocalDate dataInicio, LocalDate dataFim);
             def void sincronizarEventos();
             
             Repository CalendarioRepository {
@@ -197,11 +189,9 @@ BoundedContext GestaoEventos implements GestaoEventos {
         Service CalendarioService {
             @Calendario criarCalendario(@UsuarioId usuarioId);
             void sincronizarCalendario(@CalendarioId calendarioId);
-            List<@Evento> listarEventosProximos(@UsuarioId usuarioId, int dias);
+            List<@EventoId> listarEventosProximos(@UsuarioId usuarioId, int dias);
         }
     }
-
-
 
     Aggregate Relatorio {
     	Entity DashboardEvento {
@@ -220,9 +210,8 @@ BoundedContext GestaoEventos implements GestaoEventos {
         }
         
         Service RelatorioService {
-            List<@Evento> listarEventosDestaque();
+            List<@EventoId> listarEventosDestaque();
             @DashboardEvento gerarDashboard(@EventoId eventoId);
         }
     }
-    
 }
