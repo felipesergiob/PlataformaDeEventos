@@ -69,21 +69,13 @@ PlataformaDeEventos/
 
 1. Clone o repositório
 2. Certifique-se de ter Java 17 e Maven 3.9.6 instalados
-3. Execute `mvn clean install` para compilar o projeto
+3. Execute `mvn clean install` para compilar o projeto (isso tambem ja roda os testes)
 4. Execute os testes com `mvn test`
 
 ## 📝 Documentação
 
 - [Modelo de Domínio](sistema.cml)
 - [Descrição do Domínio](docs/dominio.md)
-
-## 🤝 Contribuindo
-
-1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
 
 ## 📄 Licença
 
