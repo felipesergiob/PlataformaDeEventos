@@ -15,7 +15,6 @@ public class Calendario {
     private TipoVisualizacao visualizacaoAtual;
     private UsuarioId usuarioId;
     
-    // Mapa temporário para compatibilidade com testes existentes
     private Map<Evento, EventoId> eventoParaId;
 
     public enum TipoInteracao {
@@ -47,7 +46,6 @@ public class Calendario {
         this.usuarioId = usuario.getId();
     }
     
-    // Método para compatibilidade com testes existentes
     public void adicionarEvento(Evento evento, TipoInteracao tipo) {
         EventoId eventoId = evento.getId();
         if (eventoId == null) {
@@ -58,12 +56,10 @@ public class Calendario {
         eventoParaId.put(evento, eventoId);
     }
     
-    // Novo método conforme CML
     public void adicionarEvento(EventoId eventoId, TipoInteracao tipo) {
         eventos.put(eventoId, tipo);
     }
     
-    // Método para compatibilidade com testes existentes
     public List<Evento> getEventosPorTipo(TipoInteracao tipo) {
         return eventoParaId.entrySet().stream()
             .filter(entry -> eventos.get(entry.getValue()) == tipo)
@@ -71,7 +67,6 @@ public class Calendario {
             .collect(Collectors.toList());
     }
     
-    // Novo método conforme CML
     public List<EventoId> getEventosIdPorTipo(TipoInteracao tipo) {
         return eventos.entrySet().stream()
             .filter(entry -> entry.getValue() == tipo)
@@ -79,13 +74,11 @@ public class Calendario {
             .collect(Collectors.toList());
     }
     
-    // Método para compatibilidade com testes existentes
     public String getCorDoEvento(Evento evento) {
         EventoId eventoId = eventoParaId.get(evento);
         return eventos.get(eventoId).getCor();
     }
     
-    // Novo método conforme CML
     public String getCorDoEvento(EventoId eventoId) {
         return eventos.get(eventoId).getCor();
     }
@@ -98,12 +91,10 @@ public class Calendario {
         return visualizacaoAtual;
     }
     
-    // Método para compatibilidade com testes existentes
     public List<Evento> getEventos() {
         return new ArrayList<>(eventoParaId.keySet());
     }
     
-    // Novo método conforme CML
     public List<EventoId> getEventosIds() {
         return new ArrayList<>(eventos.keySet());
     }

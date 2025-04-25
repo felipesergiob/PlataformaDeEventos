@@ -19,7 +19,6 @@ public class AvaliarEventoSteps extends BaseSteps {
     @Dado("que sou um usuário que confirmou presença em um evento")
     public void queSouUmUsuarioQueConfirmouPresencaEmUmEvento() {
         setupUsuarioQueParticipouDoEvento();
-        // Ensure the event is not finalized
         context.getEvento().setStatus("ABERTO");
         context.setEventoFinalizado(false);
     }
