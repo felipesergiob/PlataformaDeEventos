@@ -4,6 +4,7 @@ import br.edu.cesar.eventos.dominio.evento.EventoId;
 import br.edu.cesar.eventos.dominio.usuario.UsuarioId;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Data
 public class ItemPerdido {
@@ -16,6 +17,11 @@ public class ItemPerdido {
     private String foto;
     private LocalDateTime dataReporte;
     private boolean devolvido;
+    private LocalDateTime dataDevolucao;
+    private String status;
+    private int tentativasContato;
+    private LocalDateTime ultimaTentativaContato;
+    private String observacoesEquipe;
 
     public EventoId getEventoId() {
         return eventoId;
@@ -89,14 +95,89 @@ public class ItemPerdido {
         this.devolvido = devolvido;
     }
 
+    public LocalDateTime getDataDevolucao() {
+        return dataDevolucao;
+    }
+
+    public void setDataDevolucao(LocalDateTime dataDevolucao) {
+        this.dataDevolucao = dataDevolucao;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public int getTentativasContato() {
+        return tentativasContato;
+    }
+
+    public void setTentativasContato(int tentativasContato) {
+        this.tentativasContato = tentativasContato;
+    }
+
+    public LocalDateTime getUltimaTentativaContato() {
+        return ultimaTentativaContato;
+    }
+
+    public void setUltimaTentativaContato(LocalDateTime ultimaTentativaContato) {
+        this.ultimaTentativaContato = ultimaTentativaContato;
+    }
+
+    public String getObservacoesEquipe() {
+        return observacoesEquipe;
+    }
+
+    public void setObservacoesEquipe(String observacoesEquipe) {
+        this.observacoesEquipe = observacoesEquipe;
+    }
+
     public void marcarComoDevolvido() {
-        this.devolvido = true;
+        if (!devolvido) {
+            this.devolvido = true;
+            this.dataDevolucao = LocalDateTime.now();
+            this.status = "DEVOLVIDO";
+        }
     }
 
     public boolean isValid() {
-        return tipo != null && !tipo.isEmpty() &&
-               cor != null && !cor.isEmpty() &&
+        return eventoId != null && 
+               usuarioId != null && 
+               tipo != null && !tipo.isEmpty() &&
                descricao != null && !descricao.isEmpty() &&
-               localAproximado != null && !localAproximado.isEmpty();
+               localAproximado != null && !localAproximado.isEmpty() &&
+               dataReporte != null;
+    }
+
+    public boolean podeSerDevolvido() {
+        return !devolvido && 
+               status != null && 
+               status.equals("ENCONTRADO") &&
+               tentativasContato > 0;
+    }
+
+    public void registrarTentativaContato(String observacao) {
+        this.tentativasContato++;
+        this.ultimaTentativaContato = LocalDateTime.now();
+        this.observacoesEquipe = observacao;
+    }
+
+    public boolean precisaNovaTentativaContato() {
+        if (ultimaTentativaContato == null) return true;
+        long diasDesdeUltimaTentativa = ChronoUnit.DAYS.between(ultimaTentativaContato, LocalDateTime.now());
+        return diasDesdeUltimaTentativa >= 3;
+    }
+
+    public void atualizarStatus(String novoStatus) {
+        if (!devolvido) {
+            this.status = novoStatus;
+        }
+    }
+
+    public boolean isEmAberto() {
+        return !devolvido && status != null && status.equals("EM_ANALISE");
     }
 }

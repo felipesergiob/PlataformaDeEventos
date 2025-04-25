@@ -3,158 +3,106 @@ package br.edu.cesar.steps;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Quando;
 import io.cucumber.java.pt.Entao;
+import br.edu.cesar.eventos.dominio.interacao.Avaliacao;
 import org.junit.jupiter.api.Assertions;
-import br.edu.cesar.eventos.dominio.evento.Evento;
-import br.edu.cesar.eventos.dominio.evento.EventoId;
-import br.edu.cesar.eventos.dominio.usuario.Usuario;
-import br.edu.cesar.eventos.dominio.usuario.UsuarioId;
 
-public class AvaliarEventoSteps {
-    private Evento evento;
-    private Usuario usuario;
+public class AvaliarEventoSteps extends BaseSteps {
+    private Avaliacao avaliacao;
     private String mensagemErro;
-    private double notaAtual;
-    private boolean eventoFinalizado;
-    private boolean presencaConfirmada;
-
-    @Dado("que sou um usuário que participou do evento")
-    public void queSouUmUsuarioQueParticipouDoEvento() {
-        usuario = new Usuario("João Silva");
-        usuario.setEmail("joao@email.com");
-        usuario.setSenha("senha123");
-        usuario.setOrganizador(false);
-
-        evento = new Evento();
-        evento.setId(new EventoId("1"));
-        evento.setTitulo("Workshop de Java");
-        evento.adicionarUsuarioConfirmado(usuario.getId());
-    }
-
-    @Dado("que sou um usuário que não participou do evento")
-    public void queSouUmUsuarioQueNaoParticipouDoEvento() {
-        usuario = new Usuario("João Silva");
-        usuario.setEmail("joao@email.com");
-        usuario.setSenha("senha123");
-        usuario.setOrganizador(false);
-
-        evento = new Evento();
-        evento.setId(new EventoId("1"));
-        evento.setTitulo("Workshop de Java");
-    }
 
     @Dado("que sou um usuário que confirmou presença em um evento finalizado")
     public void queSouUmUsuarioQueConfirmouPresencaEmUmEventoFinalizado() {
-        usuario = new Usuario("João Silva");
-        usuario.setEmail("joao@email.com");
-        usuario.setSenha("senha123");
-        usuario.setOrganizador(false);
-
-        evento = new Evento();
-        evento.setId(new EventoId("1"));
-        evento.setTitulo("Workshop de Java");
-        evento.adicionarUsuarioConfirmado(usuario.getId());
-        eventoFinalizado = true;
-        presencaConfirmada = true;
+        setupUsuarioQueParticipouDoEvento();
+        setupEventoFinalizado();
     }
 
     @Dado("que sou um usuário que confirmou presença em um evento")
     public void queSouUmUsuarioQueConfirmouPresencaEmUmEvento() {
-        usuario = new Usuario("João Silva");
-        usuario.setEmail("joao@email.com");
-        usuario.setSenha("senha123");
-        usuario.setOrganizador(false);
-
-        evento = new Evento();
-        evento.setId(new EventoId("1"));
-        evento.setTitulo("Workshop de Java");
-        evento.adicionarUsuarioConfirmado(usuario.getId());
-        eventoFinalizado = false;
-        presencaConfirmada = true;
+        setupUsuarioQueParticipouDoEvento();
+        // Ensure the event is not finalized
+        context.getEvento().setStatus("ABERTO");
+        context.setEventoFinalizado(false);
     }
 
     @Dado("que sou um usuário que não confirmou presença em um evento finalizado")
     public void queSouUmUsuarioQueNaoConfirmouPresencaEmUmEventoFinalizado() {
-        usuario = new Usuario("João Silva");
-        usuario.setEmail("joao@email.com");
-        usuario.setSenha("senha123");
-        usuario.setOrganizador(false);
-
-        evento = new Evento();
-        evento.setId(new EventoId("1"));
-        evento.setTitulo("Workshop de Java");
-        eventoFinalizado = true;
-        presencaConfirmada = false;
-    }
-
-    @Quando("avalio o evento com nota {int}")
-    public void avalioOEventoComNota(int nota) {
-        if (evento.getUsuariosConfirmados().contains(usuario.getId())) {
-            evento.setTotalAvaliacoes(evento.getTotalAvaliacoes() + 1);
-            double novaMedia = ((evento.getMediaNotas() * (evento.getTotalAvaliacoes() - 1)) + nota) / evento.getTotalAvaliacoes();
-            evento.setMediaNotas(novaMedia);
-            notaAtual = nota;
-        } else {
-            mensagemErro = "Apenas participantes podem avaliar o evento";
-        }
+        setupUsuarioQueNaoParticipouDoEvento();
+        setupEventoFinalizado();
     }
 
     @Quando("acesso a página de avaliação do evento")
     public void acessoAPaginaDeAvaliacaoDoEvento() {
-        if (!eventoFinalizado) {
-            mensagemErro = "O evento ainda não finalizou";
-        } else if (!presencaConfirmada) {
+        // Simula o acesso à página
+    }
+
+    @Quando("tento acessar a página de avaliação do evento")
+    public void tentoAcessarAPaginaDeAvaliacaoDoEvento() {
+        if (!context.isPresencaConfirmada()) {
             mensagemErro = "Você precisa ter confirmado presença para avaliar o evento";
+        } else if (!context.isEventoFinalizado()) {
+            mensagemErro = "O evento ainda não finalizou";
         }
     }
 
     @Quando("preencho apenas a nota {int}")
-    public void preenchoApenasANota(int nota) {
-        if (eventoFinalizado && presencaConfirmada) {
-            evento.setTotalAvaliacoes(evento.getTotalAvaliacoes() + 1);
-            double novaMedia = ((evento.getMediaNotas() * (evento.getTotalAvaliacoes() - 1)) + nota) / evento.getTotalAvaliacoes();
-            evento.setMediaNotas(novaMedia);
-            notaAtual = nota;
-        }
+    public void preenchoApenasANota(Integer nota) {
+        avaliacao = new Avaliacao();
+        avaliacao.setNota(nota);
+        avaliacao.setEventoId(context.getEvento().getId());
+        avaliacao.setUsuarioId(context.getUsuario().getId());
     }
 
     @Quando("submeto a avaliação")
-    public void submetoAAvaliacao() {}
-
-    @Quando("tento acessar a página de avaliação do evento")
-    public void tentoAcessarAPaginaDeAvaliacaoDoEvento() {
-        if (!eventoFinalizado) {
-            mensagemErro = "O evento ainda não finalizou";
-        } else if (!presencaConfirmada) {
-            mensagemErro = "Você precisa ter confirmado presença para avaliar o evento";
+    public void submetoAAvaliacao() {
+        try {
+            avaliacao.validar();
+            registroSucesso = true;
+        } catch (IllegalArgumentException e) {
+            mensagemErro = e.getMessage();
+            registroSucesso = false;
         }
     }
 
-    @Entao("a avaliação deve ser registrada")
-    public void aAvaliacaoDeveSerRegistrada() {
-        Assertions.assertEquals(1, evento.getTotalAvaliacoes());
-        Assertions.assertEquals(notaAtual, evento.getMediaNotas());
+    @Quando("avalio o evento com nota {int}")
+    public void avalioOEventoComNota(Integer nota) {
+        avaliacao = new Avaliacao();
+        avaliacao.setNota(nota);
+        avaliacao.setEventoId(context.getEvento().getId());
+        avaliacao.setUsuarioId(context.getUsuario().getId());
+        
+        try {
+            if (!context.isPresencaConfirmada()) {
+                mensagemErro = "Apenas participantes podem avaliar o evento";
+                registroSucesso = false;
+            } else if (!context.isEventoFinalizado()) {
+                mensagemErro = "O evento ainda não finalizou";
+                registroSucesso = false;
+            } else {
+                avaliacao.validar();
+                registroSucesso = true;
+            }
+        } catch (IllegalArgumentException e) {
+            mensagemErro = e.getMessage();
+            registroSucesso = false;
+        }
     }
 
     @Entao("a avaliação deve ser registrada com sucesso")
     public void aAvaliacaoDeveSerRegistradaComSucesso() {
-        Assertions.assertEquals(1, evento.getTotalAvaliacoes());
-        Assertions.assertEquals(notaAtual, evento.getMediaNotas());
+        Assertions.assertTrue(registroSucesso);
+        Assertions.assertNotNull(avaliacao);
+        Assertions.assertNotNull(avaliacao.getDataAvaliacao());
     }
 
-    @Entao("devo ver a mensagem de erro de avaliação {string}")
-    public void devoVerAMensagemDeErroDeAvaliacao(String mensagem) {
-        Assertions.assertEquals(mensagem, mensagemErro);
-    }
-
-    @Entao("a avaliação não deve ser registrada")
-    public void aAvaliacaoNaoDeveSerRegistrada() {
-        Assertions.assertEquals(0, evento.getTotalAvaliacoes());
-        Assertions.assertEquals(0.0, evento.getMediaNotas());
+    @Entao("a avaliação deve ser registrada")
+    public void aAvaliaçãoDeveSerRegistrada() {
+        Assertions.assertTrue(registroSucesso);
+        Assertions.assertNotNull(avaliacao);
     }
 
     @Entao("devo ver uma mensagem de confirmação")
     public void devoVerUmaMensagemDeConfirmacao() {
-        Assertions.assertTrue(evento.getTotalAvaliacoes() > 0);
+        Assertions.assertTrue(registroSucesso);
     }
 
     @Entao("devo ver uma mensagem informando que o evento ainda não finalizou")
@@ -165,5 +113,15 @@ public class AvaliarEventoSteps {
     @Entao("devo ver uma mensagem informando que preciso ter confirmado presença para avaliar")
     public void devoVerUmaMensagemInformandoQuePrecisoTerConfirmadoPresencaParaAvaliar() {
         Assertions.assertEquals("Você precisa ter confirmado presença para avaliar o evento", mensagemErro);
+    }
+
+    @Entao("devo ver a mensagem de erro de avaliação {string}")
+    public void devoVerAMensagemDeErroDeAvaliacao(String mensagem) {
+        Assertions.assertEquals(mensagem, mensagemErro);
+    }
+
+    @Entao("a avaliação não deve ser registrada")
+    public void aAvaliacaoNaoDeveSerRegistrada() {
+        Assertions.assertFalse(registroSucesso);
     }
 }

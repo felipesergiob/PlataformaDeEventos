@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashSet;
 import java.util.Set;
+import java.time.temporal.ChronoUnit;
 
 public class Evento {
     private EventoId id;
@@ -32,12 +33,25 @@ public class Evento {
     private int totalComentarios;
     private Set<UsuarioId> usuariosConfirmados;
     private String data;
+    private List<String> categorias;
+    private List<String> tags;
+    private boolean verificado;
+    private LocalDateTime dataVerificacao;
+    private String statusVerificacao;
+    private int visualizacoes;
+    private List<UsuarioId> visualizadores;
+    private Map<String, Integer> metricasEngajamento;
 
     public Evento() {
         this.participantes = new ArrayList<>();
         this.interessados = new ArrayList<>();
         this.talvezVao = new ArrayList<>();
         this.usuariosConfirmados = new HashSet<>();
+        this.categorias = new ArrayList<>();
+        this.tags = new ArrayList<>();
+        this.visualizadores = new ArrayList<>();
+        this.metricasEngajamento = new HashMap<>();
+        this.status = "RASCUNHO";
     }
 
     public EventoId getId() {
@@ -125,28 +139,33 @@ public class Evento {
     }
 
     public boolean adicionarParticipante(UsuarioId participanteId) {
-        if (participantes.size() < limiteParticipantes) {
+        if (participantes.size() < limiteParticipantes && 
+            !participantes.contains(participanteId) &&
+            !isFinalizado()) {
             participantes.add(participanteId);
+            atualizarMetricasEngajamento("participantes");
             return true;
         }
         return false;
     }
 
     public void marcarInteresse(UsuarioId interessadoId) {
-        if (!interessados.contains(interessadoId)) {
+        if (!interessados.contains(interessadoId) && !isFinalizado()) {
             interessados.add(interessadoId);
+            atualizarMetricasEngajamento("interessados");
         }
     }
 
     public void marcarTalvez(UsuarioId usuarioId) {
-        if (!talvezVao.contains(usuarioId)) {
+        if (!talvezVao.contains(usuarioId) && !isFinalizado()) {
             talvezVao.add(usuarioId);
             totalTalvez++;
+            atualizarMetricasEngajamento("talvez");
         }
     }
 
     public boolean verificarDisponibilidade() {
-        return participantes.size() < limiteParticipantes;
+        return participantes.size() < limiteParticipantes && !isFinalizado();
     }
 
     public UsuarioId getCriadorId() {
@@ -210,19 +229,59 @@ public class Evento {
     }
 
     public void adicionarUsuarioConfirmado(UsuarioId usuarioId) {
-        usuariosConfirmados.add(usuarioId);
+        if (!isFinalizado()) {
+            usuariosConfirmados.add(usuarioId);
+            totalConfirmacoes++;
+            atualizarMetricasEngajamento("confirmacoes");
+        }
+    }
+
+    public void registrarVisualizacao(UsuarioId usuarioId) {
+        if (!visualizadores.contains(usuarioId)) {
+            visualizadores.add(usuarioId);
+            visualizacoes++;
+            atualizarMetricasEngajamento("visualizacoes");
+        }
+    }
+
+    public void adicionarCategoria(String categoria) {
+        if (!categorias.contains(categoria)) {
+            categorias.add(categoria);
+        }
+    }
+
+    public void adicionarTag(String tag) {
+        if (!tags.contains(tag)) {
+            tags.add(tag);
+        }
+    }
+
+    public void verificar(String status) {
+        this.verificado = true;
+        this.statusVerificacao = status;
+        this.dataVerificacao = LocalDateTime.now();
+    }
+
+    public boolean podeSerEditado() {
+        if (isFinalizado()) {
+            return false;
+        }
+        long horasRestantes = ChronoUnit.HOURS.between(LocalDateTime.now(), dataHora);
+        return horasRestantes >= 24;
     }
 
     public boolean isFinalizado() {
         return "FINALIZADO".equals(status);
     }
 
-    public String getData() {
-        return data;
+    public void finalizar() {
+        if (!isFinalizado() && dataHora.isBefore(LocalDateTime.now())) {
+            this.status = "FINALIZADO";
+        }
     }
 
-    public void setData(String data) {
-        this.data = data;
+    private void atualizarMetricasEngajamento(String tipo) {
+        metricasEngajamento.merge(tipo, 1, Integer::sum);
     }
 
     public Map<String, Object> gerarRelatorio() {
@@ -234,6 +293,8 @@ public class Evento {
         relatorio.put("mediaNotas", mediaNotas);
         relatorio.put("totalAvaliacoes", totalAvaliacoes);
         relatorio.put("totalComentarios", totalComentarios);
+        relatorio.put("visualizacoes", visualizacoes);
+        relatorio.put("metricasEngajamento", metricasEngajamento);
         return relatorio;
     }
 
@@ -241,5 +302,45 @@ public class Evento {
         Map<String, Object> relatorio = gerarRelatorio();
         relatorio.put("periodo", periodo);
         return relatorio;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
+    public List<String> getCategorias() {
+        return categorias;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public boolean isVerificado() {
+        return verificado;
+    }
+
+    public LocalDateTime getDataVerificacao() {
+        return dataVerificacao;
+    }
+
+    public String getStatusVerificacao() {
+        return statusVerificacao;
+    }
+
+    public int getVisualizacoes() {
+        return visualizacoes;
+    }
+
+    public List<UsuarioId> getVisualizadores() {
+        return visualizadores;
+    }
+
+    public Map<String, Integer> getMetricasEngajamento() {
+        return metricasEngajamento;
     }
 }

@@ -1,7 +1,13 @@
 package br.edu.cesar.eventos.dominio.evento;
 
+import java.util.UUID;
+
 public class EventoId {
     private String id;
+
+    public EventoId() {
+        this.id = UUID.randomUUID().toString();
+    }
 
     public EventoId(String id) {
         this.id = id;

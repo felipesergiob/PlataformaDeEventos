@@ -2,6 +2,7 @@ br/edu/cesar/eventos/dominio/relatorio/DashboardEvento.class
 br/edu/cesar/eventos/dominio/interacao/ItemPerdido.class
 br/edu/cesar/eventos/dominio/evento/Evento.class
 br/edu/cesar/eventos/dominio/interacao/Resposta.class
+br/edu/cesar/eventos/dominio/relato/Comentario.class
 br/edu/cesar/eventos/dominio/evento/EventoId.class
 br/edu/cesar/eventos/dominio/interacao/Avaliacao.class
 br/edu/cesar/eventos/dominio/usuario/UsuarioId.class

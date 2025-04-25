@@ -1,23 +1,27 @@
 Domain Eventos {
 	Subdomain GestaoUsuarios
     Subdomain GestaoEventos
+    Subdomain GestaoInteracoes
 }
 
 ContextMap EventosContextMap {
 	contains GestaoUsuarios
 	contains GestaoEventos
+	contains GestaoInteracoes
 
 	GestaoUsuarios Shared-Kernel GestaoEventos
+	GestaoEventos Shared-Kernel GestaoInteracoes
+	GestaoUsuarios Shared-Kernel GestaoInteracoes
 }
 
 BoundedContext GestaoUsuarios implements GestaoUsuarios {
     Aggregate Usuario {
         Entity Usuario {
             aggregateRoot
-            
+
             -UsuarioId id
             String nome
-            String emailUsuario
+            String email
             String senha
             LocalDateTime dataCadastro
             List<UsuarioId> seguindo
@@ -26,38 +30,11 @@ BoundedContext GestaoUsuarios implements GestaoUsuarios {
 
             def void seguirUsuario(@UsuarioId usuarioId);
             def void pararSeguir(@UsuarioId usuarioId);
-
-            Repository UsuarioRepository {
-                void adicionar(@Usuario usuario);
-                void remover(@Usuario usuario);
-                @Usuario buscarPorId(@UsuarioId id);
-                List<@Usuario> listarUsuarios();
-            }
         }
 
         ValueObject UsuarioId {
             long id
         }
-    }
-    Aggregate Relato {
-    	Entity Relato{
-    		aggregateRoot
-    		
-    		String titulo
-    		String conteudo
-    		-UsuarioId autorId
-    		LocalDateTime dataCriacao
-    		List<Foto> fotos
-    		String eventoId
-    		
-    		def void adicionarFoto(Foto foto);
-    		def boolean isValid();
-    	}
-    	
-    	Entity Foto {
-    		String urlFoto
-    		String descricao
-    	}
     }
 }
 
@@ -65,7 +42,7 @@ BoundedContext GestaoEventos implements GestaoEventos {
     Aggregate Evento {
         Entity Evento {
             aggregateRoot
-            
+
             -EventoId id
             String titulo
             String descricao
@@ -98,29 +75,69 @@ BoundedContext GestaoEventos implements GestaoEventos {
             def boolean isFinalizado();
             def Map<String, Object> gerarRelatorio();
             def Map<String, Object> gerarRelatorio(String periodo);
-
-            Repository EventoRepository {
-                void adicionar(@Evento evento);
-                void remover(@Evento evento);
-                @Evento buscarPorId(@EventoId id);
-                List<@Evento> listarEventos();
-                List<@Evento> filtrarPorData(LocalDate data);
-                List<@Evento> filtrarPorGenero(String genero);
-                List<@Evento> filtrarPorPreco(BigDecimal precoMin, BigDecimal precoMax);
-            }
         }
-        
+
+        ValueObject EventoId {
+            long id
+        }
+
+        ValueObject UsuarioId {
+            long id
+        }
+    }
+
+    Aggregate Relatorio {
+    	Entity DashboardEvento {
+    		aggregateRoot
+
+            -EventoId eventoId
+            int totalParticipantes
+            int totalInteressados
+            double mediaAvaliacoes
+            List<Avaliacao> avaliacoes
+            List<Relato> relatos
+            List<ItemPerdido> itensPerdidos
+
+            def void atualizarMetricas();
+            def void gerarRelatorio();
+        }
+    }
+}
+
+BoundedContext GestaoInteracoes implements GestaoInteracoes {
+    Aggregate Avaliacao {
         Entity Avaliacao {
-    		-EventoId eventoId
-    		-UsuarioId usuarioId
-    		int nota
-    		String comentario
-    		LocalDateTime dataAvaliacao
-    		
-    		def boolean validarNota();
-    	}
-    	
+            aggregateRoot
+
+            -EventoId eventoId
+            -UsuarioId usuarioId
+            int nota
+            String comentario
+            LocalDateTime dataAvaliacao
+            boolean moderada
+            String statusModeracao
+            LocalDateTime dataModeracao
+            String motivoRejeicao
+            int likes
+            List<UsuarioId> usuariosQueCurtiram
+
+            def boolean validarNota();
+            def boolean isValid();
+            def boolean podeSerModerada();
+            def void moderar(String status, String motivo);
+            def boolean podeSerEditada();
+            def void curtir(@UsuarioId usuarioId);
+            def void removerCurtida(@UsuarioId usuarioId);
+            def boolean isAprovada();
+            def boolean isRejeitada();
+            def void validar();
+        }
+    }
+
+    Aggregate ItemPerdido {
         Entity ItemPerdido {
+            aggregateRoot
+
             -EventoId eventoId
             -UsuarioId usuarioId
             String tipo
@@ -134,8 +151,33 @@ BoundedContext GestaoEventos implements GestaoEventos {
             def void marcarComoDevolvido();
             def boolean isValid();
         }
-        
+    }
+
+    Aggregate Relato {
+        Entity Relato {
+            aggregateRoot
+
+            String titulo
+            String conteudo
+            -UsuarioId autorId
+            LocalDateTime dataCriacao
+            List<Foto> fotos
+            String eventoId
+
+            def void adicionarFoto(@Foto foto);
+            def boolean isValid();
+        }
+
+        Entity Foto {
+            String urlFoto
+            String descricao
+        }
+    }
+
+    Aggregate Comentario {
         Entity Comentario {
+            aggregateRoot
+
             -UsuarioId autorId
             String conteudo
             LocalDateTime data
@@ -144,74 +186,35 @@ BoundedContext GestaoEventos implements GestaoEventos {
             def void adicionarResposta(@Resposta resposta);
             def void removerResposta(@Resposta resposta);
         }
-        
-        Entity Resposta{
-        	-UsuarioId autorId
-        	String conteudo
-        	LocalDateTime data
-        }
 
-        ValueObject EventoId {
-            long id
-        }
-        
-        ValueObject UsuarioId {
-            long id
+        Entity Resposta {
+            -UsuarioId autorId
+            String conteudo
+            LocalDateTime data
         }
     }
-    
+
     Aggregate Calendario {
         Entity Calendario {
             aggregateRoot
-            
-            -CalendarioId id
+
             -UsuarioId usuarioId
-            List<EventoId> eventos
-            Map<LocalDate, List<EventoId>> eventosPorData
-            
-            def void adicionarEvento(@EventoId eventoId);
-            def void removerEvento(@EventoId eventoId);
-            def List<EventoId> listarEventosPorData(LocalDate data);
-            def List<EventoId> listarEventosPorPeriodo(LocalDate dataInicio, LocalDate dataFim);
-            def void sincronizarEventos();
-            
-            Repository CalendarioRepository {
-                void salvar(@Calendario calendario);
-                @Calendario buscarPorUsuarioId(@UsuarioId usuarioId);
-                void atualizar(@Calendario calendario);
-            }
-        }
-        
-        ValueObject CalendarioId {
-            long id
-        }
-        
-        Service CalendarioService {
-            @Calendario criarCalendario(@UsuarioId usuarioId);
-            void sincronizarCalendario(@CalendarioId calendarioId);
-            List<@EventoId> listarEventosProximos(@UsuarioId usuarioId, int dias);
-        }
-    }
+            Map<EventoId, TipoInteracao> eventos
+            TipoVisualizacao visualizacaoAtual
 
-    Aggregate Relatorio {
-    	Entity DashboardEvento {
-    		aggregateRoot
-    		
-            -EventoId eventoId
-            int totalParticipantes
-            int totalInteressados
-            double mediaAvaliacoes
-            List<Avaliacao> avaliacoes
-            List<Relato> relatos
-            List<ItemPerdido> itensPerdidos
-
-            def void atualizarMetricas();
-            def void gerarRelatorio();
+            def void adicionarEvento(@EventoId eventoId, TipoInteracao tipo);
+            def List<EventoId> getEventosPorTipo(TipoInteracao tipo);
+            def String getCorDoEvento(@EventoId eventoId);
+            def void setVisualizacao(TipoVisualizacao visualizacao);
         }
-        
-        Service RelatorioService {
-            List<@EventoId> listarEventosDestaque();
-            @DashboardEvento gerarDashboard(@EventoId eventoId);
+
+        ValueObject TipoInteracao {
+            String tipo
+            String cor
+        }
+
+        ValueObject TipoVisualizacao {
+            String tipo
         }
     }
 }

@@ -1,15 +1,15 @@
 package br.edu.cesar.eventos.dominio.relato;
 
 public class Foto {
-    private String url;
+    private String urlFoto;
     private String descricao;
 
-    public String getUrl() {
-        return url;
+    public String getUrlFoto() {
+        return urlFoto;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setUrlFoto(String urlFoto) {
+        this.urlFoto = urlFoto;
     }
 
     public String getDescricao() {

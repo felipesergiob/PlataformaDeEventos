@@ -1,12 +1,15 @@
+br/edu/cesar/steps/TestContext.class
 br/edu/cesar/steps/ResponderComentariosSteps.class
 br/edu/cesar/steps/CriarEventoSteps.class
 br/edu/cesar/steps/FiltrarEventosSteps.class
-br/edu/cesar/steps/SeguirUsuariosSteps.class
 br/edu/cesar/steps/VisualizarCalendarioSteps.class
 br/edu/cesar/runners/CucumberRunner.class
 br/edu/cesar/steps/CriarRelatoEventoSteps.class
 br/edu/cesar/steps/ReportarItemPerdidoSteps.class
 br/edu/cesar/steps/VisualizarHistoricoEventosSteps.class
 br/edu/cesar/steps/AvaliarEventoSteps.class
-br/edu/cesar/steps/VisualizarEventosDestaqueSteps.class
 br/edu/cesar/steps/VisualizarRelatorioEventoSteps.class
+br/edu/cesar/steps/SeguirUsuariosSteps.class
+br/edu/cesar/steps/SharedSteps.class
+br/edu/cesar/steps/BaseSteps.class
+br/edu/cesar/steps/VisualizarEventosDestaqueSteps.class
