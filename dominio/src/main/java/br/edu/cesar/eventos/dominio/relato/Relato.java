@@ -66,13 +66,11 @@ public class Relato {
         this.autorId = autorId;
     }
     
-    // For backward compatibility
     @Deprecated
     public Usuario getAutor() {
-        return null; // This is deprecated, use getAutorId() instead
+        return null; 
     }
 
-    // For backward compatibility
     @Deprecated
     public void setAutor(Usuario autor) {
         if (autor != null) {
@@ -156,7 +154,6 @@ public class Relato {
         }
     }
     
-    // For backward compatibility
     @Deprecated
     public void registrarVisualizacao(Usuario usuario) {
         if (usuario != null) {

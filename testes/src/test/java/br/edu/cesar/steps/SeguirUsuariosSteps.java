@@ -93,7 +93,7 @@ public class SeguirUsuariosSteps {
 
     @Entao("devo ver o evento na seção {string} do meu feed")
     public void devoVerOEventoNaSecaoDoMeuFeed(String secao) {
-        // Implementação do teste
+        // todo
     }
 
     @Entao("o evento deve estar marcado como {string}")
@@ -103,7 +103,7 @@ public class SeguirUsuariosSteps {
 
     @Entao("não devo ver o evento na seção {string} do meu feed")
     public void naoDevoVerOEventoNaSecaoDoMeuFeed(String secao) {
-        // Implementação do teste
+        // todo
     }
 
     @Entao("devo ver os organizadores:")
