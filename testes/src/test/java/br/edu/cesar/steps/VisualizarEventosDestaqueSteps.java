@@ -94,7 +94,7 @@ public class VisualizarEventosDestaqueSteps {
     @Entao("a seção deve mostrar apenas eventos da semana {int}")
     public void aSecaoDeveMostrarApenasEventosDaSemana(int semana) {
         for (Evento evento : eventosDestaque) {
-            // Aqui você implementaria a lógica para verificar se o evento é da semana especificada
+            // implementar a lógica para verificar se o evento é da semana especificada
             Assertions.assertTrue(true);
         }
     }
@@ -102,7 +102,7 @@ public class VisualizarEventosDestaqueSteps {
     @Entao("não deve mostrar eventos de semanas anteriores")
     public void naoDeveMostrarEventosDeSemanasAnteriores() {
         for (Evento evento : eventosDestaque) {
-            // Aqui você implementaria a lógica para verificar se o evento não é de semanas anteriores
+            // implementar a lógica para verificar se o evento não é de semanas anteriores
             Assertions.assertTrue(true);
         }
     }
