@@ -1,0 +1,24 @@
+# Arquivos de compilação
+target/
+build/
+bin/
+*.class
+
+# Arquivos de IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# Arquivos de log
+*.log
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos de dependências
+node_modules/
+dist/ 
