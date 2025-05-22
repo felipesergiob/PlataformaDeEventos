@@ -2,7 +2,6 @@ package com.plataforma.dominio.evento;
 
 import com.plataforma.compartilhado.EventoId;
 import com.plataforma.evento.Evento;
-import com.plataforma.evento.EventoService;
 import com.plataforma.evento.EventoRepository;
 import io.cucumber.java.Before;
 import io.cucumber.java.DataTableType;
