@@ -1,21 +1,14 @@
 package com.plataforma.usuario;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import com.plataforma.compartilhado.UsuarioId;
 import lombok.Getter;
 import java.time.LocalDateTime;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.apache.commons.lang3.Validate.notBlank;
 import static org.apache.commons.lang3.Validate.isTrue;
 
-@Entity
 public class Usuario {
     
-    @Id
-    @Column(columnDefinition = "uuid")
     @Getter
     private final UsuarioId id;
 
@@ -27,8 +20,6 @@ public class Usuario {
     private LocalDateTime dataCadastro;
     private LocalDateTime dataAtualizacao;
     private Boolean ativo;
-    
-    @Enumerated(EnumType.STRING)
     private TipoUsuario tipo;
 
     public enum TipoUsuario {

@@ -1,11 +1,6 @@
 package com.plataforma.evento;
 
 import com.plataforma.compartilhado.EventoId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
@@ -13,11 +8,8 @@ import static org.apache.commons.lang3.Validate.notNull;
 import static org.apache.commons.lang3.Validate.notBlank;
 import static org.apache.commons.lang3.Validate.isTrue;
 
-@Entity
 public class Evento {
     
-    @Id
-    @Column(columnDefinition = "uuid")
     @Getter
     private final EventoId id;
 
@@ -32,10 +24,7 @@ public class Evento {
     private String categoria;
     private String genero;
     private BigDecimal valor;
-    
-    @Enumerated(EnumType.STRING)
     private StatusEvento status;
-    
     private Boolean ativo;
 
     public enum StatusEvento {

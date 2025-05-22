@@ -1,6 +1,9 @@
 package com.plataforma.usuario;
 
 import java.util.List;
+
+import com.plataforma.compartilhado.UsuarioId;
+
 import java.time.LocalDateTime;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.apache.commons.lang3.Validate.notBlank;
@@ -13,21 +16,18 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    public void salvar(Usuario usuario) {
+    public void registrar(Usuario usuario) {
         notNull(usuario, "O usuário não pode ser nulo");
         if (usuarioRepository.existeEmail(usuario.getEmail())) {
-            throw new IllegalArgumentException("Email já cadastrado");
+            throw new IllegalArgumentException("Já existe um usuário com este email");
         }
         usuarioRepository.salvar(usuario);
     }
 
     public Usuario obter(UsuarioId id) {
         notNull(id, "O ID do usuário não pode ser nulo");
-        Usuario usuario = usuarioRepository.obter(id);
-        if (usuario == null) {
-            throw new IllegalArgumentException("Usuário não encontrado");
-        }
-        return usuario;
+        return usuarioRepository.obter(id)
+            .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
     }
 
     public Usuario buscarPorEmail(String email) {
@@ -62,6 +62,14 @@ public class UsuarioService {
         return usuarioRepository.listarPorPeriodo(inicio, fim);
     }
 
+    public void atualizar(Usuario usuario) {
+        notNull(usuario, "O usuário não pode ser nulo");
+        if (!usuarioRepository.existe(usuario.getId())) {
+            throw new IllegalArgumentException("Usuário não encontrado");
+        }
+        usuarioRepository.salvar(usuario);
+    }
+
     public void excluir(UsuarioId id) {
         notNull(id, "O ID do usuário não pode ser nulo");
         if (!usuarioRepository.existe(id)) {
@@ -73,25 +81,25 @@ public class UsuarioService {
     public void desativar(UsuarioId id) {
         Usuario usuario = obter(id);
         usuario.desativar();
-        usuarioRepository.salvar(usuario);
+        atualizar(usuario);
     }
 
     public void ativar(UsuarioId id) {
         Usuario usuario = obter(id);
         usuario.ativar();
-        usuarioRepository.salvar(usuario);
+        atualizar(usuario);
     }
 
     public void tornarOrganizador(UsuarioId id) {
         Usuario usuario = obter(id);
         usuario.tornarOrganizador();
-        usuarioRepository.salvar(usuario);
+        atualizar(usuario);
     }
 
     public void tornarParticipante(UsuarioId id) {
         Usuario usuario = obter(id);
         usuario.tornarParticipante();
-        usuarioRepository.salvar(usuario);
+        atualizar(usuario);
     }
 
     public List<Usuario> listarOrganizadores() {

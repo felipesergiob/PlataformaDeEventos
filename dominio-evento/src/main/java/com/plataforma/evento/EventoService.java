@@ -53,7 +53,7 @@ public class EventoService {
         return eventoRepository.listarPorCategoria(categoria);
     }
 
-    public List<Evento> listarPorGenero(String genero) {
+    public List<Evento> listarPorGenero(String genero) { //ISSO NAO TESTA NADA APENAS O MOCK
         notNull(genero, "O gênero não pode ser nulo");
         return eventoRepository.listarPorGenero(genero);
     }
@@ -199,7 +199,6 @@ public class EventoService {
         return eventos;
     }
 
-    // Métodos para os testes BDD
     public void criarEvento(Evento evento) {
         salvar(evento);
     }

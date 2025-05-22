@@ -5,24 +5,14 @@ import com.plataforma.compartilhado.EventoId;
 import com.plataforma.compartilhado.AvaliacaoId;
 import com.plataforma.avaliacao.resposta.RespostaAvaliacao;
 import com.plataforma.avaliacao.resposta.RespostaAvaliacaoId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.Validate.notNull;
-import static org.apache.commons.lang3.Validate.notBlank;
-import static org.apache.commons.lang3.Validate.isTrue;
 
-@Entity
 public class Avaliacao {
     
-    @Id
-    @Column(columnDefinition = "uuid")
-    @Getter
     private final AvaliacaoId id;
 
     private final UsuarioId usuarioId;

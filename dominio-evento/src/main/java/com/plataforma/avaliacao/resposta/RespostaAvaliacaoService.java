@@ -28,12 +28,10 @@ public class RespostaAvaliacaoService {
         notNull(avaliacaoId, "O id da avaliação não pode ser nulo");
         notNull(comentario, "O comentário não pode ser nulo");
         
-        // Verifica se a avaliação existe
         if (!avaliacaoService.existe(avaliacaoId)) {
             throw new IllegalStateException("Avaliação não encontrada");
         }
         
-        // Verifica se já existe uma resposta ativa
         Optional<RespostaAvaliacao> respostaExistente = respostaRepository
             .findByUsuarioIdAndAvaliacaoId(usuarioId, avaliacaoId);
             

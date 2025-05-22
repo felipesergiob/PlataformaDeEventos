@@ -1,7 +1,7 @@
 package com.plataforma.item;
 
-import com.plataforma.evento.EventoId;
-import com.plataforma.usuario.UsuarioId;
+import com.plataforma.compartilhado.EventoId;
+import com.plataforma.compartilhado.UsuarioId;
 import java.util.List;
 import java.time.LocalDateTime;
 import static org.apache.commons.lang3.Validate.notNull;

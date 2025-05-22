@@ -126,7 +126,6 @@ public class VisualizacaoCalendarioTest {
 
     @Quando("o usuário visualiza seus eventos salvos")
     public void oUsuarioVisualizaSeusEventosSalvos() {
-        // Cria uma inscrição para o evento
         Evento evento = eventos.get(0);
         Inscricao inscricao = new Inscricao(
             InscricaoId.novo(),

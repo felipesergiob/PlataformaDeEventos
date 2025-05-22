@@ -2,20 +2,12 @@ package com.plataforma.inscricao;
 
 import com.plataforma.compartilhado.UsuarioId;
 import com.plataforma.compartilhado.EventoId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import java.time.LocalDateTime;
 import static org.apache.commons.lang3.Validate.notNull;
 
-@Entity
 public class Inscricao {
     
-    @Id
-    @Column(columnDefinition = "uuid")
     @Getter
     private final InscricaoId id;
 
@@ -25,8 +17,6 @@ public class Inscricao {
     private final LocalDateTime dataCancelamento;
     private final String motivoCancelamento;
     private final Boolean ativo;
-
-    @Enumerated(EnumType.STRING)
     private StatusInscricao status;
 
     public enum StatusInscricao {

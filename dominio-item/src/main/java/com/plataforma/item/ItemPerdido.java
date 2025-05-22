@@ -1,23 +1,15 @@
 package com.plataforma.item;
 
-import com.plataforma.evento.EventoId;
-import com.plataforma.usuario.UsuarioId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import com.plataforma.compartilhado.EventoId;
+import com.plataforma.compartilhado.UsuarioId;
 import lombok.Getter;
 import java.time.LocalDateTime;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.apache.commons.lang3.Validate.notBlank;
 import static org.apache.commons.lang3.Validate.isTrue;
 
-@Entity
 public class ItemPerdido {
     
-    @Id
-    @Column(columnDefinition = "uuid")
     @Getter
     private final ItemPerdidoId id;
 
@@ -33,8 +25,6 @@ public class ItemPerdido {
     private LocalDateTime dataRecuperacao;
     private UsuarioId recuperadoPor;
     private String observacoes;
-    
-    @Enumerated(EnumType.STRING)
     private StatusItem status;
 
     public enum StatusItem {

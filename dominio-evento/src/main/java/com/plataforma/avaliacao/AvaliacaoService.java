@@ -32,7 +32,6 @@ public class AvaliacaoService {
             throw new IllegalArgumentException("A nota deve estar entre 1 e 5");
         }
         
-        // Verifica se já existe uma avaliação ativa
         Optional<Avaliacao> avaliacaoExistente = avaliacaoRepository
             .findByUsuarioIdAndEventoId(usuarioId, eventoId);
             

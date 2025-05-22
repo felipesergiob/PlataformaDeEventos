@@ -2,18 +2,12 @@ package com.plataforma.historico;
 
 import com.plataforma.compartilhado.EventoId;
 import com.plataforma.compartilhado.AvaliacaoId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
 import lombok.Getter;
 import java.time.LocalDateTime;
 import static org.apache.commons.lang3.Validate.notNull;
 
-@Entity
 public class Historico {
     
-    @Id
-    @Column(columnDefinition = "uuid")
     @Getter
     private final HistoricoId id;
 

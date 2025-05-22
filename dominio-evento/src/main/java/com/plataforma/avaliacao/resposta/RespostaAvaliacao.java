@@ -2,20 +2,10 @@ package com.plataforma.avaliacao.resposta;
 
 import com.plataforma.compartilhado.UsuarioId;
 import com.plataforma.compartilhado.AvaliacaoId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import lombok.Getter;
 import java.time.LocalDateTime;
 import static org.apache.commons.lang3.Validate.notNull;
-import static org.apache.commons.lang3.Validate.notBlank;
-
-@Entity
 public class RespostaAvaliacao {
     
-    @Id
-    @Column(columnDefinition = "uuid")
-    @Getter
     private final RespostaAvaliacaoId id;
 
     private final UsuarioId usuarioId;
