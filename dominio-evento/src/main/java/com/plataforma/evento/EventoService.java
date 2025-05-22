@@ -165,4 +165,64 @@ public class EventoService {
         isTrue(limite > 0, "O limite deve ser maior que zero");
         return eventoRepository.listarPorNumeroInscritos(limite);
     }
+
+    public List<Evento> listarPorFiltros(String genero, LocalTime horarioInicio, LocalTime horarioFim, LocalDate data, BigDecimal preco) {
+        List<Evento> eventos = eventoRepository.listarTodos();
+        
+        if (genero != null) {
+            eventos = eventos.stream()
+                .filter(evento -> evento.getGenero().equals(genero))
+                .toList();
+        }
+        
+        if (horarioInicio != null && horarioFim != null) {
+            eventos = eventos.stream()
+                .filter(evento -> {
+                    LocalTime horarioEvento = evento.getDataInicio().toLocalTime();
+                    return !horarioEvento.isBefore(horarioInicio) && !horarioEvento.isAfter(horarioFim);
+                })
+                .toList();
+        }
+        
+        if (data != null) {
+            eventos = eventos.stream()
+                .filter(evento -> evento.getDataInicio().toLocalDate().equals(data))
+                .toList();
+        }
+        
+        if (preco != null) {
+            eventos = eventos.stream()
+                .filter(evento -> evento.getValor().compareTo(preco) == 0)
+                .toList();
+        }
+        
+        return eventos;
+    }
+
+    // Métodos para os testes BDD
+    public void criarEvento(Evento evento) {
+        salvar(evento);
+    }
+
+    public List<Evento> filtrarEventosPorGenero(String genero) {
+        return listarPorGenero(genero);
+    }
+
+    public List<Evento> filtrarEventosPorHorario(LocalDateTime horario) {
+        return listarTodos().stream()
+            .filter(evento -> evento.getDataInicio().toLocalTime().equals(horario.toLocalTime()))
+            .toList();
+    }
+
+    public List<Evento> filtrarEventosPorData(LocalDateTime data) {
+        return listarTodos().stream()
+            .filter(evento -> evento.getDataInicio().toLocalDate().equals(data.toLocalDate()))
+            .toList();
+    }
+
+    public List<Evento> filtrarEventosPorPrecoMaximo(BigDecimal precoMaximo) {
+        return listarTodos().stream()
+            .filter(evento -> evento.getValor().compareTo(precoMaximo) <= 0)
+            .toList();
+    }
 } 

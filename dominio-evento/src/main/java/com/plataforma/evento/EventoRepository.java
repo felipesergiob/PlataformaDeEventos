@@ -24,4 +24,5 @@ public interface EventoRepository {
     List<Evento> listarPorNumeroInscritos(int limite);
     void excluir(EventoId id);
     boolean existe(EventoId id);
+    List<Evento> listarPorFiltros(String genero, LocalTime horarioInicio, LocalTime horarioFim, LocalDate data, BigDecimal preco);
 } 
