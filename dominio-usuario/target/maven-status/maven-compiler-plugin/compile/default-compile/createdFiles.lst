@@ -1,0 +1,9 @@
+com/plataforma/usuario/UsuarioId.class
+com/plataforma/historico/HistoricoId.class
+com/plataforma/usuario/UsuarioRepository.class
+com/plataforma/usuario/Usuario$TipoUsuario.class
+com/plataforma/historico/HistoricoRepository.class
+com/plataforma/historico/HistoricoService.class
+com/plataforma/historico/Historico.class
+com/plataforma/usuario/Usuario.class
+com/plataforma/usuario/UsuarioService.class

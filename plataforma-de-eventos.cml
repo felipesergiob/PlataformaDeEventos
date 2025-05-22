@@ -1,0 +1,358 @@
+Domain PlataformaEventos {
+    Subdomain Eventos
+    Subdomain Usuarios
+    Subdomain Avaliacoes
+    Subdomain Inscricoes
+    Subdomain ItensPerdidos
+}
+
+ContextMap {
+    contains Eventos
+    contains Usuarios
+    contains Avaliacoes
+    contains Inscricoes
+    contains ItensPerdidos
+
+    Eventos Shared-Kernel Usuarios
+    Avaliacoes Shared-Kernel Eventos
+    Avaliacoes Shared-Kernel Usuarios
+    Inscricoes Shared-Kernel Eventos
+    Inscricoes Shared-Kernel Usuarios
+    ItensPerdidos Shared-Kernel Eventos
+    ItensPerdidos Shared-Kernel Usuarios
+}
+
+Bounded Context Eventos implements Eventos {
+    Aggregate Evento {
+        Entity Evento {
+            aggregateRoot
+
+            -EventoId id
+            String nome
+            String descricao
+            LocalDateTime dataInicio
+            LocalDateTime dataFim
+            String local
+            Integer capacidade
+            Integer inscritos
+            String organizador
+            String categoria
+            String genero
+            BigDecimal valor
+            StatusEvento status
+            Boolean ativo
+
+            def boolean estaAtivo()
+            def boolean estaDisponivel()
+            def boolean estaLotado()
+            def void incrementarInscritos()
+            def void decrementarInscritos()
+
+            Repository EventoRepository {
+                @Evento obter(@EventoId id)
+                List<@Evento> listarAtivos()
+                List<@Evento> listarPorPeriodo(LocalDateTime inicio, LocalDateTime fim)
+                List<@Evento> listarPorCategoria(String categoria)
+                List<@Evento> listarPorGenero(String genero)
+                List<@Evento> listarPorHorario(LocalTime horarioInicio, LocalTime horarioFim)
+                List<@Evento> listarPorData(LocalDate data)
+                List<@Evento> listarPorPreco(BigDecimal preco)
+                List<@Evento> listarPorValor(BigDecimal valorMinimo, BigDecimal valorMaximo)
+                List<@Evento> listarPorOrganizador(String organizador)
+                List<@Evento> listarPorStatus(StatusEvento status)
+            }
+
+            Service EventoService {
+                void salvar(@Evento evento)
+                @Evento obter(@EventoId id)
+                List<@Evento> listarTodos()
+                List<@Evento> listarAtivos()
+                List<@Evento> listarPorPeriodo(LocalDateTime inicio, LocalDateTime fim)
+                List<@Evento> listarPorCategoria(String categoria)
+                List<@Evento> listarPorGenero(String genero)
+                List<@Evento> listarPorHorario(LocalTime horarioInicio, LocalTime horarioFim)
+                List<@Evento> listarPorData(LocalDate data)
+                List<@Evento> listarPorPreco(BigDecimal preco)
+                List<@Evento> listarPorValor(BigDecimal valorMinimo, BigDecimal valorMaximo)
+                List<@Evento> listarPorOrganizador(String organizador)
+                List<@Evento> listarPorStatus(StatusEvento status)
+                List<@Evento> listarComVagasDisponiveis()
+                List<@Evento> listarProximos()
+                List<@Evento> listarEmAndamento()
+                List<@Evento> listarFinalizados()
+                void excluir(@EventoId id)
+                void desativar(@EventoId id)
+                void ativar(@EventoId id)
+                void cancelar(@EventoId id)
+                void incrementarInscritos(@EventoId id)
+                void decrementarInscritos(@EventoId id)
+            }
+        }
+
+        Entity Inscricao {
+            -InscricaoId id
+            -EventoId evento
+            -UsuarioId usuario
+            LocalDateTime dataInscricao
+            StatusInscricao status
+
+            def boolean estaConfirmada()
+            def void confirmar()
+            def void cancelar()
+
+            Repository InscricaoRepository {
+                @Inscricao obter(@InscricaoId id)
+                List<@Inscricao> listarPorEvento(@EventoId eventoId)
+                List<@Inscricao> listarPorUsuario(@UsuarioId usuarioId)
+                boolean existeInscricao(@EventoId eventoId, @UsuarioId usuarioId)
+            }
+
+            Service InscricaoService {
+                void inscrever(@EventoId eventoId, @UsuarioId usuarioId)
+                void confirmar(@InscricaoId id)
+                void cancelar(@InscricaoId id)
+                List<@Evento> listarEventosConfirmados(@UsuarioId usuarioId)
+            }
+        }
+
+        ValueObject InscricaoId {
+            String codigo
+        }
+
+        ValueObject StatusInscricao {
+            PENDENTE
+            CONFIRMADA
+            CANCELADA
+        }
+
+        ValueObject EventoId {
+            String codigo
+        }
+
+        ValueObject StatusEvento {
+            AGENDADO
+            EM_ANDAMENTO
+            FINALIZADO
+            CANCELADO
+        }
+    }
+}
+
+Bounded Context Usuarios implements Usuarios {
+    Aggregate Usuario {
+        Entity Usuario {
+            aggregateRoot
+
+            -UsuarioId id
+            String nome
+            String email
+            String senha
+            String telefone
+            String fotoPerfil nullable
+            LocalDateTime dataCadastro
+            LocalDateTime dataAtualizacao
+            Boolean ativo
+            TipoUsuario tipo
+
+            def boolean estaAtivo()
+            def boolean ehOrganizador()
+            def boolean ehParticipante()
+            def void tornarOrganizador()
+            def void tornarParticipante()
+            def void ativar()
+            def void desativar()
+
+            Repository UsuarioRepository {
+                @Usuario obter(@UsuarioId id)
+                List<@Usuario> listarAtivos()
+                List<@Usuario> listarPorTipo(TipoUsuario tipo)
+                @Usuario buscarPorEmail(String email)
+            }
+        }
+
+        ValueObject UsuarioId {
+            String codigo
+        }
+
+        ValueObject TipoUsuario {
+            PARTICIPANTE
+            ORGANIZADOR
+        }
+    }
+}
+
+Bounded Context Avaliacoes implements Avaliacoes {
+    Aggregate Avaliacao {
+        Entity Avaliacao {
+            aggregateRoot
+
+            -AvaliacaoId id
+            -EventoId evento
+            -UsuarioId avaliador
+            Integer nota
+            String comentario nullable
+            Boolean moderado
+            LocalDateTime dataAvaliacao
+            List<RespostaAvaliacao> respostas
+
+            def boolean estaModerada()
+            def void moderar()
+            def double calcularMediaNotas()
+            def void adicionarResposta(RespostaAvaliacao resposta)
+            def void removerResposta(RespostaAvaliacaoId id)
+
+            Repository AvaliacaoRepository {
+                @Avaliacao obter(@AvaliacaoId id)
+                List<@Avaliacao> listarPorEvento(@EventoId eventoId)
+                List<@Avaliacao> listarComentariosPendentesModeracao()
+                double calcularMediaNotas(@EventoId eventoId)
+            }
+        }
+
+        Entity RespostaAvaliacao {
+            -RespostaAvaliacaoId id
+            -AvaliacaoId avaliacao
+            -UsuarioId usuario
+            String nomeUsuario
+            String comentario
+            LocalDateTime dataResposta
+            LocalDateTime dataAtualizacao
+            Boolean ativo
+            Boolean comentarioModerado
+
+            def boolean estaAtivo()
+            def boolean estaModerado()
+            def void ativar()
+            def void desativar()
+            def void moderar()
+            def boolean podeSerEditado()
+
+            Repository RespostaAvaliacaoRepository {
+                @RespostaAvaliacao obter(@RespostaAvaliacaoId id)
+                List<@RespostaAvaliacao> listarPorAvaliacao(@AvaliacaoId avaliacaoId)
+                List<@RespostaAvaliacao> listarPorUsuario(@UsuarioId usuarioId)
+                List<@RespostaAvaliacao> listarPendentesModeracao()
+            }
+        }
+
+        ValueObject RespostaAvaliacaoId {
+            String codigo
+        }
+
+        ValueObject AvaliacaoId {
+            String codigo
+        }
+
+        Service AvaliacaoService {
+            void salvar(@Avaliacao avaliacao)
+            void moderar(@AvaliacaoId id)
+            double calcularMediaEvento(@EventoId eventoId)
+            void adicionarResposta(@AvaliacaoId avaliacaoId, @UsuarioId usuarioId, String comentario)
+            void removerResposta(@RespostaAvaliacaoId id)
+            void moderarResposta(@RespostaAvaliacaoId id)
+        }
+    }
+}
+
+Bounded Context Inscricoes implements Inscricoes {
+    Aggregate Inscricao {
+        Entity Inscricao {
+            aggregateRoot
+
+            -InscricaoId id
+            -EventoId evento
+            -UsuarioId usuario
+            LocalDateTime dataInscricao
+            StatusInscricao status
+
+            def boolean estaConfirmada()
+            def void confirmar()
+            def void cancelar()
+
+            Repository InscricaoRepository {
+                @Inscricao obter(@InscricaoId id)
+                List<@Inscricao> listarPorEvento(@EventoId eventoId)
+                List<@Inscricao> listarPorUsuario(@UsuarioId usuarioId)
+                boolean existeInscricao(@EventoId eventoId, @UsuarioId usuarioId)
+            }
+
+            Service InscricaoService {
+                void inscrever(@EventoId eventoId, @UsuarioId usuarioId)
+                void confirmar(@InscricaoId id)
+                void cancelar(@InscricaoId id)
+                List<@Evento> listarEventosConfirmados(@UsuarioId usuarioId)
+                List<@Inscricao> listarInscricoesPorUsuario(@UsuarioId usuarioId)
+                List<@Inscricao> listarInscricoesPorEvento(@EventoId eventoId)
+            }
+        }
+
+        ValueObject InscricaoId {
+            String codigo
+        }
+
+        ValueObject StatusInscricao {
+            PENDENTE
+            CONFIRMADA
+            CANCELADA
+        }
+    }
+}
+
+Bounded Context ItensPerdidos implements ItensPerdidos {
+    Aggregate ItemPerdido {
+        Entity ItemPerdido {
+            aggregateRoot
+
+            -ItemPerdidoId id
+            -EventoId evento
+            -UsuarioId registrante
+            String descricao
+            String localEncontrado
+            LocalDateTime dataRegistro
+            StatusItem status
+            -UsuarioId recuperador nullable
+            LocalDateTime dataRecuperacao nullable
+            String observacoes nullable
+
+            def boolean estaPendente()
+            def boolean foiRecuperado()
+            def boolean estaArquivado()
+            def void marcarComoRecuperado(@UsuarioId recuperador)
+            def void arquivar()
+
+            Repository ItemPerdidoRepository {
+                @ItemPerdido obter(@ItemPerdidoId id)
+                List<@ItemPerdido> listarPorEvento(@EventoId eventoId)
+                List<@ItemPerdido> listarPendentes()
+                List<@ItemPerdido> listarRecuperados()
+                List<@ItemPerdido> listarArquivados()
+                List<@ItemPerdido> listarPorRegistrante(@UsuarioId usuarioId)
+                List<@ItemPerdido> listarPorRecuperador(@UsuarioId usuarioId)
+            }
+        }
+
+        ValueObject ItemPerdidoId {
+            String codigo
+        }
+
+        ValueObject StatusItem {
+            PENDENTE
+            RECUPERADO
+            ARQUIVADO
+        }
+
+        Service ItemPerdidoService {
+            void registrar(@ItemPerdido item)
+            @ItemPerdido obter(@ItemPerdidoId id)
+            void marcarComoRecuperado(@ItemPerdidoId id, @UsuarioId recuperador)
+            void arquivar(@ItemPerdidoId id)
+            List<@ItemPerdido> listarPorEvento(@EventoId eventoId)
+            List<@ItemPerdido> listarPendentes()
+            List<@ItemPerdido> listarRecuperados()
+            List<@ItemPerdido> listarArquivados()
+            List<@ItemPerdido> listarPorRegistrante(@UsuarioId usuarioId)
+            List<@ItemPerdido> listarPorRecuperador(@UsuarioId usuarioId)
+            void excluir(@ItemPerdidoId id)
+        }
+    }
+}
