@@ -253,6 +253,10 @@ public class Evento {
         return LocalDateTime.now().isBefore(dataInicio);
     }
 
+    public boolean isCancelado() {
+        return status == StatusEvento.CANCELADO;
+    }
+
     @Override
     public String toString() {
         return String.format("%s (%s)", nome, status);

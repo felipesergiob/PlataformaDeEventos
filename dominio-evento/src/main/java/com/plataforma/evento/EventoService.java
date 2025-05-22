@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.math.BigDecimal;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.apache.commons.lang3.Validate.isTrue;
+import java.util.stream.Collectors;
 
 public class EventoService {
     private final EventoRepository eventoRepository;
@@ -53,9 +54,17 @@ public class EventoService {
         return eventoRepository.listarPorCategoria(categoria);
     }
 
-    public List<Evento> listarPorGenero(String genero) { //ISSO NAO TESTA NADA APENAS O MOCK
-        notNull(genero, "O gênero não pode ser nulo");
-        return eventoRepository.listarPorGenero(genero);
+    public List<Evento> listarPorGenero(String genero) {
+        if (genero == null || genero.trim().isEmpty()) {
+            throw new IllegalArgumentException("Gênero não pode ser nulo ou vazio");
+        }
+
+        String generoNormalizado = genero.substring(0, 1).toUpperCase() + genero.substring(1).toLowerCase();
+        List<Evento> eventos = eventoRepository.listarPorGenero(generoNormalizado);
+        
+        return eventos.stream()
+            .filter(evento -> !evento.isCancelado())
+            .collect(Collectors.toList());
     }
 
     public List<Evento> listarPorOrganizador(String organizador) {

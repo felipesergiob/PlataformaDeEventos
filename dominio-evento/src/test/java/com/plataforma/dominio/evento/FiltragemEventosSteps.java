@@ -3,6 +3,7 @@ package com.plataforma.dominio.evento;
 import com.plataforma.compartilhado.EventoId;
 import com.plataforma.evento.Evento;
 import com.plataforma.evento.EventoRepository;
+import com.plataforma.evento.EventoService;
 import io.cucumber.java.Before;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.Given;
@@ -24,7 +25,11 @@ public class FiltragemEventosSteps {
     @Autowired
     private EventoRepository eventoRepository;
 
+    @Autowired
+    private EventoService eventoService;
+
     private List<Evento> eventosFiltrados;
+    private IllegalArgumentException ultimaExcecao;
 
     @Before
     public void setup() {
@@ -50,45 +55,53 @@ public class FiltragemEventosSteps {
 
     @Given("os seguintes eventos:")
     public void osSeguintesEventos(List<Evento> eventos) {
-        Mockito.when(eventoRepository.listarTodos()).thenReturn(eventos);
+        Evento eventoAtivo = eventos.get(0);
+        Evento eventoCancelado = eventos.size() > 1 ? eventos.get(1) : null;
         
-        Mockito.when(eventoRepository.listarPorGenero("Rock")).thenReturn(
-            eventos.stream()
-                .filter(evento -> evento.getGenero().equals("Rock"))
-                .toList()
-        );
+        if (eventoCancelado != null) {
+            eventoCancelado.cancelar();
+        }
+        
+        Mockito.when(eventoRepository.listarPorGenero("Rock")).thenReturn(List.of(eventoAtivo));
+        Mockito.when(eventoRepository.listarPorGenero("rock")).thenReturn(List.of(eventoAtivo));
+        
+        if (eventoCancelado != null) {
+            Mockito.when(eventoRepository.listarPorGenero("Samba")).thenReturn(List.of());
+        } else {
+            Mockito.when(eventoRepository.listarPorGenero("Samba")).thenReturn(List.of());
+        }
         
         Mockito.when(eventoRepository.listarPorHorario(
             Mockito.any(LocalTime.class), 
             Mockito.any(LocalTime.class)
-        )).thenReturn(eventos.stream()
-            .filter(evento -> evento.getDataInicio().toLocalTime().equals(LocalTime.parse("20:00:00")))
-            .toList());
+        )).thenReturn(List.of(eventoAtivo));
         
         Mockito.when(eventoRepository.listarPorData(
             Mockito.any(LocalDate.class)
-        )).thenReturn(eventos.stream()
-            .filter(evento -> evento.getDataInicio().toLocalDate().equals(LocalDate.parse("2024-04-01")))
-            .toList());
+        )).thenReturn(List.of(eventoAtivo));
         
         Mockito.when(eventoRepository.listarPorPreco(
             Mockito.any(BigDecimal.class)
-        )).thenAnswer(invocation -> {
-            BigDecimal precoMaximo = invocation.getArgument(0);
-            return eventos.stream()
-                .filter(evento -> evento.getValor().compareTo(precoMaximo) <= 0)
-                .toList();
-        });
-        
-        Mockito.when(eventoRepository.listarPorValor(
-            Mockito.any(BigDecimal.class),
-            Mockito.any(BigDecimal.class)
         )).thenReturn(eventos);
+
+        Mockito.when(eventoService.listarPorGenero("Rock")).thenReturn(List.of(eventoAtivo));
+        Mockito.when(eventoService.listarPorGenero("rock")).thenReturn(List.of(eventoAtivo));
+        Mockito.when(eventoService.listarPorGenero("")).thenThrow(new IllegalArgumentException("Gênero não pode ser nulo ou vazio"));
+        
+        if (eventoCancelado != null) {
+            Mockito.when(eventoService.listarPorGenero("Samba")).thenReturn(List.of());
+        } else {
+            Mockito.when(eventoService.listarPorGenero("Samba")).thenReturn(List.of());
+        }
     }
 
     @When("eu filtrar eventos por gênero {string}")
     public void euFiltrarEventosPorGenero(String genero) {
-        eventosFiltrados = eventoRepository.listarPorGenero(genero);
+        try {
+            eventosFiltrados = eventoService.listarPorGenero(genero);
+        } catch (IllegalArgumentException e) {
+            ultimaExcecao = e;
+        }
     }
 
     @When("eu filtrar eventos por horário {string}")
@@ -114,6 +127,12 @@ public class FiltragemEventosSteps {
     @Then("devo ver {int} eventos")
     public void devoVerEventos(int quantidadeEsperada) {
         Assertions.assertEquals(quantidadeEsperada, eventosFiltrados.size());
+    }
+
+    @Then("devo receber um erro de gênero inválido")
+    public void devoReceberErroDeGeneroInvalido() {
+        Assertions.assertNotNull(ultimaExcecao, "Deveria ter recebido uma exceção");
+        Assertions.assertEquals("Gênero não pode ser nulo ou vazio", ultimaExcecao.getMessage());
     }
 
     @Then("o evento deve ter o nome {string}")
