@@ -25,9 +25,6 @@ public class FiltragemEventosSteps {
     @Autowired
     private EventoRepository eventoRepository;
 
-    @Autowired
-    private EventoService eventoService;
-
     private List<Evento> eventosFiltrados;
 
     @Before
@@ -56,14 +53,12 @@ public class FiltragemEventosSteps {
     public void osSeguintesEventos(List<Evento> eventos) {
         Mockito.when(eventoRepository.listarTodos()).thenReturn(eventos);
         
-        // Configuração dos mocks para filtragem por gênero
         Mockito.when(eventoRepository.listarPorGenero("Rock")).thenReturn(
             eventos.stream()
                 .filter(evento -> evento.getGenero().equals("Rock"))
                 .toList()
         );
         
-        // Configuração dos mocks para filtragem por horário
         Mockito.when(eventoRepository.listarPorHorario(
             Mockito.any(LocalTime.class), 
             Mockito.any(LocalTime.class)
@@ -71,14 +66,12 @@ public class FiltragemEventosSteps {
             .filter(evento -> evento.getDataInicio().toLocalTime().equals(LocalTime.parse("20:00:00")))
             .toList());
         
-        // Configuração dos mocks para filtragem por data
         Mockito.when(eventoRepository.listarPorData(
             Mockito.any(LocalDate.class)
         )).thenReturn(eventos.stream()
             .filter(evento -> evento.getDataInicio().toLocalDate().equals(LocalDate.parse("2024-04-01")))
             .toList());
         
-        // Configuração dos mocks para filtragem por preço
         Mockito.when(eventoRepository.listarPorPreco(
             Mockito.any(BigDecimal.class)
         )).thenAnswer(invocation -> {
@@ -88,7 +81,6 @@ public class FiltragemEventosSteps {
                 .toList();
         });
         
-        // Configuração dos mocks para filtragem por valor
         Mockito.when(eventoRepository.listarPorValor(
             Mockito.any(BigDecimal.class),
             Mockito.any(BigDecimal.class)
