@@ -8,11 +8,6 @@ import java.math.BigDecimal;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.apache.commons.lang3.Validate.notBlank;
 import static org.apache.commons.lang3.Validate.isTrue;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
-import java.time.LocalTime;
-import java.time.LocalDate;
 
 public class Evento {
     private final EventoId id;
@@ -27,7 +22,7 @@ public class Evento {
     private BigDecimal valor;
     private Status status;
 
-    private enum Status {
+    public enum Status {
         SALVO,
         CONFIRMADO,
         CANCELADO
@@ -115,8 +110,8 @@ public class Evento {
         this.organizador = usuario;
     }
 
-    public String getOrganizador() {
-        return organizador.toString();
+    public UsuarioId getOrganizador() {
+        return organizador;
     }
 
     public void setGenero(String genero) {
@@ -160,46 +155,8 @@ public class Evento {
         return LocalDateTime.now().isBefore(dataInicio);
     }
 
-    public List<Evento> listarPorOrganizador(UsuarioId organizador) {
-        notNull(organizador, "O organizador não pode ser nulo");
-
-        List<Evento> eventos = new ArrayList<>();
-
-        return eventos;
-    }
-
     public Status getStatus() {
         return status;
-    }
-
-    public List<Evento> listarPorFiltros(String genero, LocalTime horarioInicio, LocalTime horarioFim, LocalDate data, BigDecimal preco) {
-        notNull(genero, "O gênero não pode ser nulo");
-        notNull(horarioInicio, "O horário de início não pode ser nulo");
-        notNull(horarioFim, "O horário de fim não pode ser nulo");
-        notNull(data, "A data não pode ser nula");
-        notNull(preco, "O preço não pode ser nulo");
-
-        List<Evento> eventos = new ArrayList<>();
-
-        return eventos;
-    }
-
-    public List<Evento> listarSalvos(UsuarioId id) {
-        List<Evento> eventos = new ArrayList<>();
-
-        List<Evento> eventosQueNaoPassaram = eventos.stream().filter(evento -> evento.getDataInicio().isAfter(LocalDateTime.now())).collect(Collectors.toList());
-
-        eventosQueNaoPassaram.stream().filter(evento -> evento.getStatus() == Status.SALVO).collect(Collectors.toList());
-
-        return eventosQueNaoPassaram;
-    }
-
-    public List<Evento> listarConfirmados(UsuarioId id) {
-        List<Evento> eventos = new ArrayList<>();
-        
-        eventos.stream().filter(evento -> evento.getStatus() == Status.CONFIRMADO).collect(Collectors.toList());
-        
-        return eventos;
     }
 
     @Override
