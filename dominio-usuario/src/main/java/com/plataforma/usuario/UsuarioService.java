@@ -35,7 +35,7 @@ public class UsuarioService {
     evento.listarPorOrganizador(idSeguido);
    }
 
-   public List<Evento> visualizarCalendario(UsuarioId id) { //historia 2
+   public List<Evento> visualizarCalendario(UsuarioId id) { //historia 2 //mudar aqui ta errado
     notNull(id, "O id do usuário não pode ser nulo");
 
     var eventosCalendario = Stream.concat(

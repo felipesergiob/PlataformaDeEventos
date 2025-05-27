@@ -2,10 +2,12 @@ package com.plataforma.compartilhado;
 
 import lombok.Getter;
 import java.util.Objects;
+import java.util.Random;
 import org.apache.commons.lang3.Validate;
 
 @Getter
 public class AvaliacaoId {
+    private static final Random random = new Random();
     private final int id;
 
     private AvaliacaoId(int id) {
@@ -17,6 +19,14 @@ public class AvaliacaoId {
     
     public int getId() {
         return id;
+    }
+
+    public static AvaliacaoId random() {
+        return new AvaliacaoId(random.nextInt(Integer.MAX_VALUE - 1) + 1);
+    }
+
+    public static AvaliacaoId de(int id) {
+        return new AvaliacaoId(id);
     }
 
     @Override

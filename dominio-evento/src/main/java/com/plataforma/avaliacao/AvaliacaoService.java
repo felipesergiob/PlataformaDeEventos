@@ -41,7 +41,7 @@ public class AvaliacaoService {
         
         LocalDateTime agora = LocalDateTime.now();
         Avaliacao avaliacao = new Avaliacao(
-            AvaliacaoId.novo(),
+            AvaliacaoId.random(),
             usuarioId,
             eventoId,
             "Usuário", // TODO: Buscar nome do usuário
