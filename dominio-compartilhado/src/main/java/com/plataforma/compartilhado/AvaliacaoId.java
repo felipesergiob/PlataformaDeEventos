@@ -1,40 +1,42 @@
 package com.plataforma.compartilhado;
 
 import lombok.Getter;
+import java.util.Objects;
 import org.apache.commons.lang3.Validate;
 
 @Getter
 public class AvaliacaoId {
-    private final String codigo;
+    private final int id;
 
-    private AvaliacaoId(String codigo) {
-        Validate.notBlank(codigo, "O código não pode ser nulo ou vazio");
-        this.codigo = codigo;
+    private AvaliacaoId(int id) {
+        Validate.notNull(id, "O código não pode ser nulo ou vazio");
+        Validate.isTrue(id > 0, "O código não pode ser menor que 1");
+
+        this.id = id;
     }
-
-    public static AvaliacaoId novo() {
-        return new AvaliacaoId(java.util.UUID.randomUUID().toString());
-    }
-
-    public static AvaliacaoId de(String codigo) {
-        return new AvaliacaoId(codigo);
+    
+    public int getId() {
+        return id;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AvaliacaoId avaliacaoId = (AvaliacaoId) o;
-        return codigo.equals(avaliacaoId.codigo);
+    public boolean equals(Object obj) {
+        if (obj != null && obj instanceof AvaliacaoId) {
+            AvaliacaoId avaliacaoId = (AvaliacaoId) obj;
+
+            return id == avaliacaoId.id;
+        }
+
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return codigo.hashCode();
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
-        return codigo;
+        return Integer.toString(id);
     }
 } 

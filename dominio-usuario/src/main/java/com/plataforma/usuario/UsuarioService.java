@@ -1,126 +1,48 @@
 package com.plataforma.usuario;
 
-import java.util.List;
-
 import com.plataforma.compartilhado.UsuarioId;
+import com.plataforma.evento.Evento;
 
-import java.time.LocalDateTime;
 import static org.apache.commons.lang3.Validate.notNull;
-import static org.apache.commons.lang3.Validate.notBlank;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.List;
 
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
+    private final Evento evento;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
-        notNull(usuarioRepository, "O repositório de usuários não pode ser nulo");
-        this.usuarioRepository = usuarioRepository;
-    }
+   public UsuarioService(UsuarioRepository usuarioRepository, Evento evento) {
+    this.usuarioRepository = usuarioRepository;
+    this.evento = evento;
+   }
 
-    public void registrar(Usuario usuario) {
-        notNull(usuario, "O usuário não pode ser nulo");
-        if (usuarioRepository.existeEmail(usuario.getEmail())) {
-            throw new IllegalArgumentException("Já existe um usuário com este email");
-        }
-        usuarioRepository.salvar(usuario);
-    }
+   public void obter(UsuarioId id) {
+    notNull(id, "O id do usuário não pode ser nulo");
+    usuarioRepository.obter(id);
+   }
 
-    public Usuario obter(UsuarioId id) {
-        notNull(id, "O ID do usuário não pode ser nulo");
-        return usuarioRepository.obter(id)
-            .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
-    }
+   public void salvar(Usuario usuario) {
+    notNull(usuario, "O usuário não pode ser nulo");
+    usuarioRepository.salvar(usuario);
+   }
 
-    public Usuario buscarPorEmail(String email) {
-        notNull(email, "O email não pode ser nulo");
-        notBlank(email, "O email não pode estar em branco");
-        Usuario usuario = usuarioRepository.buscarPorEmail(email);
-        if (usuario == null) {
-            throw new IllegalArgumentException("Usuário não encontrado");
-        }
-        return usuario;
-    }
+   public void seguirUsuarioEListarEventos(UsuarioId id, UsuarioId idSeguido) { //historia 7
+    notNull(id, "O id do usuário não pode ser nulo");
+    notNull(idSeguido, "O id do usuário a ser seguido não pode ser nulo");
 
-    public List<Usuario> listarTodos() {
-        return usuarioRepository.listarTodos();
-    }
+    usuarioRepository.seguirUsuario(id, idSeguido);
+    evento.listarPorOrganizador(idSeguido);
+   }
 
-    public List<Usuario> listarAtivos() {
-        return usuarioRepository.listarAtivos();
-    }
+   public List<Evento> visualizarCalendario(UsuarioId id) { //historia 2
+    notNull(id, "O id do usuário não pode ser nulo");
 
-    public List<Usuario> listarPorTipo(Usuario.TipoUsuario tipo) {
-        notNull(tipo, "O tipo de usuário não pode ser nulo");
-        return usuarioRepository.listarPorTipo(tipo);
-    }
+    var eventosCalendario = Stream.concat(
+        evento.listarSalvos(id).stream(),
+        evento.listarConfirmados(id).stream()
+    ).collect(Collectors.toList());
 
-    public List<Usuario> listarPorPeriodo(LocalDateTime inicio, LocalDateTime fim) {
-        notNull(inicio, "A data de início não pode ser nula");
-        notNull(fim, "A data de fim não pode ser nula");
-        if (inicio.isAfter(fim)) {
-            throw new IllegalArgumentException("A data de início não pode ser posterior à data de fim");
-        }
-        return usuarioRepository.listarPorPeriodo(inicio, fim);
-    }
-
-    public void atualizar(Usuario usuario) {
-        notNull(usuario, "O usuário não pode ser nulo");
-        if (!usuarioRepository.existe(usuario.getId())) {
-            throw new IllegalArgumentException("Usuário não encontrado");
-        }
-        usuarioRepository.salvar(usuario);
-    }
-
-    public void excluir(UsuarioId id) {
-        notNull(id, "O ID do usuário não pode ser nulo");
-        if (!usuarioRepository.existe(id)) {
-            throw new IllegalArgumentException("Usuário não encontrado");
-        }
-        usuarioRepository.excluir(id);
-    }
-
-    public void desativar(UsuarioId id) {
-        Usuario usuario = obter(id);
-        usuario.desativar();
-        atualizar(usuario);
-    }
-
-    public void ativar(UsuarioId id) {
-        Usuario usuario = obter(id);
-        usuario.ativar();
-        atualizar(usuario);
-    }
-
-    public void tornarOrganizador(UsuarioId id) {
-        Usuario usuario = obter(id);
-        usuario.tornarOrganizador();
-        atualizar(usuario);
-    }
-
-    public void tornarParticipante(UsuarioId id) {
-        Usuario usuario = obter(id);
-        usuario.tornarParticipante();
-        atualizar(usuario);
-    }
-
-    public List<Usuario> listarOrganizadores() {
-        return usuarioRepository.listarPorTipo(Usuario.TipoUsuario.ORGANIZADOR);
-    }
-
-    public List<Usuario> listarParticipantes() {
-        return usuarioRepository.listarPorTipo(Usuario.TipoUsuario.PARTICIPANTE);
-    }
-
-    public boolean verificarCredenciais(String email, String senha) {
-        notNull(email, "O email não pode ser nulo");
-        notNull(senha, "A senha não pode ser nula");
-        
-        try {
-            Usuario usuario = usuarioRepository.buscarPorEmail(email);
-            return usuario != null && 
-                   usuario.estaAtivo() && 
-                   usuario.getSenha().equals(senha);
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
-} 
+    return eventosCalendario;
+   }
+}

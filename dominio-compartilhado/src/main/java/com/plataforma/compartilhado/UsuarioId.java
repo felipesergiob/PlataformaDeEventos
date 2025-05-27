@@ -1,40 +1,45 @@
 package com.plataforma.compartilhado;
 
 import lombok.Getter;
+import java.util.Objects;
 import org.apache.commons.lang3.Validate;
 
 @Getter
 public class UsuarioId {
-    private final String codigo;
+    private final int id;
 
-    private UsuarioId(String codigo) {
-        Validate.notBlank(codigo, "O código não pode ser nulo ou vazio");
-        this.codigo = codigo;
+    private UsuarioId(int id) {
+        Validate.notNull(id, "O código não pode ser nulo ou vazio");
+        Validate.isTrue(id > 0, "O código não pode ser menor que 1");
+
+        this.id = id;
     }
 
-    public static UsuarioId novo() {
-        return new UsuarioId(java.util.UUID.randomUUID().toString());
-    }
-
-    public static UsuarioId de(String codigo) {
-        return new UsuarioId(codigo);
+    public int getId() {
+        return id;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UsuarioId usuarioId = (UsuarioId) o;
-        return codigo.equals(usuarioId.codigo);
+    public boolean equals(Object obj) {
+        if (obj != null && obj instanceof UsuarioId) {
+            UsuarioId usuarioId = (UsuarioId) obj;
+            return id == usuarioId.id;
+        }
+
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return codigo.hashCode();
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
-        return codigo;
+        return Integer.toString(id);
+    }
+
+    public static UsuarioId de(int id) {
+        return new UsuarioId(id);
     }
 } 
