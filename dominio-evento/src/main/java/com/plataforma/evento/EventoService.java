@@ -10,6 +10,7 @@ import com.plataforma.compartilhado.UsuarioId;
 import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 import com.plataforma.evento.Evento.Status;
+import java.time.DayOfWeek;
 
 public class EventoService {
     private final EventoRepository eventoRepository;
@@ -42,55 +43,73 @@ public class EventoService {
         return eventoRepository.listarPorOrganizador(organizador);
     }
 
-    public List<Evento> listarPorFiltros(String genero, LocalTime horarioInicio, LocalTime horarioFim, LocalDate data, BigDecimal preco) {
+    public List<Evento> listarPorFiltros(String genero, LocalTime horarioInicio, LocalTime horarioFim, LocalDate data,
+            BigDecimal preco) {
         List<Evento> eventos = eventoRepository.listarTodos();
-        
+
         if (genero != null) {
             eventos = eventos.stream()
-                .filter(evento -> evento.getGenero().equals(genero))
-                .collect(Collectors.toList());
+                    .filter(evento -> evento.getGenero().equals(genero))
+                    .collect(Collectors.toList());
         }
-        
+
         if (horarioInicio != null && horarioFim != null) {
             eventos = eventos.stream()
-                .filter(evento -> {
-                    LocalTime horarioEvento = evento.getDataInicio().toLocalTime();
-                    return !horarioEvento.isBefore(horarioInicio) && !horarioEvento.isAfter(horarioFim);
-                })
-                .collect(Collectors.toList());
+                    .filter(evento -> {
+                        LocalTime horarioEvento = evento.getDataInicio().toLocalTime();
+                        return !horarioEvento.isBefore(horarioInicio) && !horarioEvento.isAfter(horarioFim);
+                    })
+                    .collect(Collectors.toList());
         }
-        
+
         if (data != null) {
             eventos = eventos.stream()
-                .filter(evento -> evento.getDataInicio().toLocalDate().equals(data))
-                .collect(Collectors.toList());
+                    .filter(evento -> evento.getDataInicio().toLocalDate().equals(data))
+                    .collect(Collectors.toList());
         }
-        
+
         if (preco != null) {
             eventos = eventos.stream()
-                .filter(evento -> evento.getValor().compareTo(preco) == 0)
-                .collect(Collectors.toList());
+                    .filter(evento -> evento.getValor().compareTo(preco) == 0)
+                    .collect(Collectors.toList());
         }
-        
+
         return eventos;
     }
 
     public List<Evento> listarSalvos(UsuarioId id) {
         notNull(id, "O ID do usuário não pode ser nulo");
         List<Evento> eventos = eventoRepository.listarSalvos(id);
-        
+
         return eventos.stream()
-            .filter(evento -> evento.getDataInicio().isAfter(LocalDateTime.now()))
-            .filter(evento -> evento.getStatus() == Status.SALVO)
-            .collect(Collectors.toList());
+                .filter(evento -> evento.getDataInicio().isAfter(LocalDateTime.now()))
+                .filter(evento -> evento.getStatus() == Status.SALVO)
+                .collect(Collectors.toList());
     }
 
     public List<Evento> listarConfirmados(UsuarioId id) {
         notNull(id, "O ID do usuário não pode ser nulo");
         List<Evento> eventos = eventoRepository.listarConfirmados(id);
-        
+
         return eventos.stream()
-            .filter(evento -> evento.getStatus() == Status.CONFIRMADO)
-            .collect(Collectors.toList());
+                .filter(evento -> evento.getStatus() == Status.CONFIRMADO)
+                .collect(Collectors.toList());
     }
-} 
+
+    public List<Evento> listarEventosDestaques() { // historia 10
+        List<Evento> todosEventos = eventoRepository.listarTodos();
+
+        LocalDateTime agora = LocalDateTime.now();
+        LocalDateTime inicioSemana = agora.with(DayOfWeek.MONDAY).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime fimSemana = inicioSemana.plusDays(7);
+
+        return todosEventos.stream()
+                .filter(evento -> {
+                    LocalDateTime dataEvento = evento.getDataInicio();
+                    return dataEvento.isAfter(inicioSemana) && dataEvento.isBefore(fimSemana);
+                })
+                .sorted((evento1, evento2) -> evento2.getInscritos().compareTo(evento1.getInscritos()))
+                .limit(3)
+                .toList();
+    }
+}
