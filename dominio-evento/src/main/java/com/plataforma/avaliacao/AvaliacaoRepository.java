@@ -6,7 +6,7 @@ import java.util.List;
 public interface AvaliacaoRepository {
     List<Avaliacao> listarPorEvento(EventoId eventoId);
 
-    double calcularMediaNotas(EventoId eventoId);
-
     int contarParticipantesConfirmados(EventoId eventoId);
-} 
+
+    List<Avaliacao> listarNotasEvento(EventoId eventoId);
+}

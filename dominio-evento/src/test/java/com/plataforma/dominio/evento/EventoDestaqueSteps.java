@@ -16,7 +16,7 @@ public class EventoDestaqueSteps {
 
     @Autowired
     private EventoService eventoService;
-    
+
     private List<Evento> eventosDestaques;
     private List<Evento> eventosCadastrados = new ArrayList<>();
 
@@ -59,15 +59,15 @@ public class EventoDestaqueSteps {
     @E("todos os eventos exibidos devem ocorrer na semana atual")
     public void todos_os_eventos_exibidos_devem_ocorrer_na_semana_atual() {
         LocalDateTime agora = LocalDateTime.now();
-        LocalDateTime inicioSemana = agora.with(java.time.DayOfWeek.MONDAY).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime inicioSemana = agora.with(java.time.DayOfWeek.MONDAY).withHour(0).withMinute(0).withSecond(0)
+                .withNano(0);
         LocalDateTime fimSemana = inicioSemana.plusDays(7);
 
         for (Evento evento : eventosDestaques) {
             LocalDateTime dataEvento = evento.getDataInicio();
             Assert.assertTrue(
-                "Evento " + evento.getNome() + " deve estar na semana atual",
-                !dataEvento.isBefore(inicioSemana) && dataEvento.isBefore(fimSemana)
-            );
+                    "Evento " + evento.getNome() + " deve estar na semana atual",
+                    !dataEvento.isBefore(inicioSemana) && dataEvento.isBefore(fimSemana));
         }
     }
-} 
+}

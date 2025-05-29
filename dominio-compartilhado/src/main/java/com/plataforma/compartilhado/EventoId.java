@@ -2,6 +2,7 @@ package com.plataforma.compartilhado;
 
 import lombok.Getter;
 import java.util.Objects;
+
 import org.apache.commons.lang3.Validate;
 
 @Getter
@@ -39,4 +40,8 @@ public class EventoId {
     public String toString() {
         return Integer.toString(id);
     }
-} 
+
+    public static EventoId de(int id) {
+        return new EventoId(id);
+    }
+}

@@ -1,5 +1,7 @@
 package com.plataforma.dominio.evento;
 
+import com.plataforma.avaliacao.AvaliacaoRepository;
+import com.plataforma.avaliacao.AvaliacaoService;
 import com.plataforma.evento.EventoRepository;
 import com.plataforma.evento.EventoService;
 import org.mockito.Mockito;
@@ -21,4 +23,17 @@ public class TestConfig {
     public EventoService eventoService(EventoRepository eventoRepository) {
         return new EventoService(eventoRepository);
     }
+
+    @Bean
+    @Primary
+    public AvaliacaoRepository avaliacaoRepository() {
+        return Mockito.mock(AvaliacaoRepository.class);
+    }
+
+    @Bean
+    @Primary
+    public AvaliacaoService avaliacaoService(AvaliacaoRepository avaliacaoRepository) {
+        return new AvaliacaoService(avaliacaoRepository);
+    }
+
 }

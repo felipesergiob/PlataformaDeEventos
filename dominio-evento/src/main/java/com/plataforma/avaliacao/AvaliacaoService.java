@@ -19,8 +19,15 @@ public class AvaliacaoService {
     }
 
     public double obterMediaAvaliacoes(EventoId eventoId) {
-        notNull(eventoId, "O id do evento não pode ser nulo");
-        return avaliacaoRepository.calcularMediaNotas(eventoId);
+        List<Avaliacao> avaliacoes = avaliacaoRepository.listarNotasEvento(eventoId);
+        if (avaliacoes.isEmpty()) {
+            return 0.0;
+        }
+        double media = avaliacoes.stream()
+                .mapToInt(Avaliacao::getNota)
+                .average()
+                .getAsDouble();
+        return media;
     }
 
     public int obterQuantidadeParticipantes(EventoId eventoId) {
@@ -28,14 +35,14 @@ public class AvaliacaoService {
         return avaliacaoRepository.contarParticipantesConfirmados(eventoId);
     }
 
-    public Map<String, Object> visualizarResumoAvaliacoes(EventoId eventoId) { //historia 6
+    public Map<String, Object> visualizarResumoAvaliacoes(EventoId eventoId) { // historia 6
         notNull(eventoId, "O id do evento não pode ser nulo");
-        
+
         Map<String, Object> resumo = new HashMap<>();
         resumo.put("avaliacoes", visualizarHistoricoAvaliacoes(eventoId));
         resumo.put("mediaNotas", obterMediaAvaliacoes(eventoId));
         resumo.put("quantidadeParticipantes", obterQuantidadeParticipantes(eventoId));
-        
+
         return resumo;
     }
-} 
+}
