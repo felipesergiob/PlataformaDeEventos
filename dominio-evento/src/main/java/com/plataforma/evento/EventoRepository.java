@@ -21,4 +21,4 @@ public interface EventoRepository {
     List<Evento> listarConfirmados(UsuarioId id);
 
     List<Evento> listarPorFiltros(String genero, LocalTime horarioInicio, LocalTime horarioFim, LocalDate data, BigDecimal preco);
-} 
+}

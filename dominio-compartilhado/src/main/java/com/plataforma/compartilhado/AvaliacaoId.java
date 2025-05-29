@@ -16,7 +16,7 @@ public class AvaliacaoId {
 
         this.id = id;
     }
-    
+
     public int getId() {
         return id;
     }
@@ -49,4 +49,4 @@ public class AvaliacaoId {
     public String toString() {
         return Integer.toString(id);
     }
-} 
+}
