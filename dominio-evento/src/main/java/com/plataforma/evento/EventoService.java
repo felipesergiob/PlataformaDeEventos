@@ -96,7 +96,7 @@ public class EventoService {
                 .collect(Collectors.toList());
     }
 
-    public List<Evento> listarEventosDestaques() { // historia 10
+    public List<Evento> listarEventosDestaques() { // historia 10 //feito
         List<Evento> todosEventos = eventoRepository.listarTodos();
 
         LocalDateTime agora = LocalDateTime.now();
