@@ -26,10 +26,20 @@
         <jakarta.persistence.version>3.1.0</jakarta.persistence.version>
         <junit.version>5.10.1</junit.version>
         <mockito.version>5.8.0</mockito.version>
+        <spring-boot.version>3.2.3</spring-boot.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- Spring Boot -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <!-- Lombok -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
