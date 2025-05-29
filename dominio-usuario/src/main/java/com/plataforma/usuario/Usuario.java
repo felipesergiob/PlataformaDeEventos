@@ -49,14 +49,14 @@ public class Usuario {
         return seguidores;
     }
 
-    public void seguirUsuario(UsuarioId id, UsuarioId idSeguido) {
+    public void seguirUsuario(UsuarioId id) {
         if (jaSegueUsuario(id)) {
             throw new IllegalArgumentException("O usuário já está sendo seguido");
         }
 
-        if (id.equals(idSeguido)) {
+        if (this.id.equals(id)) {
             throw new IllegalArgumentException("O usuário não pode seguir a si mesmo");
-         }
+        }
 
         seguidores.add(id);
     }

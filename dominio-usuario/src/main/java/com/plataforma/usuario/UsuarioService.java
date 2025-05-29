@@ -28,15 +28,19 @@ public class UsuarioService {
     usuarioRepository.salvar(usuario);
    }
 
-   public void seguirUsuarioEListarEventos(UsuarioId id, UsuarioId idSeguido) { //historia 7
+   public void seguirUsuarioEListarEventos(UsuarioId id, UsuarioId idSeguido) { //historia 7 //feito
     notNull(id, "O id do usuário não pode ser nulo");
     notNull(idSeguido, "O id do usuário a ser seguido não pode ser nulo");
+
+    if (id.equals(idSeguido)) {
+        throw new IllegalArgumentException("O usuário não pode seguir a si mesmo");
+    }
 
     usuarioRepository.seguirUsuario(id, idSeguido);
     eventoRepository.listarPorOrganizador(idSeguido);
    }
 
-   public List<Evento> visualizarCalendario(UsuarioId id) { //historia 2 //feito
+   public List<Evento> visualizarCalendario(UsuarioId id) {
     notNull(id, "O id do usuário não pode ser nulo");
 
     var eventosCalendario = Stream.concat(
