@@ -11,8 +11,6 @@ import org.junit.Assert;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class VisualizarResumoAvaliacoesSteps {
@@ -30,7 +28,6 @@ public class VisualizarResumoAvaliacoesSteps {
     @Dado("o organizador {string} possui os seguintes eventos passados:")
     public void o_organizador_possui_os_seguintes_eventos_passados(String organizador, io.cucumber.datatable.DataTable dataTable) {
         List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
         
         eventoId = EventoId.de(1); // Using a fixed ID for testing
         
