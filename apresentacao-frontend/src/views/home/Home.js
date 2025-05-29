@@ -9,7 +9,16 @@ function Home({
   activeCategory,
   onCategoryChange,
   searchQuery,
-  onSearchChange
+  onSearchChange,
+  startTime,
+  endTime,
+  onTimeRangeChange,
+  minPrice,
+  maxPrice,
+  onPriceRangeChange,
+  startDate,
+  endDate,
+  onDateRangeChange
 }) {
   if (loading) {
     return <Loading />;
@@ -21,21 +30,34 @@ function Home({
 
   return (
     <StyledHome>
-      <StyledHome.Container maxWidth="lg">
+      <StyledHome.Container>
         <StyledHome.Header>
           <StyledHome.Title>
             Eventos Disponíveis
           </StyledHome.Title>
+        </StyledHome.Header>
+
+        <StyledHome.Content>
+          <EventList events={events} />
+        </StyledHome.Content>
+
+        <StyledHome.Filters>
           <FilterBar
             activeCategory={activeCategory}
             onCategoryChange={onCategoryChange}
             searchQuery={searchQuery}
             onSearchChange={onSearchChange}
+            startTime={startTime}
+            endTime={endTime}
+            onTimeRangeChange={onTimeRangeChange}
+            minPrice={minPrice}
+            maxPrice={maxPrice}
+            onPriceRangeChange={onPriceRangeChange}
+            startDate={startDate}
+            endDate={endDate}
+            onDateRangeChange={onDateRangeChange}
           />
-        </StyledHome.Header>
-        <StyledHome.Content>
-          <EventList events={events} />
-        </StyledHome.Content>
+        </StyledHome.Filters>
       </StyledHome.Container>
     </StyledHome>
   );
