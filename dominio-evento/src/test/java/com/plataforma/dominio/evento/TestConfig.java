@@ -20,8 +20,8 @@ public class TestConfig {
 
     @Bean
     @Primary
-    public EventoService eventoService(EventoRepository eventoRepository) {
-        return new EventoService(eventoRepository);
+    public EventoService eventoService(EventoRepository eventoRepository, AvaliacaoService avaliacaoService, AvaliacaoRepository avaliacaoRepository) {
+        return new EventoService(eventoRepository, avaliacaoService, avaliacaoRepository);
     }
 
     @Bean
@@ -32,8 +32,7 @@ public class TestConfig {
 
     @Bean
     @Primary
-    public AvaliacaoService avaliacaoService(AvaliacaoRepository avaliacaoRepository) {
-        return new AvaliacaoService(avaliacaoRepository);
+    public AvaliacaoService avaliacaoService(AvaliacaoRepository avaliacaoRepository, EventoRepository eventoRepository) {
+        return new AvaliacaoService(avaliacaoRepository, eventoRepository());
     }
-
 }

@@ -28,7 +28,7 @@ public class Evento {
         CANCELADO
     }
 
-    public Evento(EventoId  id, String nome, String descricao, LocalDateTime dataInicio,
+    public Evento(EventoId id, String nome, String descricao, LocalDateTime dataInicio,
             LocalDateTime dataFim, String local, UsuarioId organizador,
             String genero, BigDecimal valor) {
         notNull(id, "O id não pode ser nulo");
@@ -106,7 +106,7 @@ public class Evento {
 
     public void setOrganizador(UsuarioId usuario) {
         notNull(usuario, "O usuario não pode ser nulo");
-        
+
         this.organizador = usuario;
     }
 

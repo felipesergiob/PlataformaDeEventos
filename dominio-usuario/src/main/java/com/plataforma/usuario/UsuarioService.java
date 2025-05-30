@@ -40,7 +40,7 @@ public class UsuarioService {
     eventoRepository.listarPorOrganizador(idSeguido);
    }
 
-   public List<Evento> visualizarCalendario(UsuarioId id) {
+   public List<Evento> visualizarCalendario(UsuarioId id) { //historia 2 //feito
     notNull(id, "O id do usuário não pode ser nulo");
 
     var eventosCalendario = Stream.concat(

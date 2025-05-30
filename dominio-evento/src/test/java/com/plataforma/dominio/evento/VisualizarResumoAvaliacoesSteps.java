@@ -28,9 +28,9 @@ public class VisualizarResumoAvaliacoesSteps {
     @Dado("o organizador {string} possui os seguintes eventos passados:")
     public void o_organizador_possui_os_seguintes_eventos_passados(String organizador, io.cucumber.datatable.DataTable dataTable) {
         List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
-        
-        eventoId = EventoId.de(1); // Using a fixed ID for testing
-        
+
+        eventoId = EventoId.de(1);
+
         for (Map<String, String> row : rows) {
             Avaliacao avaliacao = Mockito.mock(Avaliacao.class);
             Mockito.when(avaliacao.getNota()).thenReturn(Integer.parseInt(row.get("mediaAvaliacao").split("\\.")[0]));

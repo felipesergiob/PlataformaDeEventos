@@ -11,13 +11,29 @@ import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 import com.plataforma.evento.Evento.Status;
 import java.time.DayOfWeek;
+import com.plataforma.avaliacao.AvaliacaoService;
+import com.plataforma.avaliacao.AvaliacaoRepository;
+import com.plataforma.avaliacao.Avaliacao;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EventoService {
     private final EventoRepository eventoRepository;
+    private final AvaliacaoService avaliacaoService;
+    private final AvaliacaoRepository avaliacaoRepository;
+
+    public EventoService(EventoRepository eventoRepository, AvaliacaoService avaliacaoService, AvaliacaoRepository avaliacaoRepository) {
+        notNull(eventoRepository, "O repositório de eventos não pode ser nulo");
+        notNull(avaliacaoService, "O serviço de avaliações não pode ser nulo");
+        this.eventoRepository = eventoRepository;
+        this.avaliacaoService = avaliacaoService;
+        this.avaliacaoRepository = avaliacaoRepository;
+    }
 
     public EventoService(EventoRepository eventoRepository) {
-        notNull(eventoRepository, "O repositório de eventos não pode ser nulo");
         this.eventoRepository = eventoRepository;
+        this.avaliacaoService = null;
+        this.avaliacaoRepository = null;
     }
 
     public void salvar(Evento evento) {
@@ -111,5 +127,35 @@ public class EventoService {
                 .sorted((evento1, evento2) -> evento2.getInscritos().compareTo(evento1.getInscritos()))
                 .limit(3)
                 .toList();
+    }
+
+    public Map<String, Object> dashboardEvento(EventoId id) { //historia 4
+        Evento evento = eventoRepository.obter(id);
+        if (evento == null) {
+            throw new IllegalArgumentException("Evento não encontrado");
+        }
+
+        if (evento.getDataFim().isAfter(LocalDateTime.now())) {
+            throw new IllegalArgumentException("O dashboard só está disponível para eventos encerrados");
+        }
+
+        Map<String, Object> dashboard = new HashMap<>();
+        int totalInscritos = evento.getInscritos();
+        double mediaAvaliacoes = avaliacaoService.obterMediaAvaliacoes(id);
+        List<Avaliacao> avaliacoes = avaliacaoRepository.listarNotasEvento(id);
+        int quantidadeNotasAvaliacoes = avaliacoes.size();
+
+        List<String> comentarios = avaliacoes.stream()
+            .map(Avaliacao::getComentario)
+            .filter(comentario -> comentario != null && !comentario.trim().isEmpty())
+            .toList();
+
+        dashboard.put("nomeEvento", evento.getNome());
+        dashboard.put("totalInscritos", totalInscritos);
+        dashboard.put("mediaAvaliacoes", mediaAvaliacoes);
+        dashboard.put("quantidadeAvaliacoes", quantidadeNotasAvaliacoes);
+        dashboard.put("comentarios", comentarios);
+
+        return dashboard;
     }
 }
