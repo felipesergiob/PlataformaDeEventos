@@ -48,7 +48,7 @@ public class AvaliacaoService {
         return avaliacaoRepository.contarParticipantesConfirmados(eventoId);
     }
 
-    public Map<String, Object> visualizarResumoAvaliacoes(EventoId eventoId) { // historia 6
+    public Map<String, Object> visualizarResumoAvaliacoes(EventoId eventoId) { // historia  indefinida
         notNull(eventoId, "O id do evento não pode ser nulo");
 
         Map<String, Object> resumo = new HashMap<>();
