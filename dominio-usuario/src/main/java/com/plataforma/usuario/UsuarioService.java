@@ -5,6 +5,8 @@ import com.plataforma.evento.Evento;
 import com.plataforma.evento.EventoRepository;
 import com.plataforma.avaliacao.AvaliacaoRepository;
 import com.plataforma.avaliacao.Avaliacao;
+import com.plataforma.Publicacao.Publicacao;
+import com.plataforma.Publicacao.PublicacaoRepository;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import java.time.LocalDateTime;
@@ -16,23 +18,28 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final EventoRepository eventoRepository;
     private final AvaliacaoRepository avaliacaoRepository;
+    private final PublicacaoRepository publicacaoRepository;
 
     public UsuarioService(UsuarioRepository usuarioRepository,
             EventoRepository eventoRepository,
-            AvaliacaoRepository avaliacaoRepository) {
+            AvaliacaoRepository avaliacaoRepository,
+            PublicacaoRepository publicacaoRepository) {
         notNull(usuarioRepository, "O repositório de usuários não pode ser nulo");
         notNull(eventoRepository, "O repositório de eventos não pode ser nulo");
         notNull(avaliacaoRepository, "O repositório de avaliações não pode ser nulo");
+        notNull(publicacaoRepository, "O repositório de publicações não pode ser nulo");
 
         this.usuarioRepository = usuarioRepository;
         this.eventoRepository = eventoRepository;
         this.avaliacaoRepository = avaliacaoRepository;
+        this.publicacaoRepository = publicacaoRepository;
     }
 
     public UsuarioService(UsuarioRepository usuarioRepository, EventoRepository eventoRepository) {
         this.usuarioRepository = usuarioRepository;
         this.eventoRepository = eventoRepository;
         this.avaliacaoRepository = null;
+        this.publicacaoRepository = null;
     }
 
     public void obter(UsuarioId id) {
@@ -67,10 +74,11 @@ public class UsuarioService {
         return eventosCalendario;
     }
 
-    public List<Map<String, Object>> perfilUsuario(UsuarioId id) { //historia 6
+    public List<Map<String, Object>> perfilUsuario(UsuarioId id) {
         notNull(id, "O id do usuário não pode ser nulo");
 
         List<Evento> eventos = eventoRepository.listarPorOrganizador(id);
+        List<Publicacao> publicacoes = publicacaoRepository.listarPorAutor(id);
 
         List<Evento> eventosPassados = eventos.stream()
                 .filter(evento -> evento.getDataFim().isBefore(LocalDateTime.now()))
@@ -97,6 +105,11 @@ public class UsuarioService {
                     .map(Avaliacao::getComentario)
                     .collect(Collectors.toList());
             infoEvento.put("comentarios", comentarios);
+
+            List<Publicacao> publicacoesEvento = publicacoes.stream()
+                    .filter(p -> p.getEventoId().equals(evento.getId()))
+                    .collect(Collectors.toList());
+            infoEvento.put("publicacoes", publicacoesEvento);
 
             return infoEvento;
         }).collect(Collectors.toList());

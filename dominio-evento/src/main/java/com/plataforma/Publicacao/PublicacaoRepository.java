@@ -1,6 +1,7 @@
 package com.plataforma.Publicacao;
 
 import com.plataforma.compartilhado.EventoId;
+import com.plataforma.compartilhado.UsuarioId;
 import java.util.List;
 
 public interface PublicacaoRepository {
@@ -9,4 +10,6 @@ public interface PublicacaoRepository {
     Publicacao obter(PublicacaoId id);
 
     List<Publicacao> listarPorEvento(EventoId id);
+
+    List<Publicacao> listarPorAutor(UsuarioId autorId);
 }

@@ -13,7 +13,6 @@
         <module>dominio-compartilhado</module>
         <module>dominio-usuario</module>
         <module>dominio-evento</module>
-        <module>dominio-item</module>
     </modules>
 
     <properties>

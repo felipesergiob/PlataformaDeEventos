@@ -7,6 +7,8 @@ import com.plataforma.evento.Evento;
 import com.plataforma.evento.EventoRepository;
 import com.plataforma.avaliacao.Avaliacao;
 import com.plataforma.avaliacao.AvaliacaoRepository;
+import com.plataforma.Publicacao.Publicacao;
+import com.plataforma.Publicacao.PublicacaoRepository;
 import io.cucumber.java.pt.*;
 import org.junit.Assert;
 import org.mockito.Mockito;
@@ -25,6 +27,7 @@ public class PerfilUsuarioSteps {
 	private List<Map<String, Object>> perfilInfo;
 	private List<Evento> eventosPassados = new ArrayList<>();
 	private List<Avaliacao> avaliacoes = new ArrayList<>();
+	private List<Publicacao> publicacoes = new ArrayList<>();
 	private UsuarioId usuarioId;
 	private Evento eventoAtual;
 
@@ -76,18 +79,29 @@ public class PerfilUsuarioSteps {
 		}
 	}
 
+	@E("que existem publicações relacionadas ao evento {string}")
+	public void que_existem_publicacoes_relacionadas_ao_evento(String nomeEvento) {
+		Publicacao publicacao = Mockito.mock(Publicacao.class);
+		Mockito.when(publicacao.getEventoId()).thenReturn(eventoAtual.getId());
+		Mockito.when(publicacao.getConteudo()).thenReturn("Conteúdo da publicação");
+		publicacoes.add(publicacao);
+	}
+
 	@Quando("eu acesso o perfil do usuário {string}")
 	public void eu_acesso_o_perfil_de(String id) {
 		EventoRepository eventoRepo = Mockito.mock(EventoRepository.class);
 		AvaliacaoRepository avaliacaoRepo = Mockito.mock(AvaliacaoRepository.class);
+		PublicacaoRepository publicacaoRepo = Mockito.mock(PublicacaoRepository.class);
 
 		Mockito.when(eventoRepo.listarPorOrganizador(usuarioId)).thenReturn(eventosPassados);
 		Mockito.when(avaliacaoRepo.listarPorEvento(Mockito.any())).thenReturn(avaliacoes);
+		Mockito.when(publicacaoRepo.listarPorAutor(usuarioId)).thenReturn(publicacoes);
 
 		usuarioService = new UsuarioService(
 				Mockito.mock(UsuarioRepository.class),
 				eventoRepo,
-				avaliacaoRepo);
+				avaliacaoRepo,
+				publicacaoRepo);
 
 		perfilInfo = usuarioService.perfilUsuario(usuarioId);
 	}
@@ -118,5 +132,16 @@ public class PerfilUsuarioSteps {
 		Assert.assertTrue("Evento não encontrado no perfil", eventoInfo.isPresent());
 		List<String> comentarios = (List<String>) eventoInfo.get().get("comentarios");
 		Assert.assertFalse("Lista de comentários não deve estar vazia", comentarios.isEmpty());
+	}
+
+	@E("eu devo ver as publicações relacionadas ao evento {string}")
+	public void eu_devo_ver_as_publicacoes_relacionadas_ao_evento(String nomeEvento) {
+		Optional<Map<String, Object>> eventoInfo = perfilInfo.stream()
+				.filter(info -> nomeEvento.equals(info.get("nome")))
+				.findFirst();
+
+		Assert.assertTrue("Evento não encontrado no perfil", eventoInfo.isPresent());
+		List<Publicacao> publicacoesEvento = (List<Publicacao>) eventoInfo.get().get("publicacoes");
+		Assert.assertFalse("Lista de publicações não deve estar vazia", publicacoesEvento.isEmpty());
 	}
 }
