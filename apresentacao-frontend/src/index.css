@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 260 6% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 260 6% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 260 6% 10%;
+
+    --primary: 263 70% 50%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 263 20% 96%;
+    --secondary-foreground: 260 6% 20%;
+
+    --muted: 263 20% 96%;
+    --muted-foreground: 260 4% 46%;
+
+    --accent: 263 20% 96%;
+    --accent-foreground: 260 6% 20%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 263 20% 90%;
+    --input: 263 20% 90%;
+    --ring: 263 70% 50%;
+
+    --radius: 0.75rem;
+
+    --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #c084fc 100%);
+    --gradient-purple-light: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  .gradient-purple {
+    background: var(--gradient-purple);
+  }
+  
+  .gradient-purple-light {
+    background: var(--gradient-purple-light);
+  }
+  
+  .text-gradient {
+    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #c084fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+@layer components {
+  .glass-effect {
+    @apply bg-white/80 backdrop-blur-sm border border-white/20;
+  }
+  
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-xl;
+  }
+  
+  .btn-purple {
+    @apply bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold py-2 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25;
+  }
+}
