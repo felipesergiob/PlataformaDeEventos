@@ -28,4 +28,4 @@ Funcionalidade: Visualização de Perfil Público
     Então devo ver a lista de eventos passados organizados por ele
     E para cada evento devo ver o nome, data de início e fim
     E a nota média e comentários das avaliações
-    E as publicações feitas por ele 
+    E as publicações feitas por ele

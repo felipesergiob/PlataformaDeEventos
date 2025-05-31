@@ -1,6 +1,8 @@
 package com.plataforma.dominio.usuario;
 
 import com.plataforma.compartilhado.UsuarioId;
+import com.plataforma.compartilhado.EventoId;
+import com.plataforma.Publicacao.PublicacaoId;
 import com.plataforma.usuario.UsuarioService;
 import com.plataforma.usuario.UsuarioRepository;
 import com.plataforma.evento.Evento;
@@ -18,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.time.LocalDate;
+import java.math.BigDecimal;
 
 public class PerfilUsuarioSteps {
 
@@ -31,64 +34,57 @@ public class PerfilUsuarioSteps {
 	private UsuarioId usuarioId;
 	private Evento eventoAtual;
 
-	@Dado("que existem eventos passados organizados pelo usuário {string}")
-	public void que_existem_eventos_passados_organizados_por(String id) {
-		this.usuarioId = UsuarioId.de(Integer.parseInt(id));
+	@Dado("que existe um usuário organizador")
+	public void que_existe_um_usuario_organizador() {
+		usuarioId = UsuarioId.de(1);
 	}
 
-	@E("que o evento {string} foi organizado pelo usuário {string}")
-	public void que_o_evento_foi_organizado_por(String nomeEvento, String id) {
-		eventoAtual = Mockito.mock(Evento.class);
-		Mockito.when(eventoAtual.getNome()).thenReturn(nomeEvento);
-		eventosPassados.add(eventoAtual);
-	}
-
-	@E("que o evento {string} aconteceu em {string}")
-	public void que_o_evento_aconteceu_em(String nomeEvento, String data) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-		LocalDate localDate = LocalDate.parse(data, formatter);
-		LocalDateTime dataEvento = localDate.atStartOfDay();
-		Mockito.when(eventoAtual.getDataFim()).thenReturn(dataEvento);
-	}
-
-	@E("que o evento {string} recebeu {int} avaliações com notas {int}, {int} e {int}")
-	public void que_o_evento_recebeu_avaliacoes_com_notas(String nomeEvento, int quantidade, int nota1, int nota2,
-			int nota3) {
-		Avaliacao avaliacao1 = Mockito.mock(Avaliacao.class);
-		Avaliacao avaliacao2 = Mockito.mock(Avaliacao.class);
-		Avaliacao avaliacao3 = Mockito.mock(Avaliacao.class);
-
-		Mockito.when(avaliacao1.getNota()).thenReturn(nota1);
-		Mockito.when(avaliacao2.getNota()).thenReturn(nota2);
-		Mockito.when(avaliacao3.getNota()).thenReturn(nota3);
-
-		avaliacoes.add(avaliacao1);
-		avaliacoes.add(avaliacao2);
-		avaliacoes.add(avaliacao3);
-	}
-
-	@E("que o evento {string} possui os seguintes comentários:")
-	public void que_o_evento_possui_os_seguintes_comentarios(String nomeEvento,
-			io.cucumber.datatable.DataTable dataTable) {
+	@E("que ele organizou os seguintes eventos passados:")
+	public void que_ele_organizou_os_seguintes_eventos_passados(io.cucumber.datatable.DataTable dataTable) {
 		List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
-		for (int i = 0; i < rows.size(); i++) {
-			Map<String, String> row = rows.get(i);
-			Avaliacao avaliacao = avaliacoes.get(i);
-			Mockito.when(avaliacao.getComentario()).thenReturn(row.get("comentario"));
+		for (Map<String, String> row : rows) {
+			Evento evento = Mockito.mock(Evento.class);
+			Mockito.when(evento.getId()).thenReturn(EventoId.de(Integer.parseInt(row.get("id"))));
+			Mockito.when(evento.getNome()).thenReturn(row.get("nome"));
+			Mockito.when(evento.getDescricao()).thenReturn(row.get("descricao"));
+			Mockito.when(evento.getDataInicio()).thenReturn(LocalDateTime.parse(row.get("dataInicio"), formatter));
+			Mockito.when(evento.getDataFim()).thenReturn(LocalDateTime.parse(row.get("dataFim"), formatter));
+			Mockito.when(evento.getLocal()).thenReturn(row.get("local"));
+			Mockito.when(evento.getGenero()).thenReturn(row.get("genero"));
+			Mockito.when(evento.getValor()).thenReturn(new BigDecimal(row.get("valor")));
+			eventosPassados.add(evento);
 		}
 	}
 
-	@E("que existem publicações relacionadas ao evento {string}")
-	public void que_existem_publicacoes_relacionadas_ao_evento(String nomeEvento) {
-		Publicacao publicacao = Mockito.mock(Publicacao.class);
-		Mockito.when(publicacao.getEventoId()).thenReturn(eventoAtual.getId());
-		Mockito.when(publicacao.getConteudo()).thenReturn("Conteúdo da publicação");
-		publicacoes.add(publicacao);
+	@E("que existem as seguintes avaliações para os eventos:")
+	public void que_existem_as_seguintes_avaliacoes_para_os_eventos(io.cucumber.datatable.DataTable dataTable) {
+		List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
+
+		for (Map<String, String> row : rows) {
+			Avaliacao avaliacao = Mockito.mock(Avaliacao.class);
+			Mockito.when(avaliacao.getNota()).thenReturn(Integer.parseInt(row.get("nota")));
+			Mockito.when(avaliacao.getComentario()).thenReturn(row.get("comentario"));
+			avaliacoes.add(avaliacao);
+		}
 	}
 
-	@Quando("eu acesso o perfil do usuário {string}")
-	public void eu_acesso_o_perfil_de(String id) {
+	@E("que ele fez as seguintes publicações:")
+	public void que_ele_fez_as_seguintes_publicacoes(io.cucumber.datatable.DataTable dataTable) {
+		List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
+
+		for (Map<String, String> row : rows) {
+			Publicacao publicacao = Mockito.mock(Publicacao.class);
+			Mockito.when(publicacao.getId()).thenReturn(PublicacaoId.gerar());
+			Mockito.when(publicacao.getEventoId()).thenReturn(EventoId.de(Integer.parseInt(row.get("eventoId"))));
+			Mockito.when(publicacao.getConteudo()).thenReturn(row.get("conteudo"));
+			publicacoes.add(publicacao);
+		}
+	}
+
+	@Quando("eu acessar o perfil público do usuário")
+	public void eu_acessar_o_perfil_publico_do_usuario() {
 		EventoRepository eventoRepo = Mockito.mock(EventoRepository.class);
 		AvaliacaoRepository avaliacaoRepo = Mockito.mock(AvaliacaoRepository.class);
 		PublicacaoRepository publicacaoRepo = Mockito.mock(PublicacaoRepository.class);
@@ -106,42 +102,36 @@ public class PerfilUsuarioSteps {
 		perfilInfo = usuarioService.perfilUsuario(usuarioId);
 	}
 
-	@Então("eu devo ver a lista de eventos passados organizados por ele")
-	public void eu_devo_ver_a_lista_de_eventos_passados_organizados_por_ele() {
+	@Entao("devo ver a lista de eventos passados organizados por ele")
+	public void devo_ver_a_lista_de_eventos_passados_organizados_por_ele() {
 		Assert.assertFalse("A lista de eventos não deve estar vazia", perfilInfo.isEmpty());
 	}
 
-	@E("eu devo ver que o evento {string} tem uma média de avaliação de {double}")
-	public void eu_devo_ver_que_o_evento_tem_uma_media_de_avaliacao(String nomeEvento, double mediaEsperada) {
-		Optional<Map<String, Object>> eventoInfo = perfilInfo.stream()
-				.filter(info -> nomeEvento.equals(info.get("nome")))
-				.findFirst();
-		Assert.assertTrue("Evento não encontrado no perfil", eventoInfo.isPresent());
-		Assert.assertEquals("Média de avaliação incorreta",
-				mediaEsperada,
-				(double) eventoInfo.get().get("mediaNotas"),
-				0.001);
+	@E("para cada evento devo ver o nome, data de início e fim")
+	public void para_cada_evento_devo_ver_o_nome_data_de_inicio_e_fim() {
+		for (Map<String, Object> eventoInfo : perfilInfo) {
+			Assert.assertNotNull("Nome do evento não deve ser nulo", eventoInfo.get("nome"));
+			Assert.assertNotNull("Data de início não deve ser nula", eventoInfo.get("dataInicio"));
+			Assert.assertNotNull("Data de fim não deve ser nula", eventoInfo.get("dataFim"));
+		}
 	}
 
-	@E("eu devo ver os comentários dos participantes do evento {string}")
-	public void eu_devo_ver_os_comentarios_dos_participantes_do_evento(String nomeEvento) {
-		Optional<Map<String, Object>> eventoInfo = perfilInfo.stream()
-				.filter(info -> nomeEvento.equals(info.get("nome")))
-				.findFirst();
-
-		Assert.assertTrue("Evento não encontrado no perfil", eventoInfo.isPresent());
-		List<String> comentarios = (List<String>) eventoInfo.get().get("comentarios");
-		Assert.assertFalse("Lista de comentários não deve estar vazia", comentarios.isEmpty());
+	@E("a nota média e comentários das avaliações")
+	public void a_nota_media_e_comentarios_das_avaliacoes() {
+		for (Map<String, Object> eventoInfo : perfilInfo) {
+			Assert.assertNotNull("Média de notas não deve ser nula", eventoInfo.get("mediaNotas"));
+			Assert.assertNotNull("Comentários não devem ser nulos", eventoInfo.get("comentarios"));
+			List<String> comentarios = (List<String>) eventoInfo.get("comentarios");
+			Assert.assertFalse("Lista de comentários não deve estar vazia", comentarios.isEmpty());
+		}
 	}
 
-	@E("eu devo ver as publicações relacionadas ao evento {string}")
-	public void eu_devo_ver_as_publicacoes_relacionadas_ao_evento(String nomeEvento) {
-		Optional<Map<String, Object>> eventoInfo = perfilInfo.stream()
-				.filter(info -> nomeEvento.equals(info.get("nome")))
-				.findFirst();
-
-		Assert.assertTrue("Evento não encontrado no perfil", eventoInfo.isPresent());
-		List<Publicacao> publicacoesEvento = (List<Publicacao>) eventoInfo.get().get("publicacoes");
-		Assert.assertFalse("Lista de publicações não deve estar vazia", publicacoesEvento.isEmpty());
+	@E("as publicações feitas por ele")
+	public void as_publicacoes_feitas_por_ele() {
+		for (Map<String, Object> eventoInfo : perfilInfo) {
+			Assert.assertNotNull("Publicações não devem ser nulas", eventoInfo.get("publicacoes"));
+			List<Publicacao> publicacoesEvento = (List<Publicacao>) eventoInfo.get("publicacoes");
+			Assert.assertFalse("Lista de publicações não deve estar vazia", publicacoesEvento.isEmpty());
+		}
 	}
 }
