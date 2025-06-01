@@ -1,129 +1,121 @@
 
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Users, Clock, Star } from "lucide-react";
-import { Event } from "@/components/EventCard";
-import { toast } from "@/hooks/use-toast";
+import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { TrendingUp, Users, Star, Calendar, MapPin } from 'lucide-react';
 
-interface FeaturedEventsProps {
-  events: Event[];
-  onRegister: (eventId: string) => void;
-  registeredEventIds: string[];
-}
+const FeaturedEvents = () => {
+  const featuredEvents = [
+    {
+      id: 1,
+      title: 'Tech Conference 2024',
+      description: 'O maior evento de tecnologia do Brasil',
+      date: '2024-07-15',
+      location: 'Centro de Convenções - SP',
+      participants: 250,
+      rating: 4.9,
+      genre: 'Tecnologia',
+      trend: '+45 confirmações hoje'
+    },
+    {
+      id: 2,
+      title: 'Festival Gastronômico',
+      description: 'Sabores únicos e experiências culinárias',
+      date: '2024-06-30',
+      location: 'Parque Villa-Lobos - SP',
+      participants: 180,
+      rating: 4.8,
+      genre: 'Gastronomia',
+      trend: '+32 confirmações hoje'
+    },
+    {
+      id: 3,
+      title: 'Workshop de Design UX',
+      description: 'Aprenda design centrado no usuário',
+      date: '2024-06-28',
+      location: 'Campus Digital - SP',
+      participants: 95,
+      rating: 4.7,
+      genre: 'Design',
+      trend: '+28 confirmações hoje'
+    }
+  ];
 
-const FeaturedEvents = ({ events, onRegister, registeredEventIds }: FeaturedEventsProps) => {
-  const handleRegister = (eventId: string) => {
-    onRegister(eventId);
-    toast({
-      title: "Inscrição realizada!",
-      description: "Você se inscreveu no evento em destaque.",
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'short'
     });
-  };
-
-  const formatPrice = (price: number) => {
-    if (price === 0) return "Gratuito";
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(price);
-  };
-
-  const getCategoryColor = (category: string) => {
-    const colors = {
-      musica: "bg-pink-100 text-pink-800",
-      festa: "bg-purple-100 text-purple-800",
-      show: "bg-blue-100 text-blue-800",
-    };
-    return colors[category as keyof typeof colors] || "bg-gray-100 text-gray-800";
   };
 
   return (
     <div className="mb-12">
-      <div className="text-center mb-8">
-        <div className="flex items-center justify-center space-x-2 mb-4">
-          <Star className="w-6 h-6 text-yellow-500 fill-yellow-500" />
-          <h2 className="text-3xl font-bold text-gradient">Eventos em Destaque</h2>
-          <Star className="w-6 h-6 text-yellow-500 fill-yellow-500" />
-        </div>
-        <p className="text-muted-foreground">
-          Os eventos mais populares e imperdíveis da semana
-        </p>
+      <div className="flex items-center space-x-2 mb-6">
+        <TrendingUp className="w-6 h-6 text-purple-600" />
+        <h3 className="text-2xl font-bold text-gray-900">Eventos em Destaque da Semana</h3>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {events.map((event) => (
-          <Card key={event.id} className="overflow-hidden group hover-lift border-purple-200 relative">
-            <div className="absolute top-3 left-3 z-10">
-              <Badge className="bg-yellow-500 text-white font-semibold">
-                <Star className="w-3 h-3 mr-1 fill-white" />
-                Destaque
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {featuredEvents.map((event, index) => (
+          <Card key={event.id} className="relative overflow-hidden group hover:shadow-lg transition-all duration-300 border-purple-100">
+            <div className="absolute top-4 left-4 z-10">
+              <Badge className="bg-purple-600 text-white">
+                #{index + 1} Destaque
               </Badge>
             </div>
             
-            <div className="relative h-48 overflow-hidden">
-              {event.image ? (
-                <img 
-                  src={event.image} 
-                  alt={event.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              ) : (
-                <div className="h-full bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600" />
-              )}
-              <div className="absolute inset-0 bg-black/20" />
-              <div className="absolute bottom-3 right-3">
-                <Badge className={getCategoryColor(event.category)}>
-                  {event.category}
+            <div className="h-32 bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600 relative">
+              <div className="absolute inset-0 bg-black/10" />
+              <div className="absolute bottom-4 right-4">
+                <Badge variant="secondary" className="bg-white/90 text-purple-900">
+                  {event.genre}
                 </Badge>
               </div>
             </div>
 
-            <CardContent className="p-6 space-y-4">
-              <div>
-                <h3 className="font-bold text-xl text-gray-900 group-hover:text-purple-600 transition-colors line-clamp-2">
-                  {event.title}
-                </h3>
-                <p className="text-muted-foreground text-sm mt-2 line-clamp-2">
-                  {event.description}
-                </p>
+            <CardContent className="p-4">
+              <h4 className="font-semibold text-lg text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">
+                {event.title}
+              </h4>
+              
+              <p className="text-gray-600 text-sm mb-3">
+                {event.description}
+              </p>
+
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center text-gray-600">
+                    <Calendar className="w-4 h-4 mr-2 text-purple-600" />
+                    <span>{formatDate(event.date)}</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <Star className="w-4 h-4 mr-1 text-yellow-500 fill-current" />
+                    <span>{event.rating}</span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center text-sm text-gray-600">
+                  <MapPin className="w-4 h-4 mr-2 text-purple-600" />
+                  <span className="truncate">{event.location}</span>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <Calendar className="w-4 h-4 mr-2 text-purple-500" />
-                  {event.date}
+              <div className="flex items-center justify-between pt-3 border-t border-purple-100">
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center text-sm text-gray-600">
+                    <Users className="w-4 h-4 mr-1 text-purple-600" />
+                    <span>{event.participants}</span>
+                  </div>
+                  <div className="text-xs text-green-600 font-medium">
+                    {event.trend}
+                  </div>
                 </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <Clock className="w-4 h-4 mr-2 text-purple-500" />
-                  {event.time}
-                </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <MapPin className="w-4 h-4 mr-2 text-purple-500" />
-                  {event.location}
-                </div>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <Users className="w-4 h-4 mr-2 text-purple-500" />
-                  {event.enrolled}/{event.capacity} participantes
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between pt-4 border-t border-purple-100">
-                <div className="text-lg font-bold text-purple-600">
-                  {formatPrice(event.price)}
-                </div>
-                {registeredEventIds.includes(event.id) ? (
-                  <Button disabled className="bg-green-100 text-green-800 border-green-200">
-                    ✓ Inscrito
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => handleRegister(event.id)}
-                    className="btn-purple"
-                  >
-                    Inscrever-se
-                  </Button>
-                )}
+                
+                <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white">
+                  Ver Mais
+                </Button>
               </div>
             </CardContent>
           </Card>

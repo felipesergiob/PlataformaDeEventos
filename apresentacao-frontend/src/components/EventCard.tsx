@@ -1,191 +1,160 @@
 
-import { useState } from "react";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Users, Clock, Heart } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
-import EventComments from "@/components/EventComments";
+import React, { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Calendar, MapPin, Clock, DollarSign, Heart, Star, User, UserCheck, CalendarX } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
-export interface Event {
-  id: string;
+interface Event {
+  id: number;
   title: string;
   description: string;
-  category: string;
-  price: number;
-  location: string;
   date: string;
   time: string;
-  image: string;
-  capacity: number;
-  enrolled: number;
-  isFree: boolean;
+  location: string;
+  genre: string;
+  price: number;
+  image?: string;
+  organizer: string;
+  participants: number;
+  rating: number;
+  isSaved: boolean;
+  attending: 'not_going' | 'maybe' | 'confirmed';
 }
 
 interface EventCardProps {
   event: Event;
-  onRegister?: (eventId: string) => void;
-  isRegistered?: boolean;
-  showRegisterButton?: boolean;
 }
 
-const EventCard = ({ event, onRegister, isRegistered = false, showRegisterButton = true }: EventCardProps) => {
-  const [isFavorited, setIsFavorited] = useState(false);
-  const [isRegistering, setIsRegistering] = useState(false);
+const EventCard = ({ event }: EventCardProps) => {
+  const [isSaved, setIsSaved] = useState(event.isSaved);
+  const [attending, setAttending] = useState<'not_going' | 'maybe' | 'confirmed'>(event.attending);
 
-  const handleRegister = async () => {
-    if (!onRegister) return;
-    
-    setIsRegistering(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      onRegister(event.id);
-      setIsRegistering(false);
-      toast({
-        title: "Inscrição realizada!",
-        description: `Você se inscreveu no evento "${event.title}".`,
-      });
-    }, 1000);
-  };
-
-  const handleFavorite = () => {
-    setIsFavorited(!isFavorited);
-    toast({
-      title: isFavorited ? "Removido dos favoritos" : "Adicionado aos favoritos",
-      description: `Evento "${event.title}" ${isFavorited ? "removido" : "adicionado"}.`,
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'short',
     });
   };
 
-  const formatPrice = (price: number) => {
-    if (price === 0) return "Gratuito";
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(price);
+  const handleSaveToggle = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigation
+    setIsSaved(!isSaved);
   };
 
-  const getCategoryColor = (category: string) => {
-    const colors = {
-      musica: "bg-pink-100 text-pink-800",
-      festa: "bg-purple-100 text-purple-800",
-      show: "bg-blue-100 text-blue-800",
-      rock: "bg-red-100 text-red-800",
-      pop: "bg-yellow-100 text-yellow-800",
-      eletronica: "bg-cyan-100 text-cyan-800",
-      samba: "bg-orange-100 text-orange-800",
-      funk: "bg-green-100 text-green-800",
-      jazz: "bg-indigo-100 text-indigo-800",
-    };
-    return colors[category as keyof typeof colors] || "bg-gray-100 text-gray-800";
+  const handleAttendance = (status: 'not_going' | 'maybe' | 'confirmed', e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigation
+    setAttending(status);
   };
-
-  const isFullyBooked = event.enrolled >= event.capacity;
 
   return (
-    <div className="space-y-4">
-      <Card className="hover-lift border-purple-100 overflow-hidden group">
-        <div className="relative">
-          <div className="h-48 relative overflow-hidden">
-            {event.image ? (
-              <img 
-                src={event.image} 
-                alt={event.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+    <Link to={`/event/${event.id}`}>
+      <Card className="h-full overflow-hidden transition-shadow hover:shadow-md flex flex-col">
+        <div className="relative h-48 bg-gradient-to-r from-purple-500 to-purple-700 overflow-hidden">
+          {event.image && (
+            <img
+              src={event.image}
+              alt={event.title}
+              className="w-full h-full object-cover opacity-75"
+            />
+          )}
+          <div className="absolute top-3 right-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full bg-white/70 hover:bg-white text-gray-700 h-8 w-8"
+              onClick={handleSaveToggle}
+            >
+              <Heart
+                className={cn("h-5 w-5", isSaved && "fill-red-500 text-red-500")}
               />
-            ) : (
-              <div className="h-full bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600" />
-            )}
-            <div className="absolute inset-0 bg-black/20" />
-            <div className="absolute top-3 left-3">
-              <Badge className={getCategoryColor(event.category)}>
-                {event.category}
-              </Badge>
-            </div>
-            <div className="absolute top-3 right-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleFavorite}
-                className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white"
-              >
-                <Heart className={`w-4 h-4 ${isFavorited ? "fill-red-500 text-red-500" : ""}`} />
-              </Button>
-            </div>
-            <div className="absolute bottom-3 left-3">
-              <Badge className="bg-white/90 text-purple-800 font-semibold">
-                {formatPrice(event.price)}
-              </Badge>
-            </div>
+            </Button>
+          </div>
+          <div className="absolute bottom-3 left-3">
+            <Badge className="bg-purple-700 text-white">{event.genre}</Badge>
           </div>
         </div>
 
-        <CardContent className="p-4 space-y-3">
-          <div>
-            <h3 className="font-bold text-lg text-gray-900 group-hover:text-purple-600 transition-colors line-clamp-2">
-              {event.title}
-            </h3>
-            <p className="text-muted-foreground text-sm mt-1 line-clamp-2">
-              {event.description}
-            </p>
+        <CardContent className="flex-1 flex flex-col p-4">
+          <div className="flex-1">
+            <h3 className="font-semibold text-lg text-gray-900 mb-2 line-clamp-2">{event.title}</h3>
+            <p className="text-gray-600 text-sm mb-3 line-clamp-2">{event.description}</p>
+
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center text-gray-600">
+                <Calendar className="w-4 h-4 mr-2 text-purple-600" />
+                <span>{formatDate(event.date)}</span>
+                <span className="mx-1">•</span>
+                <Clock className="w-4 h-4 mr-1 text-purple-600" />
+                <span>{event.time}</span>
+              </div>
+
+              <div className="flex items-center text-gray-600">
+                <MapPin className="w-4 h-4 mr-2 text-purple-600" />
+                <span className="truncate">{event.location}</span>
+              </div>
+
+              <div className="flex items-center justify-between text-gray-600">
+                <div className="flex items-center">
+                  <DollarSign className="w-4 h-4 mr-1 text-purple-600" />
+                  <span>{event.price === 0 ? 'Grátis' : `R$ ${event.price.toFixed(2)}`}</span>
+                </div>
+                <div className="flex items-center">
+                  <Star className="w-4 h-4 mr-1 text-yellow-500 fill-current" />
+                  <span>{event.rating}</span>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Calendar className="w-4 h-4 mr-2 text-purple-500" />
-              {event.date}
+          <div className="border-t border-gray-100 mt-4 pt-4">
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-gray-600">
+                <User className="w-4 h-4 inline mr-1" />
+                <span>{event.organizer}</span>
+              </div>
+              <div className="flex space-x-1">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className={cn(
+                    "h-8 px-2",
+                    attending === 'confirmed' && "text-green-600",
+                    attending === 'maybe' && "text-blue-600",
+                    attending === 'not_going' && "text-gray-500"
+                  )}
+                  onClick={(e) => handleAttendance('confirmed', e)}
+                >
+                  <UserCheck className={cn(
+                    "h-4 w-4", 
+                    attending === 'confirmed' && "fill-green-100"
+                  )} />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className={attending === 'maybe' ? "text-blue-600" : "text-gray-500"}
+                  onClick={(e) => handleAttendance('maybe', e)}
+                >
+                  ?
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className={attending === 'not_going' ? "text-red-600" : "text-gray-500"}
+                  onClick={(e) => handleAttendance('not_going', e)}
+                >
+                  <CalendarX className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Clock className="w-4 h-4 mr-2 text-purple-500" />
-              {event.time}
-            </div>
-            <div className="flex items-center text-sm text-muted-foreground">
-              <MapPin className="w-4 h-4 mr-2 text-purple-500" />
-              {event.location}
-            </div>
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Users className="w-4 h-4 mr-2 text-purple-500" />
-              {event.enrolled}/{event.capacity} inscritos
-            </div>
-          </div>
-
-          {/* Progress bar for capacity */}
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className="bg-gradient-to-r from-purple-500 to-purple-600 h-2 rounded-full transition-all duration-300"
-              style={{
-                width: `${Math.min((event.enrolled / event.capacity) * 100, 100)}%`,
-              }}
-            />
           </div>
         </CardContent>
-
-        {showRegisterButton && (
-          <CardFooter className="p-4 pt-0">
-            {isRegistered ? (
-              <Button disabled className="w-full bg-green-100 text-green-800 border-green-200">
-                ✓ Inscrito
-              </Button>
-            ) : isFullyBooked ? (
-              <Button disabled className="w-full">
-                Esgotado
-              </Button>
-            ) : (
-              <Button
-                onClick={handleRegister}
-                disabled={isRegistering}
-                className="w-full btn-purple"
-              >
-                {isRegistering ? "Inscrevendo..." : "Inscrever-se"}
-              </Button>
-            )}
-          </CardFooter>
-        )}
       </Card>
-
-      {/* Event Comments */}
-      <EventComments eventId={event.id} eventTitle={event.title} />
-    </div>
+    </Link>
   );
 };
 

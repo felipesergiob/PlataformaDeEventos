@@ -1,184 +1,233 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { MessageCircle, Send, Heart, X } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
 
-interface Comment {
-  id: string;
-  author: string;
-  avatar: string;
-  content: string;
-  timestamp: string;
-  likes: number;
-  isLiked: boolean;
-}
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { MessageCircle, Reply, Heart } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { getComments, getUser } from '@/data/mockData';
 
 interface EventCommentsProps {
   eventId: string;
-  eventTitle: string;
+  isOrganizer: boolean;
 }
 
-const EventComments = ({ eventId, eventTitle }: EventCommentsProps) => {
-  const [comments, setComments] = useState<Comment[]>([
-    {
-      id: "1",
-      author: "Maria Silva",
-      avatar: "MS",
-      content: "Mal posso esperar por esse evento! Vai ser incrível! 🎵",
-      timestamp: "2h",
-      likes: 3,
-      isLiked: false,
-    },
-    {
-      id: "2",
-      author: "João Santos",
-      avatar: "JS",
-      content: "Já comprei meu ingresso! Quem mais vai estar lá?",
-      timestamp: "4h",
-      likes: 5,
-      isLiked: true,
-    },
-    {
-      id: "3",
-      author: "Ana Costa",
-      avatar: "AC",
-      content: "Esse line-up está sensacional! Vale muito a pena ir!",
-      timestamp: "6h",
-      likes: 2,
-      isLiked: false,
-    },
-  ]);
+const EventComments = ({ eventId, isOrganizer }: EventCommentsProps) => {
+  const [newComment, setNewComment] = useState('');
+  const [replyText, setReplyText] = useState('');
+  const [showReplyForm, setShowReplyForm] = useState<string | null>(null);
+  const { toast } = useToast();
 
-  const [newComment, setNewComment] = useState("");
-  const [showModal, setShowModal] = useState(false);
+  // Get comments from centralized mock data
+  const comments = getComments(eventId);
 
-  const handleAddComment = () => {
-    if (!newComment.trim()) return;
+  const handleSubmitComment = () => {
+    if (!newComment.trim()) {
+      toast({
+        title: "Comentário vazio",
+        description: "Por favor, escreva seu comentário antes de enviar.",
+        variant: "destructive"
+      });
+      return;
+    }
 
-    const comment: Comment = {
-      id: `c${Date.now()}`,
-      author: "Você",
-      avatar: "VC",
-      content: newComment,
-      timestamp: "agora",
-      likes: 0,
-      isLiked: false,
-    };
+    // Here you would submit the comment to your backend
+    console.log({
+      eventId,
+      comment: newComment
+    });
 
-    setComments(prev => [comment, ...prev]);
-    setNewComment("");
+    setNewComment('');
     
     toast({
-      title: "Comentário adicionado!",
-      description: "Seu comentário foi publicado com sucesso.",
+      title: "Comentário publicado!",
+      description: "Seu comentário foi adicionado com sucesso."
     });
   };
 
-  const handleLikeComment = (commentId: string) => {
-    setComments(prev => prev.map(comment => 
-      comment.id === commentId 
-        ? { 
-            ...comment, 
-            isLiked: !comment.isLiked,
-            likes: comment.isLiked ? comment.likes - 1 : comment.likes + 1
-          }
-        : comment
-    ));
+  const handleReplySubmit = (commentId: string) => {
+    if (!replyText.trim()) {
+      toast({
+        title: "Resposta vazia",
+        description: "Por favor, escreva sua resposta antes de enviar.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Here you would submit the reply to your backend
+    console.log({
+      commentId,
+      reply: replyText
+    });
+
+    setReplyText('');
+    setShowReplyForm(null);
+    
+    toast({
+      title: "Resposta enviada!",
+      description: "Sua resposta foi publicada com sucesso."
+    });
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
   };
 
   return (
-    <>
-      <Button
-        variant="outline"
-        onClick={() => setShowModal(true)}
-        className="w-full border-purple-200 hover:bg-purple-50"
-      >
-        <MessageCircle className="w-4 h-4 mr-2" />
-        Ver Comentários ({comments.length})
-      </Button>
+    <div className="max-w-4xl mx-auto p-6 space-y-6">
+      {/* New Comment Form */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Deixe seu Comentário</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Textarea
+            placeholder="Escreva seu comentário sobre o evento..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            rows={3}
+          />
+          <Button 
+            onClick={handleSubmitComment}
+            className="bg-purple-600 hover:bg-purple-700"
+            disabled={!newComment.trim()}
+          >
+            <MessageCircle className="w-4 h-4 mr-2" />
+            Publicar Comentário
+          </Button>
+        </CardContent>
+      </Card>
 
-      {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col">
-            <div className="flex items-center justify-between p-4 border-b">
-              <h3 className="font-semibold text-lg">Comentários sobre {eventTitle}</h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowModal(false)}
-                className="hover:bg-gray-100"
-              >
-                <X className="w-5 h-5" />
-              </Button>
-            </div>
-            
-            <div className="flex-1 overflow-y-auto p-4">
-              {/* Add Comment */}
-              <div className="flex space-x-3 mb-4">
-                <Avatar className="w-8 h-8">
-                  <AvatarFallback className="bg-purple-200 text-purple-600 text-xs">
-                    VC
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 flex space-x-2">
-                  <Input
-                    placeholder="Escreva um comentário sobre este evento..."
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
-                    className="flex-1 border-purple-200 focus:border-purple-500"
-                  />
-                  <Button 
-                    size="sm" 
-                    onClick={handleAddComment}
-                    disabled={!newComment.trim()}
-                    className="btn-purple"
-                  >
-                    <Send className="w-4 h-4" />
-                  </Button>
+      {/* Comments List */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <span>Comentários</span>
+            <Badge variant="secondary">{comments.length} comentários</Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {comments.map((comment) => {
+            const user = getUser(comment.userId);
+            return (
+              <div key={comment.id} className="border-b border-gray-200 pb-6 last:border-b-0">
+                {/* Comment Header */}
+                <div className="flex items-start space-x-3 mb-3">
+                  <Avatar className="w-10 h-10">
+                    <AvatarImage src={comment.userAvatar} alt={comment.userName} />
+                    <AvatarFallback>
+                      {comment.userName.split(' ').map(n => n[0]).join('')}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2 mb-1">
+                      <h4 className="font-semibold text-gray-900">{comment.userName}</h4>
+                      <span className="text-sm text-gray-500">{formatDate(comment.date)}</span>
+                    </div>
+                    <p className="text-gray-700">{comment.comment}</p>
+                  </div>
                 </div>
-              </div>
 
-              {/* Comments List */}
-              <div className="space-y-4">
-                {comments.map((comment) => (
-                  <div key={comment.id} className="flex space-x-3">
-                    <Avatar className="w-8 h-8">
-                      <AvatarFallback className="bg-gray-200 text-gray-600 text-xs">
-                        {comment.avatar}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <div className="bg-gray-50 rounded-lg p-3">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <span className="font-semibold text-sm">{comment.author}</span>
-                          <span className="text-xs text-muted-foreground">{comment.timestamp}</span>
+                {/* Comment Actions */}
+                <div className="flex items-center space-x-4 text-sm ml-13">
+                  <Button variant="ghost" size="sm" className="text-gray-600 hover:text-red-600">
+                    <Heart className="w-4 h-4 mr-1" />
+                    {comment.likes}
+                  </Button>
+                  {isOrganizer && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-gray-600 hover:text-purple-600"
+                      onClick={() => setShowReplyForm(comment.id)}
+                    >
+                      <Reply className="w-4 h-4 mr-1" />
+                      Responder
+                    </Button>
+                  )}
+                </div>
+
+                {/* Replies */}
+                {comment.replies.length > 0 && (
+                  <div className="mt-4 ml-8 space-y-3">
+                    {comment.replies.map((reply) => (
+                      <div key={reply.id} className="flex items-start space-x-3">
+                        <Avatar className="w-8 h-8">
+                          <AvatarFallback className="text-xs">
+                            {reply.userName.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2">
+                            <h5 className="font-medium text-sm text-gray-900">{reply.userName}</h5>
+                            {reply.isOrganizer && (
+                              <Badge variant="outline" className="text-xs">Organizador</Badge>
+                            )}
+                            <span className="text-xs text-gray-500">{formatDate(reply.date)}</span>
+                          </div>
+                          <p className="text-sm text-gray-700 mt-1">{reply.comment}</p>
                         </div>
-                        <p className="text-sm text-gray-700">{comment.content}</p>
                       </div>
-                      <div className="flex items-center mt-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleLikeComment(comment.id)}
-                          className={`text-xs ${comment.isLiked ? 'text-red-500' : 'text-gray-500'} hover:bg-red-50`}
-                        >
-                          <Heart className={`w-3 h-3 mr-1 ${comment.isLiked ? 'fill-red-500' : ''}`} />
-                          {comment.likes}
-                        </Button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Reply Form */}
+                {showReplyForm === comment.id && (
+                  <div className="mt-4 ml-8">
+                    <div className="flex space-x-3">
+                      <Avatar className="w-8 h-8">
+                        <AvatarFallback className="text-xs">EU</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 space-y-2">
+                        <Textarea
+                          placeholder="Digite sua resposta..."
+                          value={replyText}
+                          onChange={(e) => setReplyText(e.target.value)}
+                          rows={2}
+                        />
+                        <div className="flex space-x-2">
+                          <Button 
+                            size="sm" 
+                            onClick={() => handleReplySubmit(comment.id)}
+                            disabled={!replyText.trim()}
+                            className="bg-purple-600 hover:bg-purple-700"
+                          >
+                            Responder
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => setShowReplyForm(null)}
+                          >
+                            Cancelar
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                ))}
+                )}
               </div>
+            );
+          })}
+
+          {comments.length === 0 && (
+            <div className="text-center py-8">
+              <MessageCircle className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Ainda não há comentários</h3>
+              <p className="text-gray-600">Seja o primeiro a comentar sobre este evento!</p>
             </div>
-          </div>
-        </div>
-      )}
-    </>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
