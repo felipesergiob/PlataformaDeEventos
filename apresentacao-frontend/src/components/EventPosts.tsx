@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Calendar, Camera, MessageCircle, ThumbsUp, Image, Share } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 interface EventPostsProps {
   eventId: string;
@@ -12,6 +13,7 @@ interface EventPostsProps {
 }
 
 const EventPosts = ({ eventId, hasAttended }: EventPostsProps) => {
+  const { toast } = useToast();
   const [postContent, setPostContent] = useState('');
   const [postPhotos, setPostPhotos] = useState<File[]>([]);
   const [showPostForm, setShowPostForm] = useState(false);
@@ -61,7 +63,12 @@ const EventPosts = ({ eventId, hasAttended }: EventPostsProps) => {
     setPostContent('');
     setPostPhotos([]);
     setShowPostForm(false);
-    alert('Publicação enviada com sucesso!');
+    
+    toast({
+      title: "Publicação enviada",
+      description: "Sua experiência foi compartilhada com sucesso!",
+      variant: "default"
+    });
   };
 
   const formatDate = (dateString: string) => {
