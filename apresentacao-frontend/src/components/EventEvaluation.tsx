@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Star, Camera, MessageCircle, ThumbsUp, Reply } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { getEventEvaluations, EventEvaluation as EventEvaluationData } from '@/data/mockData';
 
 interface EventEvaluationProps {
   eventId: string;
@@ -24,42 +24,8 @@ const EventEvaluation = ({ eventId, userAttended }: EventEvaluationProps) => {
   const [hasUserEvaluated, setHasUserEvaluated] = useState(false);
   const { toast } = useToast();
 
-  // Mock existing evaluations
-  const evaluations = [
-    {
-      id: '1',
-      userId: 'user1',
-      userName: 'João Santos',
-      userAvatar: '/placeholder.svg',
-      rating: 5,
-      comment: 'Evento incrível! Muito bem organizado e conteúdo de alta qualidade. Os palestrantes eram experts no assunto e a organização foi impecável.',
-      date: '2024-05-21',
-      photos: ['/placeholder.svg', '/placeholder.svg'],
-      likes: 12,
-      replies: [
-        {
-          id: 'reply1',
-          userId: 'organizer1',
-          userName: 'Ana Silva',
-          comment: 'Muito obrigada pelo feedback! Ficamos felizes que tenha gostado.',
-          date: '2024-05-22',
-          isOrganizer: true
-        }
-      ]
-    },
-    {
-      id: '2',
-      userId: 'user2',
-      userName: 'Maria Oliveira',
-      userAvatar: '/placeholder.svg',
-      rating: 4,
-      comment: 'Muito bom! Única sugestão seria melhorar o coffee break, mas o conteúdo foi excelente.',
-      date: '2024-05-20',
-      photos: [],
-      likes: 8,
-      replies: []
-    }
-  ];
+  // Get evaluations from centralized mock
+  const evaluations = getEventEvaluations(eventId);
 
   const handleSubmitEvaluation = () => {
     if (rating === 0) {

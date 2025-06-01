@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowLeft, Users, Star, MessageCircle, DollarSign, TrendingUp, Calendar, MapPin } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import Navbar from '@/components/Navbar';
+import { getEventAnalytics, getRatingDistribution, getDemographicsData, getTopComments } from '@/data/mockData';
 
 interface EventReportProps {
   eventId: number;
@@ -14,68 +14,15 @@ interface EventReportProps {
 }
 
 const EventReport = ({ eventId, onBack }: EventReportProps) => {
-  // Mock event data with detailed analytics
-  const eventData = {
-    id: eventId,
-    title: 'Palestra: O Futuro da IA',
-    description: 'Discussão sobre as tendências e impactos da Inteligência Artificial',
-    date: '2024-05-25',
-    time: '14:00',
-    location: 'Auditório da USP - SP',
-    genre: 'Tecnologia',
-    price: 50,
-    participants: 80,
-    maxParticipants: 100,
-    rating: 4.7,
-    totalRatings: 45,
-    comments: 23,
-    revenue: 4000,
-    expenses: 1200,
-    profit: 2800
-  };
+  // Get analytics data from centralized mock
+  const eventData = getEventAnalytics(eventId);
+  const ratingDistribution = getRatingDistribution(eventId);
+  const demographicsData = getDemographicsData(eventId);
+  const topComments = getTopComments(eventId);
 
-  // Mock analytics data
-  const ratingDistribution = [
-    { rating: '5 ⭐', count: 25, percentage: 56 },
-    { rating: '4 ⭐', count: 12, percentage: 27 },
-    { rating: '3 ⭐', count: 5, percentage: 11 },
-    { rating: '2 ⭐', count: 2, percentage: 4 },
-    { rating: '1 ⭐', count: 1, percentage: 2 }
-  ];
-
-  const demographicsData = [
-    { name: '18-25', value: 30, fill: '#8B5CF6' },
-    { name: '26-35', value: 35, fill: '#A78BFA' },
-    { name: '36-45', value: 20, fill: '#C4B5FD' },
-    { name: '46+', value: 15, fill: '#DDD6FE' }
-  ];
-
-  const topComments = [
-    {
-      id: '1',
-      userName: 'João Santos',
-      userAvatar: '/placeholder.svg',
-      rating: 5,
-      comment: 'Evento incrível! Muito bem organizado e conteúdo de alta qualidade.',
-      date: '2024-05-25'
-    },
-    {
-      id: '2',
-      userName: 'Maria Oliveira',
-      userAvatar: '/placeholder.svg',
-      rating: 4,
-      comment: 'Muito bom! Única sugestão seria melhorar o coffee break.',
-      date: '2024-05-25'
-    },
-    {
-      id: '3',
-      userName: 'Carlos Silva',
-      userAvatar: '/placeholder.svg',
-      rating: 5,
-      comment: 'Palestrante excelente, conteúdo muito relevante para o mercado atual.',
-      date: '2024-05-25'
-    }
-  ];
+  if (!eventData) {
+    return <div>Evento não encontrado</div>;
+  }
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR', {

@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Calendar, Camera, MessageCircle, ThumbsUp, Image, Share } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { getEventPosts, EventPost } from '@/data/mockData';
 
 interface EventPostsProps {
   eventId: string;
@@ -18,31 +19,8 @@ const EventPosts = ({ eventId, hasAttended }: EventPostsProps) => {
   const [postPhotos, setPostPhotos] = useState<File[]>([]);
   const [showPostForm, setShowPostForm] = useState(false);
 
-  // Mock posts data
-  const posts = [
-    {
-      id: '1',
-      userId: 'user1',
-      userName: 'João Santos',
-      userAvatar: '/placeholder.svg',
-      content: 'Acabei de participar deste incrível workshop sobre React! Aprendi muitas técnicas avançadas que com certeza vou aplicar nos meus projetos. O networking também foi excelente, conheci muitas pessoas interessantes da área. Recomendo demais!',
-      date: '2024-05-21',
-      photos: ['/placeholder.svg', '/placeholder.svg'],
-      likes: 24,
-      comments: 5
-    },
-    {
-      id: '2',
-      userId: 'user2',
-      userName: 'Maria Oliveira',
-      userAvatar: '/placeholder.svg',
-      content: 'O palestrante tinha um domínio incrível do assunto. Consegui tirar todas as minhas dúvidas e saí do evento com uma visão muito mais clara sobre o futuro da IA e como podemos nos preparar para essas mudanças.',
-      date: '2024-05-20',
-      photos: ['/placeholder.svg'],
-      likes: 18,
-      comments: 3
-    }
-  ];
+  // Get posts from centralized mock
+  const posts = getEventPosts(eventId);
 
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,78 +15,15 @@ import {
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { getCalendarEvents, CalendarEvent } from '@/data/mockData';
 
 const PersonalCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<'month' | 'week' | 'day'>('month');
   const [layoutMode, setLayoutMode] = useState<'calendar' | 'list'>('calendar');
 
-  // Mock events data with specific dates
-  const events = [
-    {
-      id: 1,
-      title: 'Workshop React Avançado',
-      date: '2024-06-15',
-      time: '19:00',
-      location: 'Centro de Tecnologia',
-      status: 'confirmed',
-      type: 'saved'
-    },
-    {
-      id: 2,
-      title: 'Festival de Jazz',
-      date: '2024-06-20',
-      time: '20:00',
-      location: 'Parque Ibirapuera',
-      status: 'confirmed',
-      type: 'confirmed'
-    },
-    {
-      id: 3,
-      title: 'Palestra IA',
-      date: '2024-06-25',
-      time: '14:00',
-      location: 'USP',
-      status: 'maybe',
-      type: 'maybe'
-    },
-    {
-      id: 4,
-      title: 'Meetup Desenvolvedores',
-      date: '2024-06-18',
-      time: '18:30',
-      location: 'Coworking Tech',
-      status: 'confirmed',
-      type: 'confirmed'
-    },
-    {
-      id: 5,
-      title: 'Workshop UX Design',
-      date: '2024-06-05',
-      time: '09:00',
-      location: 'Design Studio',
-      status: 'confirmed',
-      type: 'confirmed'
-    },
-    {
-      id: 6,
-      title: 'Feira de Startups',
-      date: '2024-06-12',
-      time: '10:00',
-      location: 'Centro de Convenções',
-      status: 'maybe',
-      type: 'maybe'
-    },
-    {
-      id: 7,
-      title: 'Happy Hour Tech',
-      date: '2024-06-19',
-      time: '18:00',
-      location: 'Pub Central',
-      status: 'saved',
-      type: 'saved'
-    }
-  ];
+  // Get calendar events from centralized mock
+  const events = getCalendarEvents();
 
   const monthNames = [
     'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
