@@ -1,0 +1,1 @@
+package com.plataforma.plataforma.persistencia.jpa.publicacao; 

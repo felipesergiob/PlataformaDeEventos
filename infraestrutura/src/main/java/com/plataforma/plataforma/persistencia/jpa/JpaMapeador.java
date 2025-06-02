@@ -14,4 +14,4 @@ public class JpaMapeador {
     public <D> D map(Object source, Class<D> destinationType) {
         return modelMapper.map(source, destinationType);
     }
-} 
+}

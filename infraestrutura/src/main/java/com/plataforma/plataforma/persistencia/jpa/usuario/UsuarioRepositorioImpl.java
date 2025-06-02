@@ -1,4 +1,4 @@
-package com.plataforma.plataforma.persistencia.jpa;
+package com.plataforma.plataforma.persistencia.jpa.usuario;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
