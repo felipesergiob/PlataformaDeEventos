@@ -25,18 +25,23 @@ A Plataforma de Eventos é um ambiente digital colaborativo onde qualquer usuár
    - Cadastro e autenticação
    - Seguir outros usuários
    - Notificações de eventos
+   - Autenticação por token para maior segurança
 
 2. Gestão de Eventos
    - Criação e edição de eventos
    - Filtros por data, gênero e preço
    - Confirmação de presença
    - Lista de interesse
+   - Upload de imagens e anexos nos eventos
+   - Integração com API externa para geolocalização
 
 3. Interações
    - Avaliações e comentários
    - Relatos com fotos
    - Achados e perdidos
    - Comentários públicos
+   - Sistema de denúncias e moderação de comentários
+   - Módulo de achados e perdidos aprimorado com suporte a anexos
 
 4. Relatórios
    - Dashboard de eventos
