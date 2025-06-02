@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -122,9 +121,7 @@ const EventCard = ({ event }: EventCardProps) => {
                   variant="ghost"
                   className={cn(
                     "h-8 px-2",
-                    attending === 'confirmed' && "text-green-600",
-                    attending === 'maybe' && "text-blue-600",
-                    attending === 'not_going' && "text-gray-500"
+                    attending === 'confirmed' ? "text-green-600" : "text-gray-500"
                   )}
                   onClick={(e) => handleAttendance('confirmed', e)}
                 >
@@ -136,7 +133,10 @@ const EventCard = ({ event }: EventCardProps) => {
                 <Button
                   size="sm"
                   variant="ghost"
-                  className={attending === 'maybe' ? "text-blue-600" : "text-gray-500"}
+                  className={cn(
+                    "h-8 px-2",
+                    attending === 'maybe' ? "text-blue-600" : "text-gray-500"
+                  )}
                   onClick={(e) => handleAttendance('maybe', e)}
                 >
                   ?
@@ -144,7 +144,10 @@ const EventCard = ({ event }: EventCardProps) => {
                 <Button
                   size="sm"
                   variant="ghost"
-                  className={attending === 'not_going' ? "text-red-600" : "text-gray-500"}
+                  className={cn(
+                    "h-8 px-2",
+                    attending === 'not_going' ? "text-red-600" : "text-gray-500"
+                  )}
                   onClick={(e) => handleAttendance('not_going', e)}
                 >
                   <CalendarX className="h-4 w-4" />
