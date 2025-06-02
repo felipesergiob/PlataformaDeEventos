@@ -7,8 +7,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar, MapPin, Clock, Tag, DollarSign, Image } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import { useToast } from '@/hooks/use-toast';
 
 const CreateEvent = () => {
+  const { toast } = useToast();
   const [eventData, setEventData] = useState({
     title: '',
     description: '',
@@ -28,7 +30,10 @@ const CreateEvent = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Evento criado:', eventData);
-    alert('Evento criado com sucesso!');
+    toast({
+      title: 'Evento criado com sucesso!',
+      description: 'O evento foi criado com sucesso.',
+    });
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
