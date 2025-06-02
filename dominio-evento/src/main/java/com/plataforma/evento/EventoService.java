@@ -2,20 +2,38 @@ package com.plataforma.evento;
 
 import com.plataforma.compartilhado.EventoId;
 import java.util.List;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.LocalDate;
 import java.math.BigDecimal;
 import static org.apache.commons.lang3.Validate.notNull;
-import static org.apache.commons.lang3.Validate.isTrue;
+import com.plataforma.compartilhado.UsuarioId;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import com.plataforma.evento.Evento.Status;
+import java.time.DayOfWeek;
+import com.plataforma.avaliacao.AvaliacaoService;
+import com.plataforma.avaliacao.AvaliacaoRepository;
+import com.plataforma.avaliacao.Avaliacao;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EventoService {
     private final EventoRepository eventoRepository;
+    private final AvaliacaoService avaliacaoService;
+    private final AvaliacaoRepository avaliacaoRepository;
+
+    public EventoService(EventoRepository eventoRepository, AvaliacaoService avaliacaoService, AvaliacaoRepository avaliacaoRepository) {
+        notNull(eventoRepository, "O repositório de eventos não pode ser nulo");
+        notNull(avaliacaoService, "O serviço de avaliações não pode ser nulo");
+        this.eventoRepository = eventoRepository;
+        this.avaliacaoService = avaliacaoService;
+        this.avaliacaoRepository = avaliacaoRepository;
+    }
 
     public EventoService(EventoRepository eventoRepository) {
-        notNull(eventoRepository, "O repositório de eventos não pode ser nulo");
         this.eventoRepository = eventoRepository;
+        this.avaliacaoService = null;
+        this.avaliacaoRepository = null;
     }
 
     public void salvar(Evento evento) {
@@ -36,201 +54,108 @@ public class EventoService {
         return eventoRepository.listarTodos();
     }
 
-    public List<Evento> listarAtivos() {
-        return eventoRepository.listarAtivos();
-    }
-
-    public List<Evento> listarPorPeriodo(LocalDateTime inicio, LocalDateTime fim) {
-        notNull(inicio, "A data de início não pode ser nula");
-        notNull(fim, "A data de fim não pode ser nula");
-        if (inicio.isAfter(fim)) {
-            throw new IllegalArgumentException("A data de início não pode ser posterior à data de fim");
-        }
-        return eventoRepository.listarPorPeriodo(inicio, fim);
-    }
-
-    public List<Evento> listarPorCategoria(String categoria) {
-        notNull(categoria, "A categoria não pode ser nula");
-        return eventoRepository.listarPorCategoria(categoria);
-    }
-
-    public List<Evento> listarPorGenero(String genero) {
-        if (genero == null || genero.trim().isEmpty()) {
-            throw new IllegalArgumentException("Gênero não pode ser nulo ou vazio");
-        }
-
-        String generoNormalizado = genero.substring(0, 1).toUpperCase() + genero.substring(1).toLowerCase();
-        List<Evento> eventos = eventoRepository.listarPorGenero(generoNormalizado);
-        
-        return eventos.stream()
-            .filter(evento -> !evento.isCancelado())
-            .collect(Collectors.toList());
-    }
-
-    public List<Evento> listarPorOrganizador(String organizador) {
+    public List<Evento> listarPorOrganizador(UsuarioId organizador) {
         notNull(organizador, "O organizador não pode ser nulo");
         return eventoRepository.listarPorOrganizador(organizador);
     }
 
-    public List<Evento> listarPorValor(BigDecimal valorMinimo, BigDecimal valorMaximo) {
-        notNull(valorMinimo, "O valor mínimo não pode ser nulo");
-        notNull(valorMaximo, "O valor máximo não pode ser nulo");
-        if (valorMinimo.compareTo(valorMaximo) > 0) {
-            throw new IllegalArgumentException("O valor mínimo não pode ser maior que o valor máximo");
-        }
-        return eventoRepository.listarPorValor(valorMinimo, valorMaximo);
-    }
-
-    public List<Evento> listarComVagasDisponiveis() {
-        return eventoRepository.listarTodos().stream()
-            .filter(Evento::temVagasDisponiveis)
-            .toList();
-    }
-
-    public void excluir(EventoId id) {
-        notNull(id, "O ID do evento não pode ser nulo");
-        if (!eventoRepository.existe(id)) {
-            throw new IllegalArgumentException("Evento não encontrado");
-        }
-        eventoRepository.excluir(id);
-    }
-
-    public void desativar(EventoId id) {
-        Evento evento = obter(id);
-        evento.desativar();
-        eventoRepository.salvar(evento);
-    }
-
-    public void ativar(EventoId id) {
-        Evento evento = obter(id);
-        evento.ativar();
-        eventoRepository.salvar(evento);
-    }
-
-    public void cancelar(EventoId id) {
-        Evento evento = obter(id);
-        evento.cancelar();
-        eventoRepository.salvar(evento);
-    }
-
-    public void incrementarInscritos(EventoId id) {
-        Evento evento = obter(id);
-        evento.incrementarInscritos();
-        eventoRepository.salvar(evento);
-    }
-
-    public void decrementarInscritos(EventoId id) {
-        Evento evento = obter(id);
-        evento.decrementarInscritos();
-        eventoRepository.salvar(evento);
-    }
-
-    public List<Evento> listarPorStatus(Evento.StatusEvento status) {
-        notNull(status, "O status não pode ser nulo");
-        return eventoRepository.listarPorStatus(status);
-    }
-
-    public List<Evento> listarProximos() {
-        return eventoRepository.listarTodos().stream()
-            .filter(evento -> evento.getStatus() == Evento.StatusEvento.AGENDADO)
-            .toList();
-    }
-
-    public List<Evento> listarEmAndamento() {
-        return eventoRepository.listarTodos().stream()
-            .filter(evento -> evento.getStatus() == Evento.StatusEvento.EM_ANDAMENTO)
-            .toList();
-    }
-
-    public List<Evento> listarFinalizados() {
-        return eventoRepository.listarTodos().stream()
-            .filter(evento -> evento.getStatus() == Evento.StatusEvento.FINALIZADO)
-            .toList();
-    }
-
-    public List<Evento> listarPorHorario(LocalTime horarioInicio, LocalTime horarioFim) {
-        notNull(horarioInicio, "O horário de início não pode ser nulo");
-        notNull(horarioFim, "O horário de fim não pode ser nulo");
-        if (horarioInicio.isAfter(horarioFim)) {
-            throw new IllegalArgumentException("O horário de início não pode ser posterior ao horário de fim");
-        }
-        return eventoRepository.listarPorHorario(horarioInicio, horarioFim);
-    }
-
-    public List<Evento> listarPorData(LocalDate data) {
-        notNull(data, "A data não pode ser nula");
-        return eventoRepository.listarPorData(data);
-    }
-
-    public List<Evento> listarPorPreco(BigDecimal preco) {
-        notNull(preco, "O preço não pode ser nulo");
-        if (preco.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("O preço não pode ser negativo");
-        }
-        return eventoRepository.listarPorPreco(preco);
-    }
-
-    public List<Evento> listarPorNumeroInscritos(int limite) {
-        isTrue(limite > 0, "O limite deve ser maior que zero");
-        return eventoRepository.listarPorNumeroInscritos(limite);
-    }
-
-    public List<Evento> listarPorFiltros(String genero, LocalTime horarioInicio, LocalTime horarioFim, LocalDate data, BigDecimal preco) {
+    public List<Evento> listarPorFiltros(String genero, LocalTime horarioInicio, LocalTime horarioFim, LocalDate data,
+            BigDecimal preco) {
         List<Evento> eventos = eventoRepository.listarTodos();
-        
+
         if (genero != null) {
             eventos = eventos.stream()
-                .filter(evento -> evento.getGenero().equals(genero))
-                .toList();
+                    .filter(evento -> evento.getGenero().equals(genero))
+                    .collect(Collectors.toList());
         }
-        
+
         if (horarioInicio != null && horarioFim != null) {
             eventos = eventos.stream()
-                .filter(evento -> {
-                    LocalTime horarioEvento = evento.getDataInicio().toLocalTime();
-                    return !horarioEvento.isBefore(horarioInicio) && !horarioEvento.isAfter(horarioFim);
-                })
-                .toList();
+                    .filter(evento -> {
+                        LocalTime horarioEvento = evento.getDataInicio().toLocalTime();
+                        return !horarioEvento.isBefore(horarioInicio) && !horarioEvento.isAfter(horarioFim);
+                    })
+                    .collect(Collectors.toList());
         }
-        
+
         if (data != null) {
             eventos = eventos.stream()
-                .filter(evento -> evento.getDataInicio().toLocalDate().equals(data))
-                .toList();
+                    .filter(evento -> evento.getDataInicio().toLocalDate().equals(data))
+                    .collect(Collectors.toList());
         }
-        
+
         if (preco != null) {
             eventos = eventos.stream()
-                .filter(evento -> evento.getValor().compareTo(preco) == 0)
-                .toList();
+                    .filter(evento -> evento.getValor().compareTo(preco) == 0)
+                    .collect(Collectors.toList());
         }
-        
+
         return eventos;
     }
 
-    public void criarEvento(Evento evento) {
-        salvar(evento);
+    public List<Evento> listarSalvos(UsuarioId id) {
+        notNull(id, "O ID do usuário não pode ser nulo");
+        List<Evento> eventos = eventoRepository.listarSalvos(id);
+
+        return eventos.stream()
+                .filter(evento -> evento.getDataInicio().isAfter(LocalDateTime.now()))
+                .filter(evento -> evento.getStatus() == Status.SALVO)
+                .collect(Collectors.toList());
     }
 
-    public List<Evento> filtrarEventosPorGenero(String genero) {
-        return listarPorGenero(genero);
+    public List<Evento> listarConfirmados(UsuarioId id) {
+        notNull(id, "O ID do usuário não pode ser nulo");
+        List<Evento> eventos = eventoRepository.listarConfirmados(id);
+
+        return eventos.stream()
+                .filter(evento -> evento.getStatus() == Status.CONFIRMADO)
+                .collect(Collectors.toList());
     }
 
-    public List<Evento> filtrarEventosPorHorario(LocalDateTime horario) {
-        return listarTodos().stream()
-            .filter(evento -> evento.getDataInicio().toLocalTime().equals(horario.toLocalTime()))
+    public List<Evento> listarEventosDestaques() { // historia 10 //feito
+        List<Evento> todosEventos = eventoRepository.listarTodos();
+
+        LocalDateTime agora = LocalDateTime.now();
+        LocalDateTime inicioSemana = agora.with(DayOfWeek.MONDAY).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime fimSemana = inicioSemana.plusDays(7);
+
+        return todosEventos.stream()
+                .filter(evento -> {
+                    LocalDateTime dataEvento = evento.getDataInicio();
+                    return dataEvento.isAfter(inicioSemana) && dataEvento.isBefore(fimSemana);
+                })
+                .sorted((evento1, evento2) -> evento2.getInscritos().compareTo(evento1.getInscritos()))
+                .limit(3)
+                .toList();
+    }
+
+    public Map<String, Object> dashboardEvento(EventoId id) { //historia 4
+        Evento evento = eventoRepository.obter(id);
+        if (evento == null) {
+            throw new IllegalArgumentException("Evento não encontrado");
+        }
+
+        if (evento.getDataFim().isAfter(LocalDateTime.now())) {
+            throw new IllegalArgumentException("O dashboard só está disponível para eventos encerrados");
+        }
+
+        Map<String, Object> dashboard = new HashMap<>();
+        int totalInscritos = evento.getInscritos();
+        double mediaAvaliacoes = avaliacaoService.obterMediaAvaliacoes(id);
+        List<Avaliacao> avaliacoes = avaliacaoRepository.listarNotasEvento(id);
+        int quantidadeNotasAvaliacoes = avaliacoes.size();
+
+        List<String> comentarios = avaliacoes.stream()
+            .map(Avaliacao::getComentario)
+            .filter(comentario -> comentario != null && !comentario.trim().isEmpty())
             .toList();
-    }
 
-    public List<Evento> filtrarEventosPorData(LocalDateTime data) {
-        return listarTodos().stream()
-            .filter(evento -> evento.getDataInicio().toLocalDate().equals(data.toLocalDate()))
-            .toList();
-    }
+        dashboard.put("nomeEvento", evento.getNome());
+        dashboard.put("totalInscritos", totalInscritos);
+        dashboard.put("mediaAvaliacoes", mediaAvaliacoes);
+        dashboard.put("quantidadeAvaliacoes", quantidadeNotasAvaliacoes);
+        dashboard.put("comentarios", comentarios);
 
-    public List<Evento> filtrarEventosPorPrecoMaximo(BigDecimal precoMaximo) {
-        return listarTodos().stream()
-            .filter(evento -> evento.getValor().compareTo(precoMaximo) <= 0)
-            .toList();
+        return dashboard;
     }
-} 
+}
