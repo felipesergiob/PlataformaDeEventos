@@ -2,7 +2,7 @@ package com.plataforma.dominio.usuario;
 
 import com.plataforma.compartilhado.UsuarioId;
 import com.plataforma.compartilhado.EventoId;
-import com.plataforma.Publicacao.PublicacaoId;
+import com.plataforma.compartilhado.PublicacaoId;
 import com.plataforma.usuario.UsuarioService;
 import com.plataforma.usuario.UsuarioRepository;
 import com.plataforma.evento.Evento;

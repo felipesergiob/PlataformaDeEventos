@@ -6,13 +6,15 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Entity
 @Table(name = "USUARIO")
 public class UsuarioJpa {
     @Id
-    private Integer id;
+    @Column(name = "ID", columnDefinition = "uuid")
+    private UUID id;
 
     private String nome;
     private String email;
@@ -20,6 +22,11 @@ public class UsuarioJpa {
 
     @Column(name = "DATA_CRIACAO")
     private LocalDateTime dataCriacao;
+
+    @Column(name = "ULTIMO_ACESSO")
+    private LocalDateTime ultimoAcesso;
+
+    private boolean ativo;
 
     @Column(name = "FOTO_PERFIL")
     private String fotoPerfil;

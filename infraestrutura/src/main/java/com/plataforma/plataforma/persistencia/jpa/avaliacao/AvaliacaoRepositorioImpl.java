@@ -3,7 +3,7 @@ package com.plataforma.plataforma.persistencia.jpa.avaliacao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.plataforma.dominio.avaliacao.Avaliacao;
-import com.plataforma.dominio.avaliacao.AvaliacaoId;
+import com.plataforma.compartilhado.AvaliacaoId;
 import com.plataforma.dominio.avaliacao.AvaliacaoRepositorio;
 
 @Repository

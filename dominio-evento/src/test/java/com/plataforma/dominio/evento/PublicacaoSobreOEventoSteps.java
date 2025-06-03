@@ -1,7 +1,7 @@
 package com.plataforma.dominio.evento;
 
 import com.plataforma.Publicacao.Publicacao;
-import com.plataforma.Publicacao.PublicacaoId;
+import com.plataforma.compartilhado.PublicacaoId;
 import com.plataforma.Publicacao.PublicacaoRepository;
 import com.plataforma.Publicacao.PublicacaoService;
 import com.plataforma.compartilhado.EventoId;
@@ -59,7 +59,7 @@ public class PublicacaoSobreOEventoSteps {
 
     @E("preencher o título do resumo")
     public void preencher_o_titulo_do_resumo() {
-        PublicacaoId publicacaoId = Mockito.mock(PublicacaoId.class);
+        PublicacaoId publicacaoId = PublicacaoId.gerar();
         publicacao = new Publicacao(
                 publicacaoId,
                 usuarioId,

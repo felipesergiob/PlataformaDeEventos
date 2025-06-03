@@ -3,7 +3,7 @@ package com.plataforma.plataforma.persistencia.jpa.comentario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.plataforma.dominio.comentario.Comentario;
-import com.plataforma.dominio.comentario.ComentarioId;
+import com.plataforma.compartilhado.ComentarioId;
 import com.plataforma.dominio.comentario.ComentarioRepositorio;
 
 @Repository

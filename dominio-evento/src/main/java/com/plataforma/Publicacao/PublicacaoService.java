@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.plataforma.compartilhado.EventoId;
 import com.plataforma.compartilhado.UsuarioId;
+import com.plataforma.compartilhado.PublicacaoId;
 import com.plataforma.evento.EventoRepository;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;

@@ -1,35 +1,56 @@
 package com.plataforma.plataforma.persistencia.jpa.usuario;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.plataforma.usuario.Usuario;
+import com.plataforma.usuario.UsuarioRepository;
+import com.plataforma.compartilhado.UsuarioId;
 import org.springframework.stereotype.Repository;
-
-import com.plataforma.dominio.usuario.Usuario;
-import com.plataforma.dominio.usuario.UsuarioId;
-import com.plataforma.dominio.usuario.UsuarioRepositorio;
+import java.util.Optional;
 
 @Repository
-public class UsuarioRepositorioImpl implements UsuarioRepositorio {
-    @Autowired
-    private UsuarioJpaRepository repositorio;
+public class UsuarioRepositorioImpl implements UsuarioRepository {
+    private final UsuarioJpaRepository jpaRepository;
 
-    @Autowired
-    private JpaMapeador mapeador;
+    public UsuarioRepositorioImpl(UsuarioJpaRepository jpaRepository) {
+        this.jpaRepository = jpaRepository;
+    }
 
     @Override
     public void salvar(Usuario usuario) {
-        var usuarioJpa = mapeador.map(usuario, UsuarioJpa.class);
-        repositorio.save(usuarioJpa);
+        UsuarioJpa usuarioJpa = new UsuarioJpa();
+        usuarioJpa.setId(usuario.getId().getValor());
+        usuarioJpa.setNome(usuario.getNome());
+        usuarioJpa.setEmail(usuario.getEmail());
+        usuarioJpa.setSenha(usuario.getSenha());
+        usuarioJpa.setDataCriacao(usuario.getDataCriacao());
+        usuarioJpa.setUltimoAcesso(usuario.getUltimoAcesso());
+        usuarioJpa.setAtivo(usuario.isAtivo());
+        
+        jpaRepository.save(usuarioJpa);
     }
 
     @Override
     public Usuario obter(UsuarioId id) {
-        var usuarioJpa = repositorio.findById(id.getId()).get();
-        return mapeador.map(usuarioJpa, Usuario.class);
+        return jpaRepository.findById(id.getValor())
+            .map(this::toUsuario)
+            .orElse(null);
     }
 
     @Override
     public Usuario obterPorEmail(String email) {
-        var usuarioJpa = repositorio.findByEmail(email);
-        return usuarioJpa != null ? mapeador.map(usuarioJpa, Usuario.class) : null;
+        return Optional.ofNullable(jpaRepository.findByEmail(email))
+            .map(this::toUsuario)
+            .orElse(null);
+    }
+
+    private Usuario toUsuario(UsuarioJpa jpa) {
+        return new Usuario(
+            new UsuarioId(jpa.getId()),
+            jpa.getNome(),
+            jpa.getEmail(),
+            jpa.getSenha(),
+            jpa.getDataCriacao(),
+            jpa.getUltimoAcesso(),
+            jpa.isAtivo()
+        );
     }
 } 

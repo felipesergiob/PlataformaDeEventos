@@ -6,19 +6,26 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Entity
 @Table(name = "PUBLICACAO")
 public class PublicacaoJpa {
     @Id
-    private Integer id;
-    @Column(name = "EVENTO_ID")
-    private Integer eventoId;
-    @Column(name = "USUARIO_ID")
-    private Integer usuarioId;
+    @Column(name = "ID", columnDefinition = "uuid")
+    private UUID id;
+    
+    @Column(name = "EVENTO_ID", columnDefinition = "uuid")
+    private UUID eventoId;
+    
+    @Column(name = "USUARIO_ID", columnDefinition = "uuid")
+    private UUID usuarioId;
+    
     private String conteudo;
+    
     @Column(name = "DATA_CRIACAO")
     private LocalDateTime dataCriacao;
+    
     private String fotos;
 } 
