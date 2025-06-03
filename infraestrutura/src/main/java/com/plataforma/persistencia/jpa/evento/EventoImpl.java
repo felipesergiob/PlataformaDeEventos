@@ -1,9 +1,10 @@
 package com.plataforma.persistencia.jpa.evento;
 
 import com.plataforma.evento.Evento;
-import com.plataforma.evento.EventoId;
+import com.plataforma.compartilhado.EventoId;
 import com.plataforma.compartilhado.UsuarioId;
 import com.plataforma.persistencia.jpa.usuario.UsuarioImpl;
+import com.plataforma.persistencia.jpa.usuario.UsuarioJpa;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
@@ -23,7 +24,7 @@ public class EventoImpl {
         }
 
         EventoJpa jpa = new EventoJpa();
-        jpa.setId(evento.getId().getValue());
+        jpa.setId(Long.valueOf(evento.getId().getId()));
         jpa.setTitulo(evento.getNome());
         jpa.setDescricao(evento.getDescricao());
         jpa.setDataInicio(evento.getDataInicio());
@@ -35,7 +36,7 @@ public class EventoImpl {
         jpa.setDataCriacao(LocalDateTime.now());
 
         UsuarioJpa organizadorJpa = new UsuarioJpa();
-        organizadorJpa.setId(evento.getOrganizador().getValue());
+        organizadorJpa.setId(Long.valueOf(evento.getOrganizador().getId()));
         jpa.setOrganizador(organizadorJpa);
 
         return jpa;
@@ -47,13 +48,13 @@ public class EventoImpl {
         }
 
         return new Evento(
-            new EventoId(jpa.getId()),
+            EventoId.de(jpa.getId().intValue()),
             jpa.getTitulo(),
             jpa.getDescricao(),
             jpa.getDataInicio(),
             jpa.getDataFim(),
             jpa.getLocal(),
-            new UsuarioId(jpa.getOrganizador().getId()),
+            UsuarioId.de(jpa.getOrganizador().getId().intValue()),
             jpa.getGenero(),
             jpa.getValor()
         );

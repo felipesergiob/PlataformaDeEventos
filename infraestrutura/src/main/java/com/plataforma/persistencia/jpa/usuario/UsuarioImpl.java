@@ -1,7 +1,7 @@
 package com.plataforma.persistencia.jpa.usuario;
 
 import com.plataforma.usuario.Usuario;
-import com.plataforma.usuario.UsuarioId;
+import com.plataforma.compartilhado.UsuarioId;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,7 +18,7 @@ public class UsuarioImpl {
         }
 
         UsuarioJpa jpa = new UsuarioJpa();
-        jpa.setId(usuario.getId().getValue());
+        jpa.setId(usuario.getId().getValor());
         jpa.setNome(usuario.getNome());
         jpa.setEmail(usuario.getEmail());
         jpa.setSenha(usuario.getSenha());
@@ -34,7 +34,7 @@ public class UsuarioImpl {
         }
 
         return new Usuario(
-            new UsuarioId(jpa.getId()),
+            new UsuarioId(jpa.getId().toString()),
             jpa.getNome(),
             jpa.getEmail(),
             jpa.getSenha(),

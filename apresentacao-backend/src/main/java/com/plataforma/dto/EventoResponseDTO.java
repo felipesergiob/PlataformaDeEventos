@@ -20,4 +20,4 @@ public class EventoResponseDTO {
     private String nomeOrganizador;
     private Double mediaAvaliacao;
     private Integer totalAvaliacoes;
-} 
+}

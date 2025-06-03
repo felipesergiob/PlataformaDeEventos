@@ -6,6 +6,7 @@ import com.plataforma.persistencia.jpa.usuario.UsuarioJpaRepositorio;
 import com.plataforma.persistencia.jpa.usuario.SeguidorJpa;
 import com.plataforma.persistencia.jpa.usuario.SeguidorJpaRepositorio;
 import com.plataforma.persistencia.jpa.evento.EventoJpa;
+import com.plataforma.persistencia.jpa.evento.EventoJpaRepositorio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 public class UsuarioController {
     private final UsuarioJpaRepositorio usuarioJpaRepositorio;
     private final SeguidorJpaRepositorio seguidorJpaRepositorio;
-
+    private final EventoJpaRepositorio eventoJpaRepositorio;
     @GetMapping("/{id}")
     public ResponseEntity<PerfilUsuarioResponseDTO> buscarPerfilUsuario(@PathVariable Long id) {
         UsuarioJpa usuario = usuarioJpaRepositorio.findById(id).orElse(null);
@@ -31,11 +32,11 @@ public class UsuarioController {
         response.setId(usuario.getId());
         response.setNome(usuario.getNome());
         response.setEmail(usuario.getEmail());
-        response.setFoto(usuario.getFoto());
-        response.setTotalEventosOrganizados(usuario.getEventosOrganizados().size());
-        response.setMediaAvaliacao(usuario.getMediaAvaliacao());
-        response.setTotalSeguidores(seguidorJpaRepositorio.countBySeguidoId(id));
-        response.setTotalSeguindo(seguidorJpaRepositorio.countBySeguidorId(id));
+        response.setFoto(usuario.getFotoPerfil());
+        response.setTotalEventosOrganizados(eventoJpaRepositorio.findByOrganizadorId(id).size());
+        response.setMediaAvaliacao(eventoJpaRepositorio.findMediaAvaliacaoByOrganizadorId(id));
+        response.setTotalSeguidores(usuario.getSeguidores());
+        response.setTotalSeguindo(usuario.getSeguindo().size());
 
         return ResponseEntity.ok(response);
     }
@@ -47,7 +48,7 @@ public class UsuarioController {
                 .map(evento -> {
                     EventoResponseDTO dto = new EventoResponseDTO();
                     dto.setId(evento.getId());
-                    dto.setTitulo(evento.getNome());
+                    dto.setTitulo(evento.getTitulo());
                     dto.setDescricao(evento.getDescricao());
                     dto.setDataInicio(evento.getDataInicio());
                     dto.setDataFim(evento.getDataFim());
@@ -67,7 +68,7 @@ public class UsuarioController {
                 .map(evento -> {
                     EventoResponseDTO dto = new EventoResponseDTO();
                     dto.setId(evento.getId());
-                    dto.setTitulo(evento.getNome());
+                    dto.setTitulo(evento.getTitulo());
                     dto.setDescricao(evento.getDescricao());
                     dto.setDataInicio(evento.getDataInicio());
                     dto.setDataFim(evento.getDataFim());
@@ -83,8 +84,8 @@ public class UsuarioController {
     @PostMapping("/{id}/seguir/{seguidoId}")
     public ResponseEntity<Void> seguirUsuario(@PathVariable Long id, @PathVariable Long seguidoId) {
         SeguidorJpa seguidor = new SeguidorJpa();
-        seguidor.setSeguidor(new UsuarioJpa(id));
-        seguidor.setSeguido(new UsuarioJpa(seguidoId));
+        seguidor.setSeguidor(usuarioJpaRepositorio.findById(id).orElse(null));
+        seguidor.setSeguido(usuarioJpaRepositorio.findById(seguidoId).orElse(null));
         seguidorJpaRepositorio.save(seguidor);
         return ResponseEntity.ok().build();
     }

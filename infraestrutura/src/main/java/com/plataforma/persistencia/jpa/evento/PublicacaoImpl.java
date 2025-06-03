@@ -1,6 +1,6 @@
 package com.plataforma.persistencia.jpa.evento;
 
-import com.plataforma.evento.EventoId;
+import com.plataforma.compartilhado.EventoId;
 import com.plataforma.compartilhado.UsuarioId;
 import com.plataforma.persistencia.jpa.usuario.UsuarioImpl;
 import org.springframework.stereotype.Component;
@@ -28,11 +28,11 @@ public class PublicacaoImpl {
         PublicacaoJpa jpa = new PublicacaoJpa();
         
         EventoJpa eventoJpa = new EventoJpa();
-        eventoJpa.setId(eventoId.getValue());
+        eventoJpa.setId(eventoId.getValor());
         jpa.setEvento(eventoJpa);
 
         UsuarioJpa usuarioJpa = new UsuarioJpa();
-        usuarioJpa.setId(usuarioId.getValue());
+        usuarioJpa.setId(usuarioId.getValor());
         jpa.setUsuario(usuarioJpa);
 
         jpa.setConteudo(conteudo);

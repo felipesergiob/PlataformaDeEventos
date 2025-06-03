@@ -4,6 +4,8 @@ import com.plataforma.dto.*;
 import com.plataforma.persistencia.jpa.evento.ComentarioJpa;
 import com.plataforma.persistencia.jpa.evento.ComentarioJpaRepositorio;
 import com.plataforma.persistencia.jpa.evento.EventoJpa;
+import com.plataforma.persistencia.jpa.evento.EventoJpaRepositorio;
+import com.plataforma.persistencia.jpa.usuario.UsuarioJpaRepositorio;
 import com.plataforma.persistencia.jpa.usuario.UsuarioJpa;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +20,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ComentarioController {
     private final ComentarioJpaRepositorio comentarioJpaRepositorio;
-
+    private final EventoJpaRepositorio eventoJpaRepositorio;
+    private final UsuarioJpaRepositorio usuarioJpaRepositorio;
     @PostMapping
     public ResponseEntity<ComentarioResponseDTO> criarComentario(@RequestBody CriarComentarioRequestDTO request) {
         ComentarioJpa comentario = new ComentarioJpa();
-        comentario.setEvento(new EventoJpa(request.getEventoId()));
-        comentario.setUsuario(new UsuarioJpa(request.getUsuarioId()));
+        comentario.setEvento(eventoJpaRepositorio.findById(request.getEventoId()).orElse(null));
+        comentario.setUsuario(usuarioJpaRepositorio.findById(request.getUsuarioId()).orElse(null));
         comentario.setComentario(request.getComentario());
         comentario.setDataCriacao(LocalDateTime.now());
         
         if (request.getComentarioPaiId() != null) {
-            comentario.setComentarioPai(new ComentarioJpa(request.getComentarioPaiId()));
+            comentario.setComentarioPai(comentarioJpaRepositorio.findById(request.getComentarioPaiId()).orElse(null));
         }
         
         comentario = comentarioJpaRepositorio.save(comentario);

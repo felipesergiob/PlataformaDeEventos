@@ -4,7 +4,9 @@ import com.plataforma.dto.*;
 import com.plataforma.persistencia.jpa.evento.AvaliacaoJpa;
 import com.plataforma.persistencia.jpa.evento.AvaliacaoJpaRepositorio;
 import com.plataforma.persistencia.jpa.evento.EventoJpa;
+import com.plataforma.persistencia.jpa.evento.EventoJpaRepositorio;
 import com.plataforma.persistencia.jpa.usuario.UsuarioJpa;
+import com.plataforma.persistencia.jpa.usuario.UsuarioJpaRepositorio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,16 +20,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AvaliacaoController {
     private final AvaliacaoJpaRepositorio avaliacaoJpaRepositorio;
-
+    private final EventoJpaRepositorio eventoJpaRepositorio;
+    private final UsuarioJpaRepositorio usuarioJpaRepositorio;
     @PostMapping
     public ResponseEntity<AvaliacaoResponseDTO> criarAvaliacao(@RequestBody CriarAvaliacaoRequestDTO request) {
         AvaliacaoJpa avaliacao = new AvaliacaoJpa();
-        avaliacao.setEvento(new EventoJpa(request.getEventoId()));
-        avaliacao.setUsuario(new UsuarioJpa(request.getUsuarioId()));
+        avaliacao.setEvento(eventoJpaRepositorio.findById(request.getEventoId()).orElse(null));
+        avaliacao.setUsuario(usuarioJpaRepositorio.findById(request.getUsuarioId()).orElse(null));
         avaliacao.setNota(request.getNota());
         avaliacao.setComentario(request.getComentario());
         avaliacao.setDataCriacao(LocalDateTime.now());
-        
+
         avaliacao = avaliacaoJpaRepositorio.save(avaliacao);
 
         AvaliacaoResponseDTO response = new AvaliacaoResponseDTO();

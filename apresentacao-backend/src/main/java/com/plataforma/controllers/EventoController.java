@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,17 +19,34 @@ import java.util.stream.Collectors;
 public class EventoController {
     private final EventoJpaRepositorio eventoJpaRepositorio;
 
+    private int[] getHorarioPeriodo(String periodoDia) {
+        switch (periodoDia.toLowerCase()) {
+            case "manha":
+                return new int[]{6, 12};
+            case "tarde":
+                return new int[]{12, 18};
+            case "noite":
+                return new int[]{18, 24};
+            case "madrugada":
+                return new int[]{0, 6};
+            default:
+                throw new IllegalArgumentException("Período do dia inválido: " + periodoDia);
+        }
+    }
+
     @GetMapping
     public ResponseEntity<List<EventoResponseDTO>> listarEventos(
             @RequestParam(required = false) String genero,
             @RequestParam(required = false) String periodoDia) {
         List<EventoJpa> eventos;
         if (genero != null && periodoDia != null) {
-            eventos = eventoJpaRepositorio.findByGeneroAndPeriodoDia(genero, periodoDia);
+            int[] horario = getHorarioPeriodo(periodoDia);
+            eventos = eventoJpaRepositorio.findByGeneroAndPeriodoDia(genero, horario[0], horario[1]);
         } else if (genero != null) {
             eventos = eventoJpaRepositorio.findByGenero(genero);
         } else if (periodoDia != null) {
-            eventos = eventoJpaRepositorio.findByPeriodoDia(periodoDia);
+            int[] horario = getHorarioPeriodo(periodoDia);
+            eventos = eventoJpaRepositorio.findByPeriodoDia(horario[0], horario[1]);
         } else {
             eventos = eventoJpaRepositorio.findAll();
         }
@@ -36,7 +55,7 @@ public class EventoController {
                 .map(evento -> {
                     EventoResponseDTO dto = new EventoResponseDTO();
                     dto.setId(evento.getId());
-                    dto.setTitulo(evento.getNome());
+                    dto.setTitulo(evento.getTitulo());
                     dto.setDescricao(evento.getDescricao());
                     dto.setDataInicio(evento.getDataInicio());
                     dto.setDataFim(evento.getDataFim());
@@ -51,18 +70,28 @@ public class EventoController {
 
     @PostMapping("/filtrar")
     public ResponseEntity<List<EventoResponseDTO>> filtrarEventos(@RequestBody FiltrarEventosRequestDTO request) {
+        Integer horaInicio = null;
+        Integer horaFim = null;
+        if (request.getPeriodoDia() != null) {
+            int[] horario = getHorarioPeriodo(request.getPeriodoDia());
+            horaInicio = horario[0];
+            horaFim = horario[1];
+        }
+
         List<EventoJpa> eventos = eventoJpaRepositorio.filtrarEventos(
                 request.getGenero(),
                 request.getDataInicio(),
                 request.getDataFim(),
                 request.getValorMaximo(),
-                request.getPeriodoDia()
+                horaInicio,
+                horaFim
         );
+
         List<EventoResponseDTO> response = eventos.stream()
                 .map(evento -> {
                     EventoResponseDTO dto = new EventoResponseDTO();
                     dto.setId(evento.getId());
-                    dto.setTitulo(evento.getNome());
+                    dto.setTitulo(evento.getTitulo());
                     dto.setDescricao(evento.getDescricao());
                     dto.setDataInicio(evento.getDataInicio());
                     dto.setDataFim(evento.getDataFim());
@@ -77,12 +106,16 @@ public class EventoController {
 
     @GetMapping("/destaque")
     public ResponseEntity<List<EventoResponseDTO>> listarEventosDestaque() {
-        List<EventoJpa> eventos = eventoJpaRepositorio.findEventosDestaque();
+        LocalDateTime inicioSemana = LocalDateTime.now().with(DayOfWeek.MONDAY).with(LocalTime.MIN);
+        LocalDateTime fimSemana = LocalDateTime.now().with(DayOfWeek.SUNDAY).with(LocalTime.MAX);
+        List<EventoJpa> eventos = eventoJpaRepositorio.findByDataInicioBetweenAndParticipantesGreaterThanOrderByParticipantesDesc(
+            inicioSemana, fimSemana, 0);
+
         List<EventoResponseDTO> response = eventos.stream()
                 .map(evento -> {
                     EventoResponseDTO dto = new EventoResponseDTO();
                     dto.setId(evento.getId());
-                    dto.setTitulo(evento.getNome());
+                    dto.setTitulo(evento.getTitulo());
                     dto.setDescricao(evento.getDescricao());
                     dto.setDataInicio(evento.getDataInicio());
                     dto.setDataFim(evento.getDataFim());
@@ -103,8 +136,9 @@ public class EventoController {
         }
 
         EventoResponseDTO response = new EventoResponseDTO();
+
         response.setId(evento.getId());
-        response.setTitulo(evento.getNome());
+        response.setTitulo(evento.getTitulo());
         response.setDescricao(evento.getDescricao());
         response.setDataInicio(evento.getDataInicio());
         response.setDataFim(evento.getDataFim());
@@ -118,7 +152,8 @@ public class EventoController {
     @PostMapping
     public ResponseEntity<EventoResponseDTO> criarEvento(@RequestBody CriarEventoRequestDTO request) {
         EventoJpa evento = new EventoJpa();
-        evento.setNome(request.getTitulo());
+
+        evento.setTitulo(request.getTitulo());
         evento.setDescricao(request.getDescricao());
         evento.setDataInicio(request.getDataInicio());
         evento.setDataFim(request.getDataFim());
@@ -132,8 +167,9 @@ public class EventoController {
         evento = eventoJpaRepositorio.save(evento);
 
         EventoResponseDTO response = new EventoResponseDTO();
+
         response.setId(evento.getId());
-        response.setTitulo(evento.getNome());
+        response.setTitulo(evento.getTitulo());
         response.setDescricao(evento.getDescricao());
         response.setDataInicio(evento.getDataInicio());
         response.setDataFim(evento.getDataFim());

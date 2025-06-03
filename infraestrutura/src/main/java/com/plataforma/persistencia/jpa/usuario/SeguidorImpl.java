@@ -1,6 +1,6 @@
 package com.plataforma.persistencia.jpa.usuario;
 
-import com.plataforma.usuario.UsuarioId;
+import com.plataforma.compartilhado.UsuarioId;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,11 +20,11 @@ public class SeguidorImpl {
 
         SeguidorJpa jpa = new SeguidorJpa();
         UsuarioJpa seguidorJpa = new UsuarioJpa();
-        seguidorJpa.setId(seguidorId.getValue());
+        seguidorJpa.setId(seguidorId.getValor());
         jpa.setSeguidor(seguidorJpa);
 
         UsuarioJpa seguidoJpa = new UsuarioJpa();
-        seguidoJpa.setId(seguidoId.getValue());
+        seguidoJpa.setId(seguidoId.getValor());
         jpa.setSeguido(seguidoJpa);
 
         return jpa;

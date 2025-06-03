@@ -4,7 +4,9 @@ import com.plataforma.dto.*;
 import com.plataforma.persistencia.jpa.evento.PublicacaoJpa;
 import com.plataforma.persistencia.jpa.evento.PublicacaoJpaRepositorio;
 import com.plataforma.persistencia.jpa.evento.EventoJpa;
+import com.plataforma.persistencia.jpa.evento.EventoJpaRepositorio;
 import com.plataforma.persistencia.jpa.usuario.UsuarioJpa;
+import com.plataforma.persistencia.jpa.usuario.UsuarioJpaRepositorio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +20,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PublicacaoController {
     private final PublicacaoJpaRepositorio publicacaoJpaRepositorio;
-
+    private final EventoJpaRepositorio eventoJpaRepositorio;
+    private final UsuarioJpaRepositorio usuarioJpaRepositorio;
     @PostMapping
     public ResponseEntity<PublicacaoResponseDTO> criarPublicacao(@RequestBody CriarPublicacaoRequestDTO request) {
         PublicacaoJpa publicacao = new PublicacaoJpa();
-        publicacao.setEvento(new EventoJpa(request.getEventoId()));
-        publicacao.setUsuario(new UsuarioJpa(request.getUsuarioId()));
+        publicacao.setEvento(eventoJpaRepositorio.findById(request.getEventoId()).orElse(null));
+        publicacao.setUsuario(usuarioJpaRepositorio.findById(request.getUsuarioId()).orElse(null));
         publicacao.setConteudo(request.getConteudo());
         publicacao.setFotos(request.getFotos());
         publicacao.setDataCriacao(LocalDateTime.now());
