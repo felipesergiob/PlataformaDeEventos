@@ -13,7 +13,8 @@
         <module>dominio-compartilhado</module>
         <module>dominio-usuario</module>
         <module>dominio-evento</module>
-        <module>aplicacao</module>
+        <module>infraestrutura</module>
+        <module>apresentacao-backend</module>
     </modules>
 
     <properties>
