@@ -17,7 +17,6 @@ public class ModelMapperConfig {
             .setFieldMatchingEnabled(true)
             .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
 
-        // Configura o mapeamento para sempre usar UsuarioResumoImpl quando o destino é UsuarioResumo
         modelMapper.createTypeMap(Object.class, UsuarioResumo.class)
             .setConverter(context -> modelMapper.map(context.getSource(), UsuarioResumoImpl.class));
 

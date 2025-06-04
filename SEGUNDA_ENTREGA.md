@@ -44,19 +44,7 @@ Durante o desenvolvimento do projeto, implementamos as seguintes histórias de u
 
     > Como usuário da plataforma, eu gostaria de visualizar os eventos em destaque da semana.
 
----
 
-## 🧩 Padrões de Projeto Utilizados
-
-Durante o desenvolvimento, utilizamos alguns padrões de projeto para organizar melhor a arquitetura do sistema, promover reuso de código e facilitar a manutenção.
-
-**Padrões adotados:**
-
-- **[Nome do Padrão 1]**: Aplicado nos arquivos `[NomeArquivo1.kt, NomeArquivo2.kt]`
-- **[Nome do Padrão 2]**: Utilizado para [explicação breve], presente em `[NomeArquivo.kt]`
-- ...
-
----
 
 ## ⚙️ Instruções de Execução e Acesso
 
@@ -108,6 +96,15 @@ mvn spring-boot:run
 ```
 
 Acesse: [http://localhost:8081](http://localhost:8081)
+
+### Rodar o Frontend
+
+```bash
+cd apresentacao-frontend
+npm run dev
+```
+
+Acesse: [http://localhost:5173](http://localhost:5173)
 
 ### Estrutura do Projeto
 

@@ -49,12 +49,10 @@ public class PublicacaoSobreOEventoSteps {
 
     @Quando("eu acessar a página do evento")
     public void eu_acessar_a_pagina_do_evento() {
-        // Simulação de acesso à página do evento
     }
 
     @E("clicar no botão {string}")
     public void clicar_no_botao(String botao) {
-        // Simulação de clique no botão
     }
 
     @E("preencher o título do resumo")
@@ -69,7 +67,6 @@ public class PublicacaoSobreOEventoSteps {
 
     @E("escrever o conteúdo do resumo")
     public void escrever_o_conteudo_do_resumo() {
-        // O conteúdo já foi definido no passo anterior
     }
 
     @E("clicar em {string}")

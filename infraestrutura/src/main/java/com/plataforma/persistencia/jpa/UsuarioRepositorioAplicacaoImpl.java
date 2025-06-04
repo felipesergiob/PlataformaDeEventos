@@ -71,10 +71,9 @@ public class UsuarioRepositorioAplicacaoImpl implements UsuarioRepositorioAplica
 		var novoSeguidor = new SeguidorJpa();
 		novoSeguidor.setSeguidor(seguidorJpa);
 		novoSeguidor.setSeguido(seguidoJpa);
-		
+
 		seguidorRepository.save(novoSeguidor);
-		
-		// Atualiza o contador de seguidores
+
 		seguidoJpa.setSeguidores(seguidoJpa.getSeguidores() + 1);
 		usuarioRepository.save(seguidoJpa);
 	}
@@ -88,8 +87,7 @@ public class UsuarioRepositorioAplicacaoImpl implements UsuarioRepositorioAplica
 				.orElseThrow(() -> new IllegalStateException("Usuário não está seguindo"));
 
 		seguidorRepository.delete(relacao);
-		
-		// Atualiza o contador de seguidores
+
 		seguidoJpa.setSeguidores(seguidoJpa.getSeguidores() - 1);
 		usuarioRepository.save(seguidoJpa);
 	}

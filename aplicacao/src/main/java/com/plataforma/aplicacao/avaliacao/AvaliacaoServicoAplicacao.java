@@ -17,16 +17,13 @@ public class AvaliacaoServicoAplicacao {
     private final ParticipanteRepositorioAplicacao participanteRepositorio;
 
     public void avaliarEvento(CriarAvaliacaoRequest request) {
-        // Verifica se o evento existe
         var evento = eventoRepositorio.buscarPorId(request.getEventoId())
             .orElseThrow(() -> new IllegalArgumentException("Evento não encontrado"));
 
-        // Verifica se o evento já aconteceu
         if (evento.getDataFim().isAfter(LocalDateTime.now())) {
             throw new IllegalStateException("O evento ainda não terminou");
         }
 
-        // Verifica se o usuário confirmou presença
         var participacao = participanteRepositorio.buscarParticipacao(request.getEventoId(), request.getUsuarioId())
             .orElseThrow(() -> new IllegalStateException("Usuário não confirmou presença neste evento"));
 
@@ -34,12 +31,10 @@ public class AvaliacaoServicoAplicacao {
             throw new IllegalStateException("Usuário não confirmou presença neste evento");
         }
 
-        // Verifica se o usuário já avaliou este evento
         if (avaliacaoRepositorio.buscarPorEventoEUsuario(request.getEventoId(), request.getUsuarioId()).isPresent()) {
             throw new IllegalStateException("Usuário já avaliou este evento");
         }
 
-        // Cria a avaliação
         var avaliacao = new AvaliacaoResumoImpl();
         avaliacao.setEventoId(String.valueOf(request.getEventoId()));
         avaliacao.setUsuarioId(String.valueOf(request.getUsuarioId()));

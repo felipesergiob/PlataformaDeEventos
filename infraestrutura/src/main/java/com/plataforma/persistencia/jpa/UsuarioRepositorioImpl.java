@@ -43,7 +43,6 @@ public class UsuarioRepositorioImpl implements UsuarioRepository {
 
     @Override
     public void seguirUsuario(UsuarioId id, UsuarioId idSeguido) {
-        // Implementation will be added when we create the SEGUIDOR table mapping
     }
 
     @Override

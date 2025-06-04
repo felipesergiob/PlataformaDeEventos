@@ -21,7 +21,7 @@ public class PublicacaoService {
 		this.eventoRepository = eventoRepository;
 	}
 
-	public void salvar(Publicacao publicacao, UsuarioId criadorId) { //historia 9
+	public void salvar(Publicacao publicacao, UsuarioId criadorId) {
 		notNull(publicacao, "A publicação não pode ser nula");
 		notNull(criadorId, "O ID do criador não pode ser nulo");
 		notNull(publicacao.getEventoId(), "O evento da publicação não pode ser nulo");

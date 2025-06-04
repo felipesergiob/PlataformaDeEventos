@@ -39,7 +39,7 @@ public class UsuarioController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         } catch (IllegalStateException e) {
-            return ResponseEntity.status(409).build(); // Conflict
+            return ResponseEntity.status(409).build();
         }
     }
 

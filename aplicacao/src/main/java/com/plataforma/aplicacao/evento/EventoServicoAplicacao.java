@@ -18,16 +18,13 @@ public class EventoServicoAplicacao {
 
     @Transactional
     public EventoResumo criar(CriarEventoRequest request) {
-        // Valida se o organizador existe
         var organizador = usuarioRepositorio.buscarPorId(request.getOrganizadorId())
             .orElseThrow(() -> new IllegalArgumentException("Organizador não encontrado"));
 
-        // Valida as datas
         if (request.getDataInicio().isAfter(request.getDataFim())) {
             throw new IllegalArgumentException("A data de início não pode ser posterior à data de fim");
         }
 
-        // Cria o evento
         var evento = new EventoResumoImpl();
         evento.setTitulo(request.getTitulo());
         evento.setDescricao(request.getDescricao());

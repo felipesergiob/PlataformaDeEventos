@@ -61,8 +61,6 @@ public class UsuarioServicoAplicacao {
             
         var seguido = repositorio.buscarPorId(seguidoId)
             .orElseThrow(() -> new IllegalArgumentException("Usuário a ser seguido não encontrado"));
-
-        // Cria instâncias de UsuarioResumoImpl para evitar problemas com o ModelMapper
         var seguidorImpl = new UsuarioResumoImpl();
         seguidorImpl.setId(seguidor.getId());
         seguidorImpl.setNome(seguidor.getNome());

@@ -19,15 +19,12 @@ public class PublicacaoServicoAplicacao {
 
     @Transactional
     public PublicacaoResumo criar(CriarPublicacaoRequest request) {
-        // Valida se o usuário existe
         var usuario = usuarioRepositorio.buscarPorId(request.getUsuarioId())
             .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
 
-        // Valida se o evento existe
         var evento = eventoRepositorio.buscarPorId(request.getEventoId())
             .orElseThrow(() -> new IllegalArgumentException("Evento não encontrado"));
 
-        // Cria a publicação
         var publicacao = new PublicacaoResumoImpl();
         publicacao.setConteudo(request.getConteudo());
         publicacao.setFotos(request.getFotos());
@@ -47,7 +44,6 @@ public class PublicacaoServicoAplicacao {
 
     @Transactional(readOnly = true)
     public List<PublicacaoResumo> listarPorEvento(Integer eventoId) {
-        // Valida se o evento existe
         eventoRepositorio.buscarPorId(eventoId)
             .orElseThrow(() -> new IllegalArgumentException("Evento não encontrado"));
 
@@ -56,7 +52,6 @@ public class PublicacaoServicoAplicacao {
 
     @Transactional(readOnly = true)
     public List<PublicacaoResumo> listarPorUsuario(Integer usuarioId) {
-        // Valida se o usuário existe
         usuarioRepositorio.buscarPorId(usuarioId)
             .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
 

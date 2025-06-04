@@ -10,6 +10,6 @@ public class EventoFiltro {
     private LocalDateTime dataFim;
     private Double precoMinimo;
     private Double precoMaximo;
-    private String periodoHorario; // MANHA, TARDE, NOITE
+    private String periodoHorario;
     private Boolean gratuito;
 } 

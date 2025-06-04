@@ -112,7 +112,7 @@ public class EventoService {
                 .collect(Collectors.toList());
     }
 
-    public List<Evento> listarEventosDestaques() { // historia 10 //feito
+    public List<Evento> listarEventosDestaques() {
         List<Evento> todosEventos = eventoRepository.listarTodos();
 
         LocalDateTime agora = LocalDateTime.now();
@@ -129,7 +129,7 @@ public class EventoService {
                 .toList();
     }
 
-    public Map<String, Object> dashboardEvento(EventoId id) { //historia 4
+    public Map<String, Object> dashboardEvento(EventoId id) {
         Evento evento = eventoRepository.obter(id);
         if (evento == null) {
             throw new IllegalArgumentException("Evento não encontrado");

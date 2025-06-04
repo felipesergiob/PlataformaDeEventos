@@ -48,7 +48,7 @@ public class AvaliacaoService {
         return avaliacaoRepository.contarParticipantesConfirmados(eventoId);
     }
 
-    public Map<String, Object> visualizarResumoAvaliacoes(EventoId eventoId) { // historia  indefinida
+    public Map<String, Object> visualizarResumoAvaliacoes(EventoId eventoId) {
         notNull(eventoId, "O id do evento não pode ser nulo");
 
         Map<String, Object> resumo = new HashMap<>();
@@ -59,7 +59,7 @@ public class AvaliacaoService {
         return resumo;
     }
 
-    public void avaliarEvento(EventoId eventoId, Avaliacao avaliacao, UsuarioId usuarioId) { // historia 5
+    public void avaliarEvento(EventoId eventoId, Avaliacao avaliacao, UsuarioId usuarioId) {
         notNull(eventoId, "O id do evento não pode ser nulo");
         notNull(avaliacao, "A avaliação não pode ser nula");
         notNull(usuarioId, "O id do usuário não pode ser nulo");
