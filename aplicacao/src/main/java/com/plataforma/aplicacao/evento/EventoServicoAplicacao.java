@@ -74,4 +74,17 @@ public class EventoServicoAplicacao {
         return repositorio.buscarDashboardEvento(eventoId, organizadorId)
             .orElseThrow(() -> new IllegalArgumentException("Evento não encontrado ou você não tem permissão para acessá-lo"));
     }
+
+    @Transactional(readOnly = true)
+    public List<EventoResumo> buscarEventosComFiltro(EventoFiltro filtro) {
+        return repositorio.buscarEventosComFiltro(
+            filtro.getGenero(),
+            filtro.getDataInicio(),
+            filtro.getDataFim(),
+            filtro.getPrecoMinimo(),
+            filtro.getPrecoMaximo(),
+            filtro.getPeriodoHorario(),
+            filtro.getGratuito()
+        );
+    }
 } 

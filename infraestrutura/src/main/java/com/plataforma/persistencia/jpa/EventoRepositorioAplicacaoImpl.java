@@ -219,4 +219,40 @@ public class EventoRepositorioAplicacaoImpl implements EventoRepositorioAplicaca
                     return dashboard;
                 });
     }
+
+    @Override
+    public List<EventoResumo> buscarPorOrganizador(Integer organizadorId) {
+        return eventoRepository.findByOrganizadorId(organizadorId).stream()
+                .map(this::toResumo)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<EventoResumo> buscarPorIdEOrganizador(Integer id, Integer organizadorId) {
+        return eventoRepository.findByIdAndOrganizadorId(id, organizadorId)
+                .map(this::toResumo);
+    }
+
+    @Override
+    public List<EventoResumo> buscarEventosComFiltro(
+        String genero,
+        LocalDateTime dataInicio,
+        LocalDateTime dataFim,
+        Double precoMinimo,
+        Double precoMaximo,
+        String periodoHorario,
+        Boolean gratuito
+    ) {
+        return eventoRepository.buscarEventosComFiltro(
+            genero,
+            dataInicio,
+            dataFim,
+            precoMinimo,
+            precoMaximo,
+            periodoHorario,
+            gratuito
+        ).stream()
+        .map(this::toResumo)
+        .collect(Collectors.toList());
+    }
 }

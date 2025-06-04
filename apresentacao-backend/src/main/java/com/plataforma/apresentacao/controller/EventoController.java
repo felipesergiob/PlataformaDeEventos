@@ -8,6 +8,7 @@ import com.plataforma.aplicacao.evento.EventoResumo;
 import com.plataforma.aplicacao.evento.EventoDestaqueResumo;
 import com.plataforma.aplicacao.evento.EventoServicoAplicacao;
 import com.plataforma.aplicacao.evento.EventoDashboardResumo;
+import com.plataforma.aplicacao.evento.EventoFiltro;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -62,5 +63,10 @@ public class EventoController {
         @PathVariable Integer organizadorId
     ) {
         return eventoServico.buscarDashboardEvento(eventoId, organizadorId);
+    }
+
+    @GetMapping("/filtrar")
+    public ResponseEntity<List<EventoResumo>> buscarEventosComFiltro(EventoFiltro filtro) {
+        return ResponseEntity.ok(eventoServico.buscarEventosComFiltro(filtro));
     }
 } 
