@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EventoJpaRepository extends JpaRepository<EventoJpa, Integer> {
@@ -20,4 +21,7 @@ public interface EventoJpaRepository extends JpaRepository<EventoJpa, Integer> {
         LIMIT :limite
         """, nativeQuery = true)
     List<EventoJpa> findEventosDestaqueDaSemana(@Param("limite") int limite);
+
+    List<EventoJpa> findByOrganizadorIdOrderByDataCriacaoDesc(Integer organizadorId);
+    Optional<EventoJpa> findByIdAndOrganizadorId(Integer id, Integer organizadorId);
 }

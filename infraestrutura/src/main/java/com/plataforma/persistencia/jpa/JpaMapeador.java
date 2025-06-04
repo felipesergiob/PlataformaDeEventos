@@ -65,7 +65,6 @@ class JpaMapeador extends ModelMapper {
             }
         });
 
-        // Configura o mapeamento para sempre usar UsuarioResumoImpl quando o destino é UsuarioResumo
         createTypeMap(UsuarioJpa.class, UsuarioResumo.class)
             .setConverter(context -> {
                 var source = context.getSource();

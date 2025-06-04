@@ -9,4 +9,5 @@ public interface ComentarioJpaRepository extends JpaRepository<ComentarioJpa, In
     List<ComentarioJpa> findByEventoIdOrderByDataCriacaoDesc(Integer eventoId);
     List<ComentarioJpa> findByUsuarioIdOrderByDataCriacaoDesc(Integer usuarioId);
     List<ComentarioJpa> findByComentarioPaiIdOrderByDataCriacaoAsc(Integer comentarioPaiId);
+    int countByEventoId(Integer eventoId);
 } 

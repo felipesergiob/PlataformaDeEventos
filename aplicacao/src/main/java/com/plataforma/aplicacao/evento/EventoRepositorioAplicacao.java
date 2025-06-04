@@ -9,4 +9,6 @@ public interface EventoRepositorioAplicacao {
     List<EventoResumo> listarTodos();
     List<EventoResumo> listarPorOrganizador(Integer organizadorId);
     List<EventoDestaqueResumo> listarEventosDestaqueDaSemana(int limite);
+    List<EventoDashboardResumo> listarDashboardPorOrganizador(Integer organizadorId);
+    Optional<EventoDashboardResumo> buscarDashboardEvento(Integer eventoId, Integer organizadorId);
 } 

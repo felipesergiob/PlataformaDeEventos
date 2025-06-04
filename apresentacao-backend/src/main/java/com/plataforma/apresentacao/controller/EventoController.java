@@ -7,6 +7,7 @@ import com.plataforma.aplicacao.evento.CriarEventoRequest;
 import com.plataforma.aplicacao.evento.EventoResumo;
 import com.plataforma.aplicacao.evento.EventoDestaqueResumo;
 import com.plataforma.aplicacao.evento.EventoServicoAplicacao;
+import com.plataforma.aplicacao.evento.EventoDashboardResumo;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -48,5 +49,18 @@ public class EventoController {
     public ResponseEntity<List<EventoDestaqueResumo>> listarEventosDestaqueDaSemana() {
         var eventos = eventoServico.listarEventosDestaqueDaSemana();
         return ResponseEntity.ok(eventos);
+    }
+
+    @GetMapping("/organizador/{organizadorId}/dashboard")
+    public List<EventoDashboardResumo> listarDashboardEventosOrganizador(@PathVariable Integer organizadorId) {
+        return eventoServico.listarDashboardEventosOrganizador(organizadorId);
+    }
+
+    @GetMapping("/{eventoId}/organizador/{organizadorId}/dashboard")
+    public EventoDashboardResumo buscarDashboardEvento(
+        @PathVariable Integer eventoId,
+        @PathVariable Integer organizadorId
+    ) {
+        return eventoServico.buscarDashboardEvento(eventoId, organizadorId);
     }
 } 

@@ -65,4 +65,13 @@ public class EventoServicoAplicacao {
     public List<EventoDestaqueResumo> listarEventosDestaqueDaSemana() {
         return repositorio.listarEventosDestaqueDaSemana(LIMITE_EVENTOS_DESTAQUE);
     }
+
+    public List<EventoDashboardResumo> listarDashboardEventosOrganizador(Integer organizadorId) {
+        return repositorio.listarDashboardPorOrganizador(organizadorId);
+    }
+
+    public EventoDashboardResumo buscarDashboardEvento(Integer eventoId, Integer organizadorId) {
+        return repositorio.buscarDashboardEvento(eventoId, organizadorId)
+            .orElseThrow(() -> new IllegalArgumentException("Evento não encontrado ou você não tem permissão para acessá-lo"));
+    }
 } 

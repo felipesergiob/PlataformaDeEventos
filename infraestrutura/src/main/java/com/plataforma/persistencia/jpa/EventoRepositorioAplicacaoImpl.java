@@ -8,11 +8,14 @@ import com.plataforma.aplicacao.evento.EventoResumo;
 import com.plataforma.aplicacao.evento.EventoResumoImpl;
 import com.plataforma.aplicacao.evento.EventoDestaqueResumo;
 import com.plataforma.aplicacao.evento.EventoRepositorioAplicacao;
+import com.plataforma.aplicacao.evento.EventoDashboardResumo;
+import com.plataforma.aplicacao.evento.EventoDashboardResumoImpl;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.time.LocalDateTime;
 
 @Slf4j
 @Component
@@ -21,6 +24,9 @@ public class EventoRepositorioAplicacaoImpl implements EventoRepositorioAplicaca
 
     private final EventoJpaRepository eventoRepository;
     private final UsuarioJpaRepository usuarioRepository;
+    private final ParticipanteJpaRepository participanteRepository;
+    private final AvaliacaoJpaRepository avaliacaoRepository;
+    private final ComentarioJpaRepository comentarioRepository;
 
     private EventoJpa toJpa(EventoResumo evento) {
         var jpa = new EventoJpa();
@@ -38,7 +44,6 @@ public class EventoRepositorioAplicacaoImpl implements EventoRepositorioAplicaca
         jpa.setParticipantes(evento.getParticipantes());
         jpa.setDataCriacao(evento.getDataCriacao());
 
-        // Busca o organizador
         var organizador = usuarioRepository.findById(Integer.parseInt(evento.getOrganizadorId()))
                 .orElseThrow(() -> new IllegalArgumentException("Organizador não encontrado"));
         jpa.setOrganizador(organizador);
@@ -140,5 +145,78 @@ public class EventoRepositorioAplicacaoImpl implements EventoRepositorioAplicaca
 
         log.info("Retornando {} eventos destaque", resultado.size());
         return resultado;
+    }
+
+    @Override
+    public List<EventoDashboardResumo> listarDashboardPorOrganizador(Integer organizadorId) {
+        return eventoRepository.findByOrganizadorIdOrderByDataCriacaoDesc(organizadorId).stream()
+                .map(evento -> {
+                    var dashboard = new EventoDashboardResumoImpl();
+                    dashboard.setEventoId(evento.getId());
+                    dashboard.setTitulo(evento.getTitulo());
+                    dashboard.setDescricao(evento.getDescricao());
+
+                    dashboard.setTotalConfirmacoes(
+                            participanteRepository.countByEventoIdAndStatus(evento.getId(), "CONFIRMADO"));
+
+                    var avaliacoes = avaliacaoRepository.findByEventoId(evento.getId());
+                    dashboard.setTotalAvaliacoes(avaliacoes.size());
+                    dashboard.setMediaNotas(
+                            avaliacoes.stream()
+                                    .mapToInt(AvaliacaoJpa::getNota)
+                                    .average()
+                                    .orElse(0.0));
+
+                    dashboard.setTotalComentarios(
+                            comentarioRepository.countByEventoId(evento.getId()));
+
+                    var now = LocalDateTime.now();
+                    if (evento.getDataFim().isBefore(now)) {
+                        dashboard.setStatus("ENCERRADO");
+                    } else if (evento.getDataInicio().isAfter(now)) {
+                        dashboard.setStatus("FUTURO");
+                    } else {
+                        dashboard.setStatus("EM_ANDAMENTO");
+                    }
+
+                    return dashboard;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<EventoDashboardResumo> buscarDashboardEvento(Integer eventoId, Integer organizadorId) {
+        return eventoRepository.findByIdAndOrganizadorId(eventoId, organizadorId)
+                .map(evento -> {
+                    var dashboard = new EventoDashboardResumoImpl();
+                    dashboard.setEventoId(evento.getId());
+                    dashboard.setTitulo(evento.getTitulo());
+                    dashboard.setDescricao(evento.getDescricao());
+
+                    dashboard.setTotalConfirmacoes(
+                            participanteRepository.countByEventoIdAndStatus(evento.getId(), "CONFIRMADO"));
+
+                    var avaliacoes = avaliacaoRepository.findByEventoId(evento.getId());
+                    dashboard.setTotalAvaliacoes(avaliacoes.size());
+                    dashboard.setMediaNotas(
+                            avaliacoes.stream()
+                                    .mapToInt(AvaliacaoJpa::getNota)
+                                    .average()
+                                    .orElse(0.0));
+
+                    dashboard.setTotalComentarios(
+                            comentarioRepository.countByEventoId(evento.getId()));
+
+                    var now = LocalDateTime.now();
+                    if (evento.getDataFim().isBefore(now)) {
+                        dashboard.setStatus("ENCERRADO");
+                    } else if (evento.getDataInicio().isAfter(now)) {
+                        dashboard.setStatus("FUTURO");
+                    } else {
+                        dashboard.setStatus("EM_ANDAMENTO");
+                    }
+
+                    return dashboard;
+                });
     }
 }
