@@ -76,6 +76,7 @@ PlataformaDeEventos/
 - [Personas e Mapa de Histórias](https://miro.com/app/board/uXjVI_nYtro=/?share_link_id=188525928359)
 - [Protótipo de Baixa Fidelidade](https://www.figma.com/design/J3leMrEJF7Uy62RjUHxrMl/Low-prototype?node-id=0-1&t=X3RX3u4DNpBW3Car-1)
 - [Modelo de Domínio (Context Mapper)](plataforma-de-eventos.cml)
+- [Diagrama UML](PlantUML-Requisitos.png)
 - [Slides (1ª Entrega)](https://www.canva.com/design/DAGlfz9Gsok/b5sVY79cs_YWp_q9z9RJpA/edit?utm_content=DAGlfz9Gsok&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 - [Arquivo (2ª Entrega)](SEGUNDA_ENTREGA.md)
 
