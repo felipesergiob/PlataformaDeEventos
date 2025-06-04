@@ -48,6 +48,18 @@
             <artifactId>dominio-evento</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.plataforma</groupId>
+            <artifactId>aplicacao</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- ModelMapper -->
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>3.2.0</version>
+        </dependency>
 
         <!-- Spring Boot -->
         <dependency>
@@ -130,28 +142,6 @@
                         <include>**/*Runner.java</include>
                     </includes>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>net.masterthought</groupId>
-                <artifactId>maven-cucumber-reporting</artifactId>
-                <version>5.7.7</version>
-                <executions>
-                    <execution>
-                        <id>execution</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <projectName>Plataforma de Eventos - Infraestrutura</projectName>
-                            <outputDirectory>${project.build.directory}/cucumber-reports</outputDirectory>
-                            <inputDirectory>${project.build.directory}/cucumber-reports</inputDirectory>
-                            <jsonFiles>
-                                <param>**/*.json</param>
-                            </jsonFiles>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

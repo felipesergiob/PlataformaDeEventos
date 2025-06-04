@@ -8,7 +8,7 @@ import org.apache.commons.lang3.Validate;
 public class UsuarioId {
     private final int id;
 
-    private UsuarioId(int id) {
+    public UsuarioId(int id) {
         Validate.notNull(id, "O código não pode ser nulo ou vazio");
         Validate.isTrue(id > 0, "O código não pode ser menor que 1");
 

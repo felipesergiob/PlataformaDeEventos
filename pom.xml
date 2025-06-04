@@ -15,6 +15,7 @@
         <module>dominio-evento</module>
         <module>infraestrutura</module>
         <module>apresentacao-backend</module>
+        <module>aplicacao</module>
     </modules>
 
     <properties>

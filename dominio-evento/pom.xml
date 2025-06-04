@@ -114,11 +114,13 @@
                         </goals>
                         <configuration>
                             <projectName>Plataforma de Eventos</projectName>
+                            <skip>${skipTests}</skip>
                             <outputDirectory>${project.build.directory}/cucumber-reports</outputDirectory>
                             <inputDirectory>${project.build.directory}/cucumber-reports</inputDirectory>
                             <jsonFiles>
                                 <param>**/*.json</param>
                             </jsonFiles>
+                            <checkBuildResult>false</checkBuildResult>
                         </configuration>
                     </execution>
                 </executions>

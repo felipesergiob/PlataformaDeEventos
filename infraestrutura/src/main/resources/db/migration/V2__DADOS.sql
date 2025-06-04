@@ -1,9 +1,9 @@
 -- Populando tabela USUARIO
 INSERT INTO USUARIO (NOME, EMAIL, SENHA, DATA_CRIACAO, FOTO_PERFIL, SEGUIDORES) VALUES
-  ('Ana Souza', 'ana.souza@email.com', 'senha123', '2025-06-01 10:00:00', 'ana.jpg', 2),
-  ('Carlos Silva', 'carlos.silva@email.com', 'senha123', '2025-06-01 11:00:00', 'carlos.jpg', 1),
-  ('Mariana Oliveira', 'mariana.oliveira@email.com', 'senha123', '2025-06-02 09:30:00', 'mariana.jpg', 1),
-  ('João Pereira', 'joao.pereira@email.com', 'senha123', '2025-06-02 14:00:00', 'joao.jpg', 0);
+  ('Ana Souza', 'ana.souza2@email.com', 'senha123', '2025-06-01 10:00:00', 'ana.jpg', 2),
+  ('Carlos Silva', 'carlos.silva2@email.com', 'senha123', '2025-06-01 11:00:00', 'carlos.jpg', 1),
+  ('Mariana Oliveira', 'mariana.oliveira2@email.com', 'senha123', '2025-06-02 09:30:00', 'mariana.jpg', 1),
+  ('João Pereira', 'joao.pereira2@email.com', 'senha123', '2025-06-02 14:00:00', 'joao.jpg', 0);
 
 -- Populando tabela EVENTO
 INSERT INTO EVENTO (TITULO, DESCRICAO, DATA_INICIO, DATA_FIM, LOCAL, GENERO, VALOR, IMAGEM, PARTICIPANTES, DATA_CRIACAO, ORGANIZADOR_ID) VALUES

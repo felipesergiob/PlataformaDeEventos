@@ -3,10 +3,6 @@ package com.plataforma.usuario;
 import com.plataforma.compartilhado.UsuarioId;
 import com.plataforma.evento.Evento;
 import com.plataforma.evento.EventoRepository;
-import com.plataforma.avaliacao.AvaliacaoRepository;
-import com.plataforma.avaliacao.Avaliacao;
-import com.plataforma.Publicacao.Publicacao;
-import com.plataforma.Publicacao.PublicacaoRepository;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import java.time.LocalDateTime;
@@ -17,34 +13,34 @@ import java.util.stream.Stream;
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final EventoRepository eventoRepository;
-    private final AvaliacaoRepository avaliacaoRepository;
-    private final PublicacaoRepository publicacaoRepository;
-
-    public UsuarioService(UsuarioRepository usuarioRepository,
-            EventoRepository eventoRepository,
-            AvaliacaoRepository avaliacaoRepository,
-            PublicacaoRepository publicacaoRepository) {
-        notNull(usuarioRepository, "O repositório de usuários não pode ser nulo");
-        notNull(eventoRepository, "O repositório de eventos não pode ser nulo");
-        notNull(avaliacaoRepository, "O repositório de avaliações não pode ser nulo");
-        notNull(publicacaoRepository, "O repositório de publicações não pode ser nulo");
-
-        this.usuarioRepository = usuarioRepository;
-        this.eventoRepository = eventoRepository;
-        this.avaliacaoRepository = avaliacaoRepository;
-        this.publicacaoRepository = publicacaoRepository;
-    }
 
     public UsuarioService(UsuarioRepository usuarioRepository, EventoRepository eventoRepository) {
+        notNull(usuarioRepository, "O repositório de usuários não pode ser nulo");
+        notNull(eventoRepository, "O repositório de eventos não pode ser nulo");
         this.usuarioRepository = usuarioRepository;
         this.eventoRepository = eventoRepository;
-        this.avaliacaoRepository = null;
-        this.publicacaoRepository = null;
     }
 
-    public void obter(UsuarioId id) {
+    public Optional<Usuario> obter(UsuarioId id) {
         notNull(id, "O id do usuário não pode ser nulo");
-        usuarioRepository.obter(id);
+        return usuarioRepository.obter(id);
+    }
+
+    public void registrar(Usuario usuario) {
+        notNull(usuario, "O usuário não pode ser nulo");
+        
+        if (usuarioRepository.emailJaExiste(usuario.getEmail())) {
+            throw new IllegalArgumentException("Email já cadastrado");
+        }
+        
+        usuarioRepository.salvar(usuario);
+    }
+
+    public Optional<Usuario> login(String email, String senha) {
+        notNull(email, "O email não pode ser nulo");
+        notNull(senha, "A senha não pode ser nula");
+        
+        return usuarioRepository.login(email, senha);
     }
 
     public void salvar(Usuario usuario) {
@@ -52,7 +48,7 @@ public class UsuarioService {
         usuarioRepository.salvar(usuario);
     }
 
-    public void seguirUsuarioEListarEventos(UsuarioId id, UsuarioId idSeguido) { // historia 7 //feito
+    public void seguirUsuario(UsuarioId id, UsuarioId idSeguido) {
         notNull(id, "O id do usuário não pode ser nulo");
         notNull(idSeguido, "O id do usuário a ser seguido não pode ser nulo");
 
@@ -61,57 +57,38 @@ public class UsuarioService {
         }
 
         usuarioRepository.seguirUsuario(id, idSeguido);
-        eventoRepository.listarPorOrganizador(idSeguido);
     }
 
-    public List<Evento> visualizarCalendario(UsuarioId id) { // historia 2 //feito
+    public List<Evento> seguirUsuarioEListarEventos(UsuarioId id, UsuarioId idSeguido) {
+        seguirUsuario(id, idSeguido);
+        return eventoRepository.listarPorOrganizador(idSeguido).stream()
+            .sorted(Comparator.comparing(Evento::getDataInicio))
+            .collect(Collectors.toList());
+    }
+
+    public List<Evento> visualizarCalendario(UsuarioId id) {
         notNull(id, "O id do usuário não pode ser nulo");
-
-        var eventosCalendario = Stream.concat(
-                eventoRepository.listarSalvos(id).stream(),
-                eventoRepository.listarConfirmados(id).stream()).collect(Collectors.toList());
-
-        return eventosCalendario;
+        
+        List<Evento> eventosSalvos = eventoRepository.listarSalvos(id);
+        List<Evento> eventosConfirmados = eventoRepository.listarConfirmados(id);
+        
+        return Stream.concat(eventosSalvos.stream(), eventosConfirmados.stream())
+            .sorted(Comparator.comparing(Evento::getDataInicio))
+            .collect(Collectors.toList());
     }
 
     public List<Map<String, Object>> perfilUsuario(UsuarioId id) {
         notNull(id, "O id do usuário não pode ser nulo");
-
-        List<Evento> eventos = eventoRepository.listarPorOrganizador(id);
-        List<Publicacao> publicacoes = publicacaoRepository.listarPorAutor(id);
-
-        List<Evento> eventosPassados = eventos.stream()
-                .filter(evento -> evento.getDataFim().isBefore(LocalDateTime.now()))
-                .collect(Collectors.toList());
-
-        return eventosPassados.stream().map(evento -> {
-            Map<String, Object> infoEvento = new HashMap<>();
-
-            infoEvento.put("id", evento.getId());
-            infoEvento.put("nome", evento.getNome());
-            infoEvento.put("dataInicio", evento.getDataInicio());
-            infoEvento.put("dataFim", evento.getDataFim());
-
-            List<Avaliacao> avaliacoes = avaliacaoRepository.listarPorEvento(evento.getId());
-
-            double mediaNotas = avaliacoes.stream()
-                    .mapToInt(Avaliacao::getNota)
-                    .average()
-                    .orElse(0.0);
-            mediaNotas = Math.round(mediaNotas * 100.0) / 100.0;
-            infoEvento.put("mediaNotas", mediaNotas);
-
-            List<String> comentarios = avaliacoes.stream()
-                    .map(Avaliacao::getComentario)
-                    .collect(Collectors.toList());
-            infoEvento.put("comentarios", comentarios);
-
-            List<Publicacao> publicacoesEvento = publicacoes.stream()
-                    .filter(p -> p.getEventoId().equals(evento.getId()))
-                    .collect(Collectors.toList());
-            infoEvento.put("publicacoes", publicacoesEvento);
-
-            return infoEvento;
-        }).collect(Collectors.toList());
+        
+        return eventoRepository.listarPorOrganizador(id).stream()
+            .filter(evento -> evento.getDataFim().isBefore(LocalDateTime.now()))
+            .map(evento -> {
+                Map<String, Object> eventoMap = new HashMap<>();
+                eventoMap.put("nome", evento.getNome());
+                eventoMap.put("dataInicio", evento.getDataInicio());
+                eventoMap.put("dataFim", evento.getDataFim());
+                return eventoMap;
+            })
+            .collect(Collectors.toList());
     }
 }
