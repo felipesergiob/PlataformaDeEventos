@@ -44,7 +44,29 @@ Durante o desenvolvimento do projeto, implementamos as seguintes histórias de u
 
     > Como usuário da plataforma, eu gostaria de visualizar os eventos em destaque da semana.
 
+---
 
+## 🧩 Padrões de Projeto Utilizados
+
+Durante o desenvolvimento, utilizamos alguns padrões de projeto para organizar melhor a arquitetura do sistema, promover reuso de código e facilitar a manutenção.
+
+**Padrões adotados:**
+
+- **Chain of Responsibility**: Implementado para validação de eventos, permitindo encadear diferentes validadores. Presente nos arquivos:
+  - `aplicacao/src/main/java/com/plataforma/aplicacao/evento/chain/ValidadorEvento.java`
+  - `aplicacao/src/main/java/com/plataforma/aplicacao/evento/chain/ValidadorDataEvento.java`
+
+- **Observer**: Utilizado para notificação de eventos, permitindo que diferentes observadores sejam notificados quando um evento é criado ou modificado. Implementado em:
+  - `aplicacao/src/main/java/com/plataforma/aplicacao/evento/observer/EventoObserver.java`
+  - `aplicacao/src/main/java/com/plataforma/aplicacao/evento/observer/EventoNotificacao.java`
+
+- **Strategy**: Aplicado para implementar diferentes estratégias de filtragem de eventos. Presente em:
+  - `aplicacao/src/main/java/com/plataforma/aplicacao/evento/strategy/FiltroEventoStrategy.java`
+  - `aplicacao/src/main/java/com/plataforma/aplicacao/evento/strategy/FiltroEventoProximo.java`
+
+A integração destes padrões é gerenciada principalmente pela classe `EventoServicoAplicacao`, que coordena as validações (Chain of Responsibility), notificações (Observer) e filtragens (Strategy).
+
+---
 
 ## ⚙️ Instruções de Execução e Acesso
 
