@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.plataforma.aplicacao.evento.CriarEventoRequest;
 import com.plataforma.aplicacao.evento.EventoResumo;
+import com.plataforma.aplicacao.evento.EventoDestaqueResumo;
 import com.plataforma.aplicacao.evento.EventoServicoAplicacao;
 
 import jakarta.validation.Valid;
@@ -40,6 +41,12 @@ public class EventoController {
     @GetMapping("/organizador/{organizadorId}")
     public ResponseEntity<List<EventoResumo>> listarPorOrganizador(@PathVariable Integer organizadorId) {
         var eventos = eventoServico.listarPorOrganizador(organizadorId);
+        return ResponseEntity.ok(eventos);
+    }
+
+    @GetMapping("/destaques")
+    public ResponseEntity<List<EventoDestaqueResumo>> listarEventosDestaqueDaSemana() {
+        var eventos = eventoServico.listarEventosDestaqueDaSemana();
         return ResponseEntity.ok(eventos);
     }
 } 

@@ -14,6 +14,7 @@ public class EventoServicoAplicacao {
     
     private final EventoRepositorioAplicacao repositorio;
     private final UsuarioRepositorioAplicacao usuarioRepositorio;
+    private static final int LIMITE_EVENTOS_DESTAQUE = 3;
 
     @Transactional
     public EventoResumo criar(CriarEventoRequest request) {
@@ -58,5 +59,10 @@ public class EventoServicoAplicacao {
     @Transactional(readOnly = true)
     public List<EventoResumo> listarPorOrganizador(Integer organizadorId) {
         return repositorio.listarPorOrganizador(organizadorId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<EventoDestaqueResumo> listarEventosDestaqueDaSemana() {
+        return repositorio.listarEventosDestaqueDaSemana(LIMITE_EVENTOS_DESTAQUE);
     }
 } 
