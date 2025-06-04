@@ -2,6 +2,7 @@ package com.plataforma.Publicacao;
 
 import com.plataforma.compartilhado.UsuarioId;
 import com.plataforma.compartilhado.EventoId;
+import com.plataforma.compartilhado.PublicacaoId;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ArrayList;

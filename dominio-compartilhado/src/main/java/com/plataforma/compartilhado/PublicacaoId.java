@@ -1,4 +1,4 @@
-package com.plataforma.Publicacao;
+package com.plataforma.compartilhado;
 
 import java.util.UUID;
 

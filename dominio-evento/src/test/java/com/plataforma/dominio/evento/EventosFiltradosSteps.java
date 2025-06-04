@@ -46,31 +46,26 @@ public class EventosFiltradosSteps {
 
 	@Dado("que os eventos possuem diferentes gêneros, horários, datas e preços")
 	public void que_os_eventos_possuem_diferentes_generos_horarios_datas_e_precos() {
-		// Verifica se existem eventos cadastrados
 		Assert.assertFalse("Deve haver eventos cadastrados", eventosCadastrados.isEmpty());
 
-		// Verifica se existem diferentes gêneros
 		Set<String> generos = new HashSet<>();
 		for (Evento evento : eventosCadastrados) {
 			generos.add(evento.getGenero());
 		}
 		Assert.assertTrue("Deve haver diferentes gêneros", generos.size() > 1);
 
-		// Verifica se existem diferentes horários
 		Set<LocalTime> horarios = new HashSet<>();
 		for (Evento evento : eventosCadastrados) {
 			horarios.add(evento.getDataInicio().toLocalTime());
 		}
 		Assert.assertTrue("Deve haver diferentes horários", horarios.size() > 1);
 
-		// Verifica se existem diferentes datas
 		Set<LocalDate> datas = new HashSet<>();
 		for (Evento evento : eventosCadastrados) {
 			datas.add(evento.getDataInicio().toLocalDate());
 		}
 		Assert.assertTrue("Deve haver diferentes datas", datas.size() > 1);
 
-		// Verifica se existem diferentes preços
 		Set<BigDecimal> precos = new HashSet<>();
 		for (Evento evento : eventosCadastrados) {
 			precos.add(evento.getValor());
@@ -185,7 +180,6 @@ public class EventosFiltradosSteps {
 
 	@E("a lista deve ser atualizada automaticamente")
 	public void a_lista_deve_ser_atualizada_automaticamente() {
-		// Verifica se a lista foi atualizada corretamente
 		Assert.assertNotNull("A lista atualizada não deve ser nula", eventosFiltrados);
 	}
 }
