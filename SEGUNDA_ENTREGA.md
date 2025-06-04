@@ -112,6 +112,18 @@ mvn clean install -DskipTests
 
 ### Rodar a Aplicação
 
+> ⚠️ **Importante**: Antes de rodar a aplicação, certifique-se de instalar todas as dependências necessárias:
+
+1. Para o backend (na raiz do projeto):
+```bash
+./mvnw clean install
+```
+
+2. Para o frontend (na pasta apresentacao-frontend):
+```bash
+npm install
+```
+
 ```bash
 cd apresentacao-backend
 mvn spring-boot:run
@@ -130,6 +142,7 @@ Acesse: [http://localhost:5173](http://localhost:5173)
 
 ### Estrutura do Projeto
 
+- **apresentacao-frontend**: Frontend da aplicação
 - **apresentacao-backend**: Controllers REST e configurações da API
 - **aplicacao**: Casos de uso e regras da aplicação
 - **dominio**: Entidades e regras centrais
