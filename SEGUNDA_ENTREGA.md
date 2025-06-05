@@ -44,7 +44,29 @@ Durante o desenvolvimento do projeto, implementamos as seguintes histórias de u
 
     > Como usuário da plataforma, eu gostaria de visualizar os eventos em destaque da semana.
 
+---
 
+## 🧩 Padrões de Projeto Utilizados
+
+Durante o desenvolvimento, utilizamos alguns padrões de projeto para organizar melhor a arquitetura do sistema, promover reuso de código e facilitar a manutenção.
+
+**Padrões adotados:**
+
+- **Chain of Responsibility**: Implementado para validação de eventos, permitindo encadear diferentes validadores. Presente nos arquivos:
+  - `aplicacao/src/main/java/com/plataforma/aplicacao/evento/chain/ValidadorEvento.java`
+  - `aplicacao/src/main/java/com/plataforma/aplicacao/evento/chain/ValidadorDataEvento.java`
+
+- **Observer**: Utilizado para notificação de eventos, permitindo que diferentes observadores sejam notificados quando um evento é criado ou modificado. Implementado em:
+  - `aplicacao/src/main/java/com/plataforma/aplicacao/evento/observer/EventoObserver.java`
+  - `aplicacao/src/main/java/com/plataforma/aplicacao/evento/observer/EventoNotificacao.java`
+
+- **Strategy**: Aplicado para implementar diferentes estratégias de filtragem de eventos. Presente em:
+  - `aplicacao/src/main/java/com/plataforma/aplicacao/evento/strategy/FiltroEventoStrategy.java`
+  - `aplicacao/src/main/java/com/plataforma/aplicacao/evento/strategy/FiltroEventoProximo.java`
+
+A integração destes padrões é gerenciada principalmente pela classe `EventoServicoAplicacao`, que coordena as validações (Chain of Responsibility), notificações (Observer) e filtragens (Strategy).
+
+---
 
 ## ⚙️ Instruções de Execução e Acesso
 
@@ -90,6 +112,18 @@ mvn clean install -DskipTests
 
 ### Rodar a Aplicação
 
+> ⚠️ **Importante**: Antes de rodar a aplicação, certifique-se de instalar todas as dependências necessárias:
+
+1. Para o backend (na raiz do projeto):
+```bash
+./mvnw clean install
+```
+
+2. Para o frontend (na pasta apresentacao-frontend):
+```bash
+npm install
+```
+
 ```bash
 cd apresentacao-backend
 mvn spring-boot:run
@@ -108,6 +142,7 @@ Acesse: [http://localhost:5173](http://localhost:5173)
 
 ### Estrutura do Projeto
 
+- **apresentacao-frontend**: Frontend da aplicação
 - **apresentacao-backend**: Controllers REST e configurações da API
 - **aplicacao**: Casos de uso e regras da aplicação
 - **dominio**: Entidades e regras centrais
