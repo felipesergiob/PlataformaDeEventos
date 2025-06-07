@@ -54,7 +54,7 @@ class JpaMapeador extends ModelMapper {
         addConverter(new AbstractConverter<Integer, UsuarioId>() {
             @Override
             protected UsuarioId convert(Integer source) {
-                return new UsuarioId(source);
+                return UsuarioId.de(source);
             }
         });
 

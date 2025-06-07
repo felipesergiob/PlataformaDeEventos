@@ -249,8 +249,8 @@ public class EventoRepositorioAplicacaoImpl implements EventoRepositorioAplicaca
             dataFim,
             precoMinimo,
             precoMaximo,
-            periodoHorario,
-            gratuito
+            gratuito,
+            periodoHorario
         ).stream()
         .map(this::toResumo)
         .collect(Collectors.toList());

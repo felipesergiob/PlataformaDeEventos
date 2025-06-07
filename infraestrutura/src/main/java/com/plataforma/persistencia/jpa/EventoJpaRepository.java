@@ -28,14 +28,14 @@ public interface EventoJpaRepository extends JpaRepository<EventoJpa, Integer> {
 
     @Query(value = """
         SELECT * FROM evento e
-        WHERE (:genero IS NULL OR e.genero = :genero)
-        AND (:dataInicio IS NULL OR e.data_inicio >= :dataInicio)
-        AND (:dataFim IS NULL OR e.data_fim <= :dataFim)
-        AND (:precoMinimo IS NULL OR e.valor >= :precoMinimo)
-        AND (:precoMaximo IS NULL OR e.valor <= :precoMaximo)
-        AND (:gratuito IS NULL OR (:gratuito = true AND e.valor = 0))
+        WHERE (COALESCE(:genero, '') = '' OR e.genero = :genero)
+        AND (COALESCE(:dataInicio, CAST('1970-01-01' AS timestamp)) = CAST('1970-01-01' AS timestamp) OR e.data_inicio >= :dataInicio)
+        AND (COALESCE(:dataFim, CAST('1970-01-01' AS timestamp)) = CAST('1970-01-01' AS timestamp) OR e.data_fim <= :dataFim)
+        AND (COALESCE(:precoMinimo, -1) = -1 OR e.valor >= :precoMinimo)
+        AND (COALESCE(:precoMaximo, -1) = -1 OR e.valor <= :precoMaximo)
+        AND (COALESCE(:gratuito, false) = false OR (:gratuito = true AND e.valor = 0))
         AND (
-            :periodoHorario IS NULL OR :periodoHorario = '' OR
+            COALESCE(:periodoHorario, '') = '' OR
             (
                 (:periodoHorario = 'MANHA' AND EXTRACT(HOUR FROM e.data_inicio) BETWEEN 6 AND 11) OR
                 (:periodoHorario = 'TARDE' AND EXTRACT(HOUR FROM e.data_inicio) BETWEEN 12 AND 17) OR
@@ -50,7 +50,7 @@ public interface EventoJpaRepository extends JpaRepository<EventoJpa, Integer> {
         @Param("dataFim") LocalDateTime dataFim,
         @Param("precoMinimo") Double precoMinimo,
         @Param("precoMaximo") Double precoMaximo,
-        @Param("periodoHorario") String periodoHorario,
-        @Param("gratuito") Boolean gratuito
+        @Param("gratuito") Boolean gratuito,
+        @Param("periodoHorario") String periodoHorario
     );
 }

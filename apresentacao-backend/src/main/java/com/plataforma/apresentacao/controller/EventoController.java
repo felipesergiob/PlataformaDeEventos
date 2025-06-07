@@ -29,7 +29,7 @@ public class EventoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventoResumo> buscarPorId(@PathVariable Integer id) {
+    public ResponseEntity<EventoResumo> buscarPorId(@PathVariable("id") Integer id) {
         var evento = eventoServico.buscarPorId(id);
         return ResponseEntity.ok(evento);
     }
@@ -41,7 +41,7 @@ public class EventoController {
     }
 
     @GetMapping("/organizador/{organizadorId}")
-    public ResponseEntity<List<EventoResumo>> listarPorOrganizador(@PathVariable Integer organizadorId) {
+    public ResponseEntity<List<EventoResumo>> listarPorOrganizador(@PathVariable("organizadorId") Integer organizadorId) {
         var eventos = eventoServico.listarPorOrganizador(organizadorId);
         return ResponseEntity.ok(eventos);
     }
@@ -53,14 +53,14 @@ public class EventoController {
     }
 
     @GetMapping("/organizador/{organizadorId}/dashboard")
-    public List<EventoDashboardResumo> listarDashboardEventosOrganizador(@PathVariable Integer organizadorId) {
+    public List<EventoDashboardResumo> listarDashboardEventosOrganizador(@PathVariable("organizadorId") Integer organizadorId) {
         return eventoServico.listarDashboardEventosOrganizador(organizadorId);
     }
 
     @GetMapping("/{eventoId}/organizador/{organizadorId}/dashboard")
     public EventoDashboardResumo buscarDashboardEvento(
-        @PathVariable Integer eventoId,
-        @PathVariable Integer organizadorId
+        @PathVariable("eventoId") Integer eventoId,
+        @PathVariable("organizadorId") Integer organizadorId
     ) {
         return eventoServico.buscarDashboardEvento(eventoId, organizadorId);
     }
