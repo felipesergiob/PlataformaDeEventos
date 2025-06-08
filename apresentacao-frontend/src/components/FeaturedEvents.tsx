@@ -73,7 +73,7 @@ const FeaturedEvents = () => {
                     </div>
                     <div className="flex items-center text-gray-600">
                       <Star className="w-4 h-4 mr-1 text-yellow-500 fill-current" />
-                      <span>4.8</span>
+                      <span>{event.mediaNotas?.toFixed(1) || '0.0'}</span>
                     </div>
                   </div>
                   <div className="flex items-center text-sm text-gray-600">

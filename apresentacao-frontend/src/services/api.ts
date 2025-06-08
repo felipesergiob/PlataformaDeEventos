@@ -53,7 +53,10 @@ export type EventResponse = {
   organizadorId: string;
 };
 
-export type FeaturedEventResponse = EventResponse & { posicaoRanking: number };
+export type FeaturedEventResponse = EventResponse & { 
+  posicaoRanking: number;
+  mediaNotas: number;
+};
 
 export type AvaliacaoResponse = {
   id: string;

@@ -175,7 +175,7 @@ const EventCard = ({ event }: EventCardProps) => {
                 </div>
                 <div className="flex items-center">
                   <Star className="w-4 h-4 mr-1 text-yellow-500 fill-current" />
-                  <span>{event.rating}</span>
+                  <span>{event.rating?.toFixed(1) || '0.0'}</span>
                 </div>
               </div>
             </div>

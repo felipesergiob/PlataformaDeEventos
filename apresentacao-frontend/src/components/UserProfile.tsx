@@ -234,7 +234,9 @@ const UserProfile = ({ userId, isOwnProfile = false }: UserProfileProps) => {
                         <h3 className="font-semibold text-lg text-gray-900">{event.titulo}</h3>
                         <div className="flex items-center space-x-1">
                           <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                          <span className="font-semibold">{event.participantes}</span>
+                          <span className="font-semibold">
+                            {dashboardData.find(d => d.eventoId === Number(event.id))?.mediaNotas.toFixed(1) || '0.0'}
+                          </span>
                         </div>
                       </div>
                       <p className="text-gray-600">{formatDate(event.dataInicio)}</p>
