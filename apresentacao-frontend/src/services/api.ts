@@ -80,6 +80,10 @@ export const eventApi = {
     const response = await api.get<FeaturedEventResponse[]>('/evento/destaques');
     return response.data;
   },
+  getEventById: async (id: string | number): Promise<EventResponse> => {
+    const response = await api.get<EventResponse>(`/evento/${id}`);
+    return response.data;
+  },
 };
 
 export default api;

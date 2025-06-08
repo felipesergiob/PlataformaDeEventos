@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, Users, Star, Calendar, MapPin } from 'lucide-react';
 import { eventApi, FeaturedEventResponse } from '@/services/api';
+import { Link } from 'react-router-dom';
 
 const FeaturedEvents = () => {
   const [featuredEvents, setFeaturedEvents] = useState<FeaturedEventResponse[]>([]);
@@ -42,7 +43,7 @@ const FeaturedEvents = () => {
         <div className="text-center py-8">Carregando eventos em destaque...</div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {featuredEvents.map((event, index) => (
+          {featuredEvents.map((event) => (
             <Card key={event.id} className="relative overflow-hidden group hover:shadow-lg transition-all duration-300 border-purple-100">
               <div className="absolute top-4 left-4 z-10">
                 <Badge className="bg-purple-600 text-white">
@@ -86,11 +87,12 @@ const FeaturedEvents = () => {
                       <Users className="w-4 h-4 mr-1 text-purple-600" />
                       <span>{event.participantes}</span>
                     </div>
-                    {/* Aqui você pode adicionar tendências se vierem da API */}
                   </div>
-                  <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white">
-                    Ver Mais
-                  </Button>
+                  <Link to={`/event/${event.id}`}>
+                    <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white">
+                      Ver Mais
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
