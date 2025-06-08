@@ -111,6 +111,24 @@ export type AvaliacaoResumo = {
   dataCriacao: string;
 };
 
+export type PublicacaoResponse = {
+  id: string;
+  titulo: string;
+  conteudo: string;
+  fotos: string;
+  dataCriacao: string;
+  usuarioId: string;
+  eventoId: string;
+};
+
+export type CriarPublicacaoRequest = {
+  eventoId: number;
+  usuarioId: number;
+  titulo: string;
+  conteudo: string;
+  fotos: string;
+};
+
 // User related endpoints
 export const userApi = {
   register: async (userData: RegisterUserData): Promise<void> => {
@@ -221,6 +239,17 @@ export const avaliacaoApi = {
 
   listarAvaliacoesPorUsuario: async (usuarioId: string | number): Promise<AvaliacaoResumo[]> => {
     const response = await api.get<AvaliacaoResumo[]>(`/avaliacao/usuario/${usuarioId}`);
+    return response.data;
+  }
+};
+
+export const publicacaoApi = {
+  criarPublicacao: async (data: CriarPublicacaoRequest): Promise<void> => {
+    await api.post('/publicacao', data);
+  },
+
+  listarPublicacoesPorEvento: async (eventoId: string | number): Promise<PublicacaoResponse[]> => {
+    const response = await api.get<PublicacaoResponse[]>(`/publicacao/evento/${eventoId}`);
     return response.data;
   }
 };
