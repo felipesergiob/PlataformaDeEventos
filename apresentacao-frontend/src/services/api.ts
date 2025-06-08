@@ -19,7 +19,7 @@ interface LoginUserData {
   senha: string;
 }
 
-interface UserResponse {
+export interface UserResponse {
   id: string;
   nome: string;
   email: string;
@@ -127,6 +127,28 @@ export type CriarPublicacaoRequest = {
   titulo: string;
   conteudo: string;
   fotos: string;
+};
+
+export type ComentarioResponse = {
+  id: string;
+  comentario: string;
+  comentarioPaiId: string | null;
+  dataCriacao: string;
+  usuarioId: string;
+  eventoId: string;
+};
+
+export type CriarComentarioRequest = {
+  comentario: string;
+  eventoId: number;
+  usuarioId: number;
+};
+
+export type ResponderComentarioRequest = {
+  comentarioPaiId: number;
+  comentario: string;
+  usuarioId: number;
+  eventoId: number;
 };
 
 // User related endpoints
@@ -250,6 +272,31 @@ export const publicacaoApi = {
 
   listarPublicacoesPorEvento: async (eventoId: string | number): Promise<PublicacaoResponse[]> => {
     const response = await api.get<PublicacaoResponse[]>(`/publicacao/evento/${eventoId}`);
+    return response.data;
+  }
+};
+
+export const comentarioApi = {
+  criarComentario: async (data: CriarComentarioRequest): Promise<void> => {
+    await api.post('/comentario', data);
+  },
+
+  responderComentario: async (data: ResponderComentarioRequest): Promise<void> => {
+    await api.post('/comentario/responder', data);
+  },
+
+  listarComentariosPorEvento: async (eventoId: string | number): Promise<ComentarioResponse[]> => {
+    const response = await api.get<ComentarioResponse[]>(`/comentario/evento/${eventoId}`);
+    return response.data;
+  },
+
+  listarComentariosPorUsuario: async (usuarioId: string | number): Promise<ComentarioResponse[]> => {
+    const response = await api.get<ComentarioResponse[]>(`/comentario/usuario/${usuarioId}`);
+    return response.data;
+  },
+
+  listarRespostas: async (comentarioPaiId: string | number): Promise<ComentarioResponse[]> => {
+    const response = await api.get<ComentarioResponse[]>(`/comentario/respostas/${comentarioPaiId}`);
     return response.data;
   }
 };

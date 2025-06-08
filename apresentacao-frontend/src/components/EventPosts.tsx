@@ -156,36 +156,65 @@ const EventPosts: React.FC<EventPostsProps> = ({ eventId, hasAttended }) => {
       )}
 
       <div className="space-y-4">
-        {posts.map((post) => (
-          <Card key={post.id}>
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <Avatar>
-                  <AvatarImage src={`/imagens/${post.fotos}`} />
-                  <AvatarFallback>{userInfo[post.usuarioId]?.[0] || 'U'}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-lg">{post.titulo}</h3>
-                    <span className="text-sm text-gray-500">•</span>
-                    <span className="text-sm text-gray-500">{userInfo[post.usuarioId] || 'Usuário'}</span>
-                  </div>
-                  <p className="text-gray-600 mt-2">{post.conteudo}</p>
-                  {post.fotos && (
-                    <img
-                      src={`/imagens/${post.fotos}`}
-                      alt="Publicação"
-                      className="mt-4 rounded-lg max-h-96 object-cover"
-                    />
-                  )}
-                  <p className="text-sm text-gray-500 mt-2">
-                    {format(new Date(post.dataCriacao), "d 'de' MMMM 'às' HH:mm", { locale: ptBR })}
+        {posts.length === 0 ? (
+          <Card>
+            <CardContent className="p-8 text-center">
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
+                  <MessageCircle className="w-8 h-8 text-purple-600" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-semibold text-gray-900">Nenhum relato ainda</h3>
+                  <p className="text-gray-600 max-w-md mx-auto">
+                    {hasAttended 
+                      ? "Seja o primeiro a compartilhar sua experiência neste evento!"
+                      : "Confirme sua presença no evento para poder compartilhar sua experiência."}
                   </p>
                 </div>
+                {/* {hasAttended && user && (
+                  <Button 
+                    onClick={() => document.querySelector('form')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="bg-purple-600 hover:bg-purple-700"
+                  >
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Criar Relato
+                  </Button>
+                )} */}
               </div>
             </CardContent>
           </Card>
-        ))}
+        ) : (
+          posts.map((post) => (
+            <Card key={post.id}>
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <Avatar>
+                    <AvatarImage src={`/imagens/${post.fotos}`} />
+                    <AvatarFallback>{userInfo[post.usuarioId]?.[0] || 'U'}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-lg">{post.titulo}</h3>
+                      <span className="text-sm text-gray-500">•</span>
+                      <span className="text-sm text-gray-500">{userInfo[post.usuarioId] || 'Usuário'}</span>
+                    </div>
+                    <p className="text-gray-600 mt-2">{post.conteudo}</p>
+                    {post.fotos && (
+                      <img
+                        src={`/imagens/${post.fotos}`}
+                        alt="Publicação"
+                        className="mt-4 rounded-lg max-h-96 object-cover"
+                      />
+                    )}
+                    <p className="text-sm text-gray-500 mt-2">
+                      {format(new Date(post.dataCriacao), "d 'de' MMMM 'às' HH:mm", { locale: ptBR })}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
     </div>
   );
