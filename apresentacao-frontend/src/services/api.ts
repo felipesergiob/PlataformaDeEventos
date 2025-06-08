@@ -92,6 +92,22 @@ export type EventoFiltro = {
   periodoHorario?: 'MANHA' | 'TARDE' | 'NOITE';
 };
 
+export type CriarAvaliacaoRequest = {
+  eventoId: number;
+  usuarioId: number;
+  nota: number;
+  comentario: string;
+};
+
+export type AvaliacaoResumo = {
+  id: string;
+  eventoId: string;
+  usuarioId: string;
+  nota: number;
+  comentario: string;
+  dataCriacao: string;
+};
+
 // User related endpoints
 export const userApi = {
   register: async (userData: RegisterUserData): Promise<void> => {
@@ -100,6 +116,11 @@ export const userApi = {
 
   login: async (userData: LoginUserData): Promise<UserResponse> => {
     const response = await api.post<UserResponse>('/usuario/login', userData);
+    return response.data;
+  },
+
+  getUserById: async (userId: string): Promise<UserResponse> => {
+    const response = await api.get<UserResponse>(`/usuario/${userId}`);
     return response.data;
   },
 
@@ -181,6 +202,22 @@ export const participationApi = {
   },
   getUserParticipations: async (usuarioId: string | number): Promise<ParticipationResponse[]> => {
     const response = await api.get<ParticipationResponse[]>(`/participante/usuario/${usuarioId}`);
+    return response.data;
+  }
+};
+
+export const avaliacaoApi = {
+  criarAvaliacao: async (data: CriarAvaliacaoRequest): Promise<void> => {
+    await api.post('/avaliacao', data);
+  },
+
+  listarAvaliacoesPorEvento: async (eventoId: string | number): Promise<AvaliacaoResumo[]> => {
+    const response = await api.get<AvaliacaoResumo[]>(`/avaliacao/evento/${eventoId}`);
+    return response.data;
+  },
+
+  listarAvaliacoesPorUsuario: async (usuarioId: string | number): Promise<AvaliacaoResumo[]> => {
+    const response = await api.get<AvaliacaoResumo[]>(`/avaliacao/usuario/${usuarioId}`);
     return response.data;
   }
 };

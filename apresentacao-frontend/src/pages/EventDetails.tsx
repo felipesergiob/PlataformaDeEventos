@@ -11,7 +11,7 @@ import Navbar from '@/components/Navbar';
 import EventComments from '@/components/EventComments';
 import EventPosts from '@/components/EventPosts';
 import EventEvaluation from '@/components/EventEvaluation';
-import { eventApi, EventResponse, AvaliacaoResponse, participationApi, ParticipationResponse } from '@/services/api';
+import { eventApi, EventResponse, AvaliacaoResponse, participationApi, ParticipationResponse, avaliacaoApi } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 
 const EventDetails = () => {
@@ -36,7 +36,7 @@ const EventDetails = () => {
           setEvent(data);
           
           // Buscar avaliações do evento
-          const avaliacoes = await eventApi.getEventEvaluations(eventId);
+          const avaliacoes = await avaliacaoApi.listarAvaliacoesPorEvento(eventId);
           setTotalRatings(avaliacoes.length);
           
           // Calcular média das avaliações

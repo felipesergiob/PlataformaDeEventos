@@ -31,6 +31,13 @@ public class UsuarioController {
                      .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<UsuarioResumo> buscarPorId(@PathVariable Integer id) {
+        var usuario = usuarioServico.buscarPorId(id);
+        return usuario.map(ResponseEntity::ok)
+                     .orElse(ResponseEntity.notFound().build());
+    }
+
     @PostMapping("/seguir")
     public ResponseEntity<Void> seguirUsuario(@RequestBody SeguirUsuarioRequest request) {
         try {

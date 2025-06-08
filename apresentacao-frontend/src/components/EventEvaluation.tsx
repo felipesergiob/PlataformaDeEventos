@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,11 +7,43 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Star, Camera, MessageCircle, ThumbsUp, Reply } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { getEventEvaluations, EventEvaluation as EventEvaluationData } from '@/data/mockData';
+import { avaliacaoApi, AvaliacaoResumo, userApi } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
+import { AxiosError } from 'axios';
+
+interface ValidationError {
+  codes: string[];
+  arguments: Array<{
+    codes: string[];
+    arguments: null;
+    defaultMessage: string;
+    code: string;
+  }>;
+  defaultMessage: string;
+  objectName: string;
+  field: string;
+  rejectedValue: string;
+  bindingFailure: boolean;
+  code: string;
+}
+
+interface ApiErrorResponse {
+  timestamp: string;
+  status: number;
+  error: string;
+  message: string;
+  errors: ValidationError[];
+  path: string;
+}
 
 interface EventEvaluationProps {
   eventId: string;
   userAttended: boolean;
+}
+
+interface UserInfo {
+  id: string;
+  nome: string;
 }
 
 const EventEvaluation = ({ eventId, userAttended }: EventEvaluationProps) => {
@@ -22,12 +54,61 @@ const EventEvaluation = ({ eventId, userAttended }: EventEvaluationProps) => {
   const [showReplyForm, setShowReplyForm] = useState<string | null>(null);
   const [replyText, setReplyText] = useState('');
   const [hasUserEvaluated, setHasUserEvaluated] = useState(false);
+  const [evaluations, setEvaluations] = useState<AvaliacaoResumo[]>([]);
+  const [userNames, setUserNames] = useState<Record<string, string>>({});
   const { toast } = useToast();
+  const { user } = useAuth();
 
-  // Get evaluations from centralized mock
-  const evaluations = getEventEvaluations(eventId);
+  useEffect(() => {
+    const fetchEvaluations = async () => {
+      try {
+        const avaliacoes = await avaliacaoApi.listarAvaliacoesPorEvento(eventId);
+        setEvaluations(avaliacoes);
 
-  const handleSubmitEvaluation = () => {
+        // Buscar nomes dos usuários
+        const userIds = avaliacoes.map(av => av.usuarioId);
+        const uniqueUserIds = [...new Set(userIds)];
+        
+        const userInfoPromises = uniqueUserIds.map(async (userId) => {
+          try {
+            const userData = await userApi.getUserById(userId);
+            return { id: userId, nome: userData.nome };
+          } catch (error) {
+            console.error(`Erro ao buscar usuário ${userId}:`, error);
+            return { id: userId, nome: 'Usuário' };
+          }
+        });
+
+        const userInfos = await Promise.all(userInfoPromises);
+        const userNamesMap = userInfos.reduce((acc, user) => ({
+          ...acc,
+          [user.id]: user.nome
+        }), {} as Record<string, string>);
+
+        setUserNames(userNamesMap);
+      } catch (error) {
+        console.error('Erro ao buscar avaliações:', error);
+        toast({
+          title: "Erro",
+          description: "Não foi possível carregar as avaliações do evento.",
+          variant: "destructive"
+        });
+      }
+    };
+
+    fetchEvaluations();
+  }, [eventId, toast]);
+
+  const handleSubmitEvaluation = async () => {
+    if (!user) {
+      toast({
+        title: "Erro",
+        description: "Você precisa estar logado para avaliar o evento.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (rating === 0) {
       toast({
         title: "Avaliação necessária",
@@ -37,24 +118,71 @@ const EventEvaluation = ({ eventId, userAttended }: EventEvaluationProps) => {
       return;
     }
 
-    // Here you would submit the evaluation to your backend
-    console.log({
-      eventId,
-      rating,
-      comment,
-      photos
-    });
+    try {
+      await avaliacaoApi.criarAvaliacao({
+        eventoId: Number(eventId),
+        usuarioId: Number(user.id),
+        nota: rating,
+        comentario: comment
+      });
 
-    // Reset form
-    setRating(0);
-    setComment('');
-    setPhotos([]);
-    setHasUserEvaluated(true);
-    
-    toast({
-      title: "Avaliação enviada!",
-      description: "Obrigado por avaliar este evento. Sua opinião é muito importante!"
-    });
+      // Atualizar lista de avaliações
+      const novasAvaliacoes = await avaliacaoApi.listarAvaliacoesPorEvento(eventId);
+      setEvaluations(novasAvaliacoes);
+
+      // Reset form
+      setRating(0);
+      setComment('');
+      setPhotos([]);
+      setHasUserEvaluated(true);
+      
+      toast({
+        title: "Avaliação enviada!",
+        description: "Obrigado por avaliar este evento. Sua opinião é muito importante!"
+      });
+    } catch (error) {
+      console.error('Erro ao enviar avaliação:', error);
+      
+      const axiosError = error as AxiosError<ApiErrorResponse>;
+      
+      // Tratamento específico para o erro de evento não finalizado
+      if (axiosError.response?.data?.message === "O evento ainda não terminou") {
+        toast({
+          title: "Avaliação não permitida",
+          description: "Você só poderá avaliar este evento após seu término.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Tratamento específico para o erro de usuário já avaliou
+      if (axiosError.response?.data?.message === "Usuário já avaliou este evento") {
+        toast({
+          title: "Avaliação já realizada",
+          description: "Você já avaliou este evento anteriormente.",
+          variant: "destructive"
+        });
+        setHasUserEvaluated(true);
+        return;
+      }
+
+      // Tratamento para erros de validação
+      if (axiosError.response?.data?.errors?.length > 0) {
+        const errorMessage = axiosError.response.data.errors[0].defaultMessage;
+        toast({
+          title: "Erro de validação",
+          description: errorMessage,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      toast({
+        title: "Erro",
+        description: "Não foi possível enviar sua avaliação. Tente novamente mais tarde.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,7 +254,7 @@ const EventEvaluation = ({ eventId, userAttended }: EventEvaluationProps) => {
             {/* Comment */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Comentário (opcional)
+                Comentário (mínimo 10 caracteres) *
               </label>
               <Textarea
                 placeholder="Compartilhe sua experiência no evento..."
@@ -134,6 +262,9 @@ const EventEvaluation = ({ eventId, userAttended }: EventEvaluationProps) => {
                 onChange={(e) => setComment(e.target.value)}
                 rows={4}
               />
+              <p className="mt-1 text-sm text-gray-500">
+                {comment.length}/10 caracteres
+              </p>
             </div>
 
             {/* Photo Upload */}
@@ -164,7 +295,7 @@ const EventEvaluation = ({ eventId, userAttended }: EventEvaluationProps) => {
             <Button 
               onClick={handleSubmitEvaluation}
               className="bg-purple-600 hover:bg-purple-700"
-              disabled={rating === 0}
+              disabled={rating === 0 || comment.trim().length < 10}
             >
               Enviar Avaliação
             </Button>
@@ -197,13 +328,14 @@ const EventEvaluation = ({ eventId, userAttended }: EventEvaluationProps) => {
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center space-x-3">
                   <Avatar className="w-10 h-10">
-                    <AvatarImage src={evaluation.userAvatar} alt={evaluation.userName} />
                     <AvatarFallback>
-                      {evaluation.userName.split(' ').map(n => n[0]).join('')}
+                      {userNames[evaluation.usuarioId]?.slice(0, 2).toUpperCase() || 'U'}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h4 className="font-semibold text-gray-900">{evaluation.userName}</h4>
+                    <h4 className="font-semibold text-gray-900">
+                      {userNames[evaluation.usuarioId] || 'Usuário'}
+                    </h4>
                     <div className="flex items-center space-x-2">
                       <div className="flex items-center">
                         {[1, 2, 3, 4, 5].map((star) => (
@@ -211,38 +343,27 @@ const EventEvaluation = ({ eventId, userAttended }: EventEvaluationProps) => {
                             key={star}
                             className={cn(
                               "w-4 h-4",
-                              star <= evaluation.rating
+                              star <= evaluation.nota
                                 ? "text-yellow-500 fill-current"
                                 : "text-gray-300"
                             )}
                           />
                         ))}
                       </div>
-                      <span className="text-sm text-gray-600">{formatDate(evaluation.date)}</span>
+                      <span className="text-sm text-gray-600">{formatDate(evaluation.dataCriacao)}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Comment */}
-              <p className="text-gray-700 mb-3">{evaluation.comment}</p>
-
-              {/* Photos */}
-              {evaluation.photos.length > 0 && (
-                <div className="flex space-x-2 mb-3">
-                  {evaluation.photos.map((photo, index) => (
-                    <div key={index} className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden">
-                      <img src={photo} alt={`Foto ${index + 1}`} className="w-full h-full object-cover" />
-                    </div>
-                  ))}
-                </div>
-              )}
+              <p className="text-gray-700 mb-3">{evaluation.comentario}</p>
 
               {/* Actions */}
               <div className="flex items-center space-x-4 text-sm">
                 <Button variant="ghost" size="sm" className="text-gray-600 hover:text-purple-600">
                   <ThumbsUp className="w-4 h-4 mr-1" />
-                  {evaluation.likes}
+                  0
                 </Button>
                 <Button 
                   variant="ghost" 
@@ -254,66 +375,6 @@ const EventEvaluation = ({ eventId, userAttended }: EventEvaluationProps) => {
                   Responder
                 </Button>
               </div>
-
-              {/* Replies */}
-              {evaluation.replies.length > 0 && (
-                <div className="mt-4 ml-8 space-y-3">
-                  {evaluation.replies.map((reply) => (
-                    <div key={reply.id} className="flex items-start space-x-3">
-                      <Avatar className="w-8 h-8">
-                        <AvatarFallback className="text-xs">
-                          {reply.userName.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2">
-                          <h5 className="font-medium text-sm text-gray-900">{reply.userName}</h5>
-                          {reply.isOrganizer && (
-                            <Badge variant="outline" className="text-xs">Organizador</Badge>
-                          )}
-                          <span className="text-xs text-gray-500">{formatDate(reply.date)}</span>
-                        </div>
-                        <p className="text-sm text-gray-700 mt-1">{reply.comment}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Reply Form */}
-              {showReplyForm === evaluation.id && (
-                <div className="mt-4 ml-8">
-                  <div className="flex space-x-3">
-                    <Avatar className="w-8 h-8">
-                      <AvatarFallback className="text-xs">EU</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 space-y-2">
-                      <Textarea
-                        placeholder="Digite sua resposta..."
-                        value={replyText}
-                        onChange={(e) => setReplyText(e.target.value)}
-                        rows={2}
-                      />
-                      <div className="flex space-x-2">
-                        <Button 
-                          size="sm" 
-                          onClick={() => handleReplySubmit(evaluation.id)}
-                          disabled={!replyText.trim()}
-                        >
-                          Responder
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => setShowReplyForm(null)}
-                        >
-                          Cancelar
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           ))}
         </CardContent>

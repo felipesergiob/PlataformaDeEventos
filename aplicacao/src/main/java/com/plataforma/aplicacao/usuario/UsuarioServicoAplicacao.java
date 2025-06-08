@@ -26,6 +26,11 @@ public class UsuarioServicoAplicacao {
         return repositorio.login(email, senha);
     }
 
+    @Transactional(readOnly = true)
+    public Optional<UsuarioResumo> buscarPorId(Integer id) {
+        return repositorio.buscarPorId(id);
+    }
+
     @Transactional
     public void seguirUsuario(Integer seguidorId, Integer seguidoId) {
         if (seguidorId.equals(seguidoId)) {
