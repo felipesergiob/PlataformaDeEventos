@@ -10,10 +10,12 @@ import Navbar from '@/components/Navbar';
 import { useToast } from '@/hooks/use-toast';
 import { eventApi } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const CreateEvent = () => {
   const { toast } = useToast();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [eventData, setEventData] = useState({
     title: '',
     description: '',
@@ -67,6 +69,7 @@ const CreateEvent = () => {
         price: '',
         image: null
       });
+      navigate('/'); // Redireciona para a home após criar
     } catch (error) {
       toast({ title: 'Erro ao criar evento', description: 'Tente novamente.', variant: 'destructive' });
     } finally {

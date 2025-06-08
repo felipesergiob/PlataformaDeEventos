@@ -38,7 +38,7 @@ interface CreateEventData {
   valor: number;
 }
 
-interface EventResponse {
+export type EventResponse = {
   id: string | null;
   titulo: string;
   descricao: string;
@@ -51,7 +51,9 @@ interface EventResponse {
   participantes: number;
   dataCriacao: string;
   organizadorId: string;
-}
+};
+
+export type FeaturedEventResponse = EventResponse & { posicaoRanking: number };
 
 // User related endpoints
 export const userApi = {
@@ -68,6 +70,14 @@ export const userApi = {
 export const eventApi = {
   createEvent: async (eventData: CreateEventData): Promise<EventResponse> => {
     const response = await api.post<EventResponse>('/evento', eventData);
+    return response.data;
+  },
+  getAllEvents: async (): Promise<EventResponse[]> => {
+    const response = await api.get<EventResponse[]>('/evento');
+    return response.data;
+  },
+  getFeaturedEvents: async (): Promise<FeaturedEventResponse[]> => {
+    const response = await api.get<FeaturedEventResponse[]>('/evento/destaques');
     return response.data;
   },
 };
