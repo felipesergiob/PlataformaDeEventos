@@ -7,4 +7,6 @@ public interface ParticipanteRepositorioAplicacao {
     Optional<ParticipanteResumo> buscarParticipacao(Integer eventoId, Integer usuarioId);
     List<ParticipanteResumo> listarPorEvento(Integer eventoId);
     List<ParticipanteResumo> listarPorUsuario(Integer usuarioId);
+    ParticipanteResumo criarParticipacao(Integer eventoId, Integer usuarioId, String status);
+    void atualizarStatus(Integer eventoId, Integer usuarioId, String status);
 } 

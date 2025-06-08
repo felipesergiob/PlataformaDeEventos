@@ -8,7 +8,7 @@ import java.util.Optional;
 @Repository
 public interface ParticipanteJpaRepository extends JpaRepository<ParticipanteJpa, Integer> {
     Optional<ParticipanteJpa> findByEventoIdAndUsuarioId(Integer eventoId, Integer usuarioId);
-    List<ParticipanteJpa> findByEventoIdOrderByDataCriacaoDesc(Integer eventoId);
-    List<ParticipanteJpa> findByUsuarioIdOrderByDataCriacaoDesc(Integer usuarioId);
+    List<ParticipanteJpa> findByEventoId(Integer eventoId);
+    List<ParticipanteJpa> findByUsuarioId(Integer usuarioId);
     int countByEventoIdAndStatus(Integer eventoId, String status);
 } 
