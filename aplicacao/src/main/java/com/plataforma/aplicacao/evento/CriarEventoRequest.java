@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -32,7 +33,7 @@ public class CriarEventoRequest {
     private String genero;
 
     @NotNull(message = "O valor é obrigatório")
-    @Positive(message = "O valor deve ser maior que zero")
+    @PositiveOrZero(message = "O valor não pode ser negativo")
     private BigDecimal valor;
 
     private String imagem;
