@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -6,7 +6,7 @@ import { Calendar, MapPin, Clock, DollarSign, Heart, Star, User, UserCheck, Cale
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
-import { participationApi } from '@/services/api';
+import { participationApi, userApi, avaliacaoApi } from '@/services/api';
 
 interface Event {
   id: number;
@@ -18,9 +18,8 @@ interface Event {
   genre: string;
   price: number;
   image?: string;
-  organizer: string;
+  organizadorId: string;
   participants: number;
-  rating: number;
   isSaved: boolean;
   attending: 'not_going' | 'maybe' | 'confirmed';
 }
@@ -33,6 +32,35 @@ const EventCard = ({ event }: EventCardProps) => {
   const { user } = useAuth();
   const [isSaved, setIsSaved] = useState(event.isSaved);
   const [attending, setAttending] = useState<'not_going' | 'maybe' | 'confirmed'>(event.attending);
+  const [organizerName, setOrganizerName] = useState<string>('');
+  const [eventRating, setEventRating] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchOrganizerName = async () => {
+      try {
+        const organizerData = await userApi.getUserById(event.organizadorId);
+        setOrganizerName(organizerData.nome);
+      } catch (error) {
+        console.error('Erro ao buscar nome do organizador:', error);
+        setOrganizerName('Organizador');
+      }
+    };
+
+    const fetchEventRating = async () => {
+      try {
+        const avaliacoes = await avaliacaoApi.listarAvaliacoesPorEvento(event.id);
+        if (avaliacoes.length > 0) {
+          const media = avaliacoes.reduce((acc, curr) => acc + curr.nota, 0) / avaliacoes.length;
+          setEventRating(media);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar avaliações do evento:', error);
+      }
+    };
+
+    fetchOrganizerName();
+    fetchEventRating();
+  }, [event.organizadorId, event.id]);
 
   React.useEffect(() => {
     const fetchParticipation = async () => {
@@ -175,7 +203,7 @@ const EventCard = ({ event }: EventCardProps) => {
                 </div>
                 <div className="flex items-center">
                   <Star className="w-4 h-4 mr-1 text-yellow-500 fill-current" />
-                  <span>{event.rating?.toFixed(1) || '0.0'}</span>
+                  <span>{eventRating.toFixed(1)}</span>
                 </div>
               </div>
             </div>
@@ -185,7 +213,7 @@ const EventCard = ({ event }: EventCardProps) => {
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-600">
                 <User className="w-4 h-4 inline mr-1" />
-                <span>{event.organizer}</span>
+                <span>{organizerName}</span>
               </div>
               <div className="flex space-x-1">
                 <Button

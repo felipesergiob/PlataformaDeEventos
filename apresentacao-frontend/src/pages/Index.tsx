@@ -165,9 +165,8 @@ const Index = () => {
       genre: event.genero,
       price: event.valor,
       image: event.imagem ? `/imagens/${event.imagem}` : '/placeholder.svg',
-      organizer: `Organizador ${event.organizadorId}`,
+      organizadorId: event.organizadorId,
       participants: event.participantes,
-      rating: 4.5, // Valor fictício, ajuste se tiver nota
       isSaved: false,
       attending: 'not_going' as const,
     };
