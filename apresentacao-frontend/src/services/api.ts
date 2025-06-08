@@ -178,6 +178,10 @@ export const participationApi = {
   },
   updateParticipationStatus: async (eventoId: number, usuarioId: number, status: string): Promise<void> => {
     await api.put(`/participante/${eventoId}/${usuarioId}/status`, { status });
+  },
+  getUserParticipations: async (usuarioId: string | number): Promise<ParticipationResponse[]> => {
+    const response = await api.get<ParticipationResponse[]>(`/participante/usuario/${usuarioId}`);
+    return response.data;
   }
 };
 
