@@ -53,7 +53,7 @@ const Navbar = () => {
                   <Link to="/profile">
                     <Button variant="outline" size="sm" className="border-purple-200 text-purple-600 hover:bg-purple-50">
                       <User className="w-4 h-4 mr-2" />
-                      {user?.name.split(' ')[0]}
+                      {user?.nome.split(' ')[0]}
                     </Button>
                   </Link>
                   <Button 

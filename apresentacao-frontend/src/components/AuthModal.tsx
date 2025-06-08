@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { userApi } from '@/services/api';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -16,7 +17,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { login, register } = useAuth();
+  const { setUser } = useAuth();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,7 +28,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       const email = formData.get('email') as string;
       const password = formData.get('password') as string;
 
-      await login(email, password);
+      const userData = await userApi.login({
+        email,
+        senha: password
+      });
+
+      // Update the user context with the logged in user data
+      setUser(userData);
       
       toast({
         title: "Login realizado com sucesso!",
@@ -66,8 +73,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         return;
       }
 
-      await register(name, email, password);
+      await userApi.register({
+        nome: name,
+        email: email,
+        senha: password
+      });
       
+      // Login automático após registro
+      const userData = await userApi.login({
+        email,
+        senha: password
+      });
+      setUser(userData);
+
       toast({
         title: "Conta criada com sucesso!",
         description: "Bem-vindo ao SeLigaAi!",

@@ -8,9 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar, MapPin, Clock, Tag, DollarSign, Image } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import { useToast } from '@/hooks/use-toast';
+import { eventApi } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 
 const CreateEvent = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [eventData, setEventData] = useState({
     title: '',
     description: '',
@@ -21,19 +24,54 @@ const CreateEvent = () => {
     price: '',
     image: null as File | null
   });
+  const [loading, setLoading] = useState(false);
 
   const genres = [
     'Tecnologia', 'Música', 'Gastronomia', 'Educação', 'Arte',
     'Esporte', 'Negócios', 'Saúde', 'Cultura', 'Outros'
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Evento criado:', eventData);
-    toast({
-      title: 'Evento criado com sucesso!',
-      description: 'O evento foi criado com sucesso.',
-    });
+    if (!user) {
+      toast({ title: 'Erro', description: 'Você precisa estar logado para criar um evento.', variant: 'destructive' });
+      return;
+    }
+    setLoading(true);
+    try {
+      // Montar dataInicio e dataFim no formato ISO
+      const dataInicio = eventData.date && eventData.time
+        ? new Date(`${eventData.date}T${eventData.time}`).toISOString()
+        : '';
+      const dataFim = dataInicio; // Você pode ajustar para permitir data/hora de fim diferente
+      const newEvent = {
+        titulo: eventData.title,
+        descricao: eventData.description,
+        dataInicio,
+        dataFim,
+        local: eventData.location,
+        genero: eventData.genre,
+        capacidade: 200, // Pode adicionar campo no form se quiser
+        organizadorId: Number(user.id),
+        valor: Number(eventData.price)
+      };
+      const response = await eventApi.createEvent(newEvent);
+      toast({ title: 'Evento criado com sucesso!', description: `Evento "${response.titulo}" criado!` });
+      setEventData({
+        title: '',
+        description: '',
+        date: '',
+        time: '',
+        location: '',
+        genre: '',
+        price: '',
+        image: null
+      });
+    } catch (error) {
+      toast({ title: 'Erro ao criar evento', description: 'Tente novamente.', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -202,8 +240,9 @@ const CreateEvent = () => {
                   <Button 
                     type="submit" 
                     className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+                    disabled={loading}
                   >
-                    Criar Evento
+                    {loading ? 'Criando...' : 'Criar Evento'}
                   </Button>
                 </div>
               </form>
