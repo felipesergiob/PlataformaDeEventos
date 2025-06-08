@@ -55,6 +55,26 @@ export type EventResponse = {
 
 export type FeaturedEventResponse = EventResponse & { posicaoRanking: number };
 
+export type AvaliacaoResponse = {
+  id: string;
+  eventoId: string;
+  usuarioId: string;
+  nota: number;
+  comentario: string;
+  dataCriacao: string;
+};
+
+export type DashboardEventResponse = {
+  eventoId: number;
+  titulo: string;
+  descricao: string;
+  totalConfirmacoes: number;
+  totalAvaliacoes: number;
+  mediaNotas: number;
+  totalComentarios: number;
+  status: 'FUTURO' | 'PASSADO';
+};
+
 // User related endpoints
 export const userApi = {
   register: async (userData: RegisterUserData): Promise<void> => {
@@ -65,6 +85,21 @@ export const userApi = {
     const response = await api.post<UserResponse>('/usuario/login', userData);
     return response.data;
   },
+
+  getOrganizerEvents: async (organizerId: string): Promise<EventResponse[]> => {
+    const response = await api.get<EventResponse[]>(`/evento/organizador/${organizerId}`);
+    return response.data;
+  },
+
+  getUserReviews: async (userId: string): Promise<AvaliacaoResponse[]> => {
+    const response = await api.get<AvaliacaoResponse[]>(`/avaliacao/usuario/${userId}`);
+    return response.data;
+  },
+
+  getOrganizerDashboard: async (organizerId: string): Promise<DashboardEventResponse[]> => {
+    const response = await api.get<DashboardEventResponse[]>(`/evento/organizador/${organizerId}/dashboard`);
+    return response.data;
+  }
 };
 
 export const eventApi = {
@@ -82,6 +117,14 @@ export const eventApi = {
   },
   getEventById: async (id: string | number): Promise<EventResponse> => {
     const response = await api.get<EventResponse>(`/evento/${id}`);
+    return response.data;
+  },
+  getEventEvaluations: async (eventId: string | number): Promise<AvaliacaoResponse[]> => {
+    const response = await api.get<AvaliacaoResponse[]>(`/avaliacao/evento/${eventId}`);
+    return response.data;
+  },
+  getEventDashboard: async (eventId: string | number): Promise<DashboardEventResponse> => {
+    const response = await api.get(`/evento/${eventId}/dashboard`);
     return response.data;
   },
 };

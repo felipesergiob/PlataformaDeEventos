@@ -11,7 +11,7 @@ import Navbar from '@/components/Navbar';
 import EventComments from '@/components/EventComments';
 import EventPosts from '@/components/EventPosts';
 import EventEvaluation from '@/components/EventEvaluation';
-import { eventApi, EventResponse } from '@/services/api';
+import { eventApi, EventResponse, AvaliacaoResponse } from '@/services/api';
 
 const EventDetails = () => {
   const { eventId } = useParams<{ eventId: string }>();
@@ -21,6 +21,8 @@ const EventDetails = () => {
   const [isFollowingOrganizer, setIsFollowingOrganizer] = useState(false);
   const [event, setEvent] = useState<EventResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [rating, setRating] = useState<number>(0);
+  const [totalRatings, setTotalRatings] = useState<number>(0);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -29,6 +31,17 @@ const EventDetails = () => {
         if (eventId) {
           const data = await eventApi.getEventById(eventId);
           setEvent(data);
+          
+          // Buscar avaliações do evento
+          const avaliacoes = await eventApi.getEventEvaluations(eventId);
+          setTotalRatings(avaliacoes.length);
+          
+          // Calcular média das avaliações
+          if (avaliacoes.length > 0) {
+            const somaNotas = avaliacoes.reduce((acc, curr) => acc + curr.nota, 0);
+            const media = somaNotas / avaliacoes.length;
+            setRating(media);
+          }
         }
       } catch (error) {
         setEvent(null);
@@ -99,9 +112,8 @@ const EventDetails = () => {
     price: event.valor,
     image: event.imagem ? `/imagens/${event.imagem}` : '/placeholder.svg',
     participants: event.participantes,
-    // Os campos abaixo são fictícios, ajuste conforme necessário
-    rating: 4.8,
-    reviews: 12,
+    rating: rating,
+    reviews: totalRatings,
     address: '',
     maxParticipants: undefined,
     isPast: false,
