@@ -14,7 +14,7 @@ const Navbar = () => {
   const navItems = [
     { href: '/', label: 'Explorar', icon: Calendar },
     { href: '/calendar', label: 'Calendário', icon: Calendar },
-    { href: '/my-events', label: 'Meus Eventos', icon: User },
+    // { href: '/my-events', label: 'Meus Eventos', icon: User },
     { href: '/profile', label: 'Perfil', icon: User },
   ];
 
