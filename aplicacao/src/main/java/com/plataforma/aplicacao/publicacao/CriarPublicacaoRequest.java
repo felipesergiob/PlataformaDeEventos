@@ -6,6 +6,9 @@ import lombok.Data;
 
 @Data
 public class CriarPublicacaoRequest {
+    @NotBlank(message = "O título da publicação é obrigatório")
+    private String titulo;
+
     @NotBlank(message = "O conteúdo da publicação é obrigatório")
     private String conteudo;
     

@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 public class PublicacaoResumoImpl implements PublicacaoResumo {
     private String id;
+    private String titulo;
     private String conteudo;
     private String fotos;
     private LocalDateTime dataCriacao;

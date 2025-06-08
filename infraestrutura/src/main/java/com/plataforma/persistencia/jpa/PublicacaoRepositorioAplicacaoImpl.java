@@ -24,6 +24,7 @@ public class PublicacaoRepositorioAplicacaoImpl implements PublicacaoRepositorio
         if (publicacao.getId() != null) {
             jpa.setId(Integer.parseInt(publicacao.getId()));
         }
+        jpa.setTitulo(publicacao.getTitulo());
         jpa.setConteudo(publicacao.getConteudo());
         jpa.setFotos(publicacao.getFotos());
         jpa.setDataCriacao(publicacao.getDataCriacao());
@@ -42,6 +43,7 @@ public class PublicacaoRepositorioAplicacaoImpl implements PublicacaoRepositorio
     private PublicacaoResumoImpl toResumo(PublicacaoJpa jpa) {
         var resumo = new PublicacaoResumoImpl();
         resumo.setId(String.valueOf(jpa.getId()));
+        resumo.setTitulo(jpa.getTitulo());
         resumo.setConteudo(jpa.getConteudo());
         resumo.setFotos(jpa.getFotos());
         resumo.setDataCriacao(jpa.getDataCriacao());

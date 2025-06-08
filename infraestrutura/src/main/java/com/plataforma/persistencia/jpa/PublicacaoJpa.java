@@ -12,6 +12,9 @@ public class PublicacaoJpa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "TITULO", nullable = false)
+    private String titulo;
+
     @Column(name = "CONTEUDO", nullable = false)
     private String conteudo;
 

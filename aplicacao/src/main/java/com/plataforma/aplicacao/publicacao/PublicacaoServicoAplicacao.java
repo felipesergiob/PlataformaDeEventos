@@ -26,6 +26,7 @@ public class PublicacaoServicoAplicacao {
             .orElseThrow(() -> new IllegalArgumentException("Evento não encontrado"));
 
         var publicacao = new PublicacaoResumoImpl();
+        publicacao.setTitulo(request.getTitulo());
         publicacao.setConteudo(request.getConteudo());
         publicacao.setFotos(request.getFotos());
         publicacao.setDataCriacao(java.time.LocalDateTime.now());
