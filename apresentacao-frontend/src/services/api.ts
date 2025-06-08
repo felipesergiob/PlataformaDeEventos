@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 const api = axios.create({
   baseURL: 'http://localhost:8081',
@@ -75,6 +75,23 @@ export type DashboardEventResponse = {
   status: 'FUTURO' | 'PASSADO';
 };
 
+export type ParticipationResponse = {
+  id: string;
+  eventoId: string;
+  usuarioId: string;
+  status: 'SALVO' | 'CONFIRMADO';
+};
+
+export type EventoFiltro = {
+  genero?: string;
+  dataInicio?: string;
+  dataFim?: string;
+  precoMinimo?: number;
+  precoMaximo?: number;
+  gratuito?: boolean;
+  periodoHorario?: 'MANHA' | 'TARDE' | 'NOITE';
+};
+
 // User related endpoints
 export const userApi = {
   register: async (userData: RegisterUserData): Promise<void> => {
@@ -127,6 +144,41 @@ export const eventApi = {
     const response = await api.get(`/evento/${eventId}/dashboard`);
     return response.data;
   },
+  filtrarEventos: async (filtros: EventoFiltro): Promise<EventResponse[]> => {
+    const params = new URLSearchParams();
+    if (filtros.genero) params.append('genero', filtros.genero);
+    if (filtros.dataInicio) params.append('dataInicio', filtros.dataInicio);
+    if (filtros.dataFim) params.append('dataFim', filtros.dataFim);
+    if (filtros.precoMinimo) params.append('precoMinimo', filtros.precoMinimo.toString());
+    if (filtros.precoMaximo) params.append('precoMaximo', filtros.precoMaximo.toString());
+    if (filtros.gratuito !== undefined) params.append('gratuito', filtros.gratuito.toString());
+    if (filtros.periodoHorario) params.append('periodoHorario', filtros.periodoHorario);
+    
+    const response = await api.get<EventResponse[]>(`/evento/filtrar?${params.toString()}`);
+    return response.data;
+  },
+};
+
+export const participationApi = {
+  createParticipation: async (data: { eventoId: number; usuarioId: number; status: string }): Promise<void> => {
+    await api.post('/participante', data);
+  },
+  getParticipation: async (eventoId: string | number, usuarioId: string | number): Promise<ParticipationResponse | null> => {
+    try {
+      const response = await api.get<ParticipationResponse>(`/participante/${eventoId}/${usuarioId}`);
+      return response.data;
+    } catch (error) {
+      // Se for erro 500 ou 404, assume que não há participação
+      if (error instanceof AxiosError && (error.response?.status === 500 || error.response?.status === 404)) {
+        return null;
+      }
+      // Para outros erros, propaga o erro
+      throw error;
+    }
+  },
+  updateParticipationStatus: async (eventoId: number, usuarioId: number, status: string): Promise<void> => {
+    await api.put(`/participante/${eventoId}/${usuarioId}/status`, { status });
+  }
 };
 
 export default api;

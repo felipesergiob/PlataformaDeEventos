@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -13,7 +12,12 @@ interface FilterPanelProps {
     time: string;
     price: string;
   };
-  onFiltersChange: (filters: any) => void;
+  onFiltersChange: (filters: {
+    genre: string;
+    date: string;
+    time: string;
+    price: string;
+  }) => void;
 }
 
 const FilterPanel = ({ filters, onFiltersChange }: FilterPanelProps) => {
@@ -31,6 +35,46 @@ const FilterPanel = ({ filters, onFiltersChange }: FilterPanelProps) => {
 
   const activeFilters = Object.entries(filters).filter(([_, value]) => value !== '');
 
+  const getFilterLabel = (key: string, value: string) => {
+    switch (key) {
+      case 'genre':
+        switch (value) {
+          case 'Musica': return 'Música';
+          case 'Educacao': return 'Educação';
+          case 'Negocios': return 'Negócios';
+          case 'Saude': return 'Saúde';
+          default: return value;
+        }
+      case 'date':
+        switch (value) {
+          case 'today': return 'Hoje';
+          case 'tomorrow': return 'Amanhã';
+          case 'weekend': return 'Fim de semana';
+          case 'next_week': return 'Próxima semana';
+          case 'next_month': return 'Próximo mês';
+          default: return value;
+        }
+      case 'time':
+        switch (value) {
+          case 'morning': return 'Manhã';
+          case 'afternoon': return 'Tarde';
+          case 'evening': return 'Noite';
+          default: return value;
+        }
+      case 'price':
+        switch (value) {
+          case 'free': return 'Gratuito';
+          case 'paid': return 'Pago';
+          case '0-50': return 'R$ 0 - R$ 50';
+          case '50-100': return 'R$ 50 - R$ 100';
+          case '100+': return 'R$ 100+';
+          default: return value;
+        }
+      default:
+        return value;
+    }
+  };
+
   return (
     <Card className="animate-fade-in border-purple-200">
       <CardContent className="p-6">
@@ -43,8 +87,8 @@ const FilterPanel = ({ filters, onFiltersChange }: FilterPanelProps) => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Tecnologia">Tecnologia</SelectItem>
-                <SelectItem value="Música">Música</SelectItem>
-                <SelectItem value="Educação">Educação</SelectItem>
+                <SelectItem value="Musica">Música</SelectItem>
+                <SelectItem value="Educacao">Educação</SelectItem>
                 <SelectItem value="Esporte">Esporte</SelectItem>
                 <SelectItem value="Arte">Arte</SelectItem>
                 <SelectItem value="Gastronomia">Gastronomia</SelectItem>
@@ -105,7 +149,7 @@ const FilterPanel = ({ filters, onFiltersChange }: FilterPanelProps) => {
             <span className="text-sm text-gray-600">Filtros ativos:</span>
             {activeFilters.map(([key, value]) => (
               <Badge key={key} variant="secondary" className="flex items-center gap-1 bg-purple-100 text-purple-800">
-                {value}
+                {getFilterLabel(key, value)}
                 <X 
                   className="w-3 h-3 cursor-pointer hover:text-red-500" 
                   onClick={() => clearFilter(key)}

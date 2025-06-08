@@ -29,8 +29,8 @@ const CreateEvent = () => {
   const [loading, setLoading] = useState(false);
 
   const genres = [
-    'Tecnologia', 'Música', 'Gastronomia', 'Educação', 'Arte',
-    'Esporte', 'Negócios', 'Saúde', 'Cultura', 'Outros'
+    'Tecnologia', 'Musica', 'Gastronomia', 'Educacao', 'Arte',
+    'Esporte', 'Negocios', 'Saude', 'Cultura', 'Outros'
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {

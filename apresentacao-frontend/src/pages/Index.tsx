@@ -8,7 +8,7 @@ import EventCard from '@/components/EventCard';
 import FeaturedEvents from '@/components/FeaturedEvents';
 import FilterPanel from '@/components/FilterPanel';
 import Navbar from '@/components/Navbar';
-import { eventApi, EventResponse } from '@/services/api';
+import { eventApi, EventResponse, EventoFiltro } from '@/services/api';
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -22,20 +22,135 @@ const Index = () => {
   const [events, setEvents] = useState<EventResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchEvents = async (filtros?: EventoFiltro) => {
+    setLoading(true);
+    try {
+      const data = filtros ? await eventApi.filtrarEventos(filtros) : await eventApi.getAllEvents();
+      setEvents(data);
+    } catch (error) {
+      setEvents([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
   useEffect(() => {
     const fetchEvents = async () => {
       setLoading(true);
       try {
-        const data = await eventApi.getAllEvents();
-        setEvents(data);
+        const filtros: EventoFiltro = {};
+        
+        // Converte o gênero
+        if (filters.genre) {
+          filtros.genero = filters.genre;
+        }
+
+        // Converte a data
+        if (filters.date) {
+          const hoje = new Date();
+          hoje.setHours(0, 0, 0, 0);
+          
+          const amanha = new Date(hoje);
+          amanha.setDate(amanha.getDate() + 1);
+          
+          const fimSemana = new Date(hoje);
+          const diasParaSabado = 6 - hoje.getDay();
+          fimSemana.setDate(hoje.getDate() + diasParaSabado);
+          
+          const proximaSemana = new Date(hoje);
+          proximaSemana.setDate(hoje.getDate() + 7);
+          
+          const proximoMes = new Date(hoje);
+          proximoMes.setMonth(proximoMes.getMonth() + 1);
+
+          const formatarData = (data: Date) => {
+            const year = data.getFullYear();
+            const month = String(data.getMonth() + 1).padStart(2, '0');
+            const day = String(data.getDate()).padStart(2, '0');
+            const hours = String(data.getHours()).padStart(2, '0');
+            const minutes = String(data.getMinutes()).padStart(2, '0');
+            const seconds = String(data.getSeconds()).padStart(2, '0');
+            return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+          };
+
+          switch (filters.date) {
+            case 'today':
+              filtros.dataInicio = formatarData(hoje);
+              filtros.dataFim = formatarData(new Date(hoje.setHours(23, 59, 59)));
+              break;
+            case 'tomorrow':
+              filtros.dataInicio = formatarData(amanha);
+              filtros.dataFim = formatarData(new Date(amanha.setHours(23, 59, 59)));
+              break;
+            case 'weekend':
+              filtros.dataInicio = formatarData(fimSemana);
+              filtros.dataFim = formatarData(new Date(fimSemana.setHours(23, 59, 59)));
+              break;
+            case 'next_week':
+              filtros.dataInicio = formatarData(proximaSemana);
+              filtros.dataFim = formatarData(new Date(proximaSemana.setHours(23, 59, 59)));
+              break;
+            case 'next_month':
+              filtros.dataInicio = formatarData(proximoMes);
+              filtros.dataFim = formatarData(new Date(proximoMes.setHours(23, 59, 59)));
+              break;
+          }
+        }
+
+        // Converte o horário
+        if (filters.time) {
+          switch (filters.time) {
+            case 'morning':
+              filtros.periodoHorario = 'MANHA';
+              break;
+            case 'afternoon':
+              filtros.periodoHorario = 'TARDE';
+              break;
+            case 'evening':
+              filtros.periodoHorario = 'NOITE';
+              break;
+          }
+        }
+
+        // Converte o preço
+        if (filters.price) {
+          switch (filters.price) {
+            case 'free':
+              filtros.gratuito = true;
+              break;
+            case 'paid':
+              filtros.gratuito = false;
+              filtros.precoMinimo = 0.01;
+              break;
+            case '0-50':
+              filtros.precoMinimo = 0;
+              filtros.precoMaximo = 50;
+              break;
+            case '50-100':
+              filtros.precoMinimo = 50;
+              filtros.precoMaximo = 100;
+              break;
+            case '100+':
+              filtros.precoMinimo = 100;
+              break;
+          }
+        }
+
+        const response = await eventApi.filtrarEventos(filtros);
+        setEvents(response);
       } catch (error) {
-        setEvents([]);
+        console.error('Erro ao buscar eventos:', error);
       } finally {
         setLoading(false);
       }
     };
+
     fetchEvents();
-  }, []);
+  }, [filters]);
 
   // Adaptar os dados da API para o formato esperado pelo EventCard
   const mappedEvents = events.map((event) => {
@@ -59,13 +174,8 @@ const Index = () => {
   });
 
   const filteredEvents = mappedEvents.filter(event => {
-    const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         event.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesGenre = !filters.genre || event.genre === filters.genre;
-    const matchesPrice = !filters.price || 
-                        (filters.price === 'free' && event.price === 0) ||
-                        (filters.price === 'paid' && event.price > 0);
-    return matchesSearch && matchesGenre && matchesPrice;
+    return event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+           event.description.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
   return (
