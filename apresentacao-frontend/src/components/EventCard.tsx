@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, Clock, DollarSign, Heart, Star, User, UserCheck, CalendarX } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
+import { participationApi } from '@/services/api';
 
 interface Event {
   id: number;
@@ -28,8 +30,26 @@ interface EventCardProps {
 }
 
 const EventCard = ({ event }: EventCardProps) => {
+  const { user } = useAuth();
   const [isSaved, setIsSaved] = useState(event.isSaved);
   const [attending, setAttending] = useState<'not_going' | 'maybe' | 'confirmed'>(event.attending);
+
+  React.useEffect(() => {
+    const fetchParticipation = async () => {
+      if (user) {
+        const part = await participationApi.getParticipation(event.id, user.id);
+        if (part) {
+          setAttending(part.status === 'CONFIRMADO' ? 'confirmed' : 'maybe');
+          setIsSaved(part.status === 'SALVO');
+        } else {
+          setAttending('not_going');
+          setIsSaved(false);
+        }
+      }
+    };
+    fetchParticipation();
+    // eslint-disable-next-line
+  }, [event.id, user]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -39,14 +59,66 @@ const EventCard = ({ event }: EventCardProps) => {
     });
   };
 
-  const handleSaveToggle = (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent navigation
-    setIsSaved(!isSaved);
+  const handleSaveToggle = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    try {
+      if (!isSaved) {
+        const part = await participationApi.getParticipation(event.id, user.id);
+        if (part) {
+          // Se já existe participação, atualiza o status
+          await participationApi.updateParticipationStatus(event.id, Number(user.id), 'SALVO');
+        } else {
+          // Se não existe, cria nova participação
+          await participationApi.createParticipation({ eventoId: event.id, usuarioId: Number(user.id), status: 'SALVO' });
+        }
+        setIsSaved(true);
+        setAttending('maybe');
+      } else {
+        // Não existe endpoint para remover, apenas simula
+        setIsSaved(false);
+        setAttending('not_going');
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar participação:', error);
+      // Aqui você pode adicionar uma notificação de erro para o usuário
+    }
   };
 
-  const handleAttendance = (status: 'not_going' | 'maybe' | 'confirmed', e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent navigation
-    setAttending(status);
+  const handleAttendance = async (status: 'not_going' | 'maybe' | 'confirmed', e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    try {
+      if (status === 'confirmed') {
+        const part = await participationApi.getParticipation(event.id, user.id);
+        if (part) {
+          // Se já existe participação, atualiza o status
+          await participationApi.updateParticipationStatus(event.id, Number(user.id), 'CONFIRMADO');
+        } else {
+          // Se não existe, cria nova participação
+          await participationApi.createParticipation({ eventoId: event.id, usuarioId: Number(user.id), status: 'CONFIRMADO' });
+        }
+        setAttending('confirmed');
+        setIsSaved(false);
+      } else if (status === 'maybe') {
+        const part = await participationApi.getParticipation(event.id, user.id);
+        if (part) {
+          // Se já existe participação, atualiza o status
+          await participationApi.updateParticipationStatus(event.id, Number(user.id), 'SALVO');
+        } else {
+          // Se não existe, cria nova participação
+          await participationApi.createParticipation({ eventoId: event.id, usuarioId: Number(user.id), status: 'SALVO' });
+        }
+        setAttending('maybe');
+        setIsSaved(true);
+      } else {
+        setAttending('not_going');
+        setIsSaved(false);
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar participação:', error);
+      // Aqui você pode adicionar uma notificação de erro para o usuário
+    }
   };
 
   return (
@@ -121,6 +193,17 @@ const EventCard = ({ event }: EventCardProps) => {
                   variant="ghost"
                   className={cn(
                     "h-8 px-2",
+                    isSaved ? "text-blue-600" : "text-gray-500"
+                  )}
+                  onClick={handleSaveToggle}
+                >
+                  {isSaved ? 'Salvo' : 'Salvar'}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className={cn(
+                    "h-8 px-2",
                     attending === 'confirmed' ? "text-green-600" : "text-gray-500"
                   )}
                   onClick={(e) => handleAttendance('confirmed', e)}
@@ -129,28 +212,6 @@ const EventCard = ({ event }: EventCardProps) => {
                     "h-4 w-4", 
                     attending === 'confirmed' && "fill-green-100"
                   )} />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className={cn(
-                    "h-8 px-2",
-                    attending === 'maybe' ? "text-blue-600" : "text-gray-500"
-                  )}
-                  onClick={(e) => handleAttendance('maybe', e)}
-                >
-                  ?
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className={cn(
-                    "h-8 px-2",
-                    attending === 'not_going' ? "text-red-600" : "text-gray-500"
-                  )}
-                  onClick={(e) => handleAttendance('not_going', e)}
-                >
-                  <CalendarX className="h-4 w-4" />
                 </Button>
               </div>
             </div>

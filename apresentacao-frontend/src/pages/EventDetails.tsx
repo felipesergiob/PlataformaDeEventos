@@ -11,10 +11,12 @@ import Navbar from '@/components/Navbar';
 import EventComments from '@/components/EventComments';
 import EventPosts from '@/components/EventPosts';
 import EventEvaluation from '@/components/EventEvaluation';
-import { eventApi, EventResponse, AvaliacaoResponse } from '@/services/api';
+import { eventApi, EventResponse, AvaliacaoResponse, participationApi, ParticipationResponse } from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
 
 const EventDetails = () => {
   const { eventId } = useParams<{ eventId: string }>();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('details');
   const [attendance, setAttendance] = useState<'not_going' | 'maybe' | 'confirmed'>('not_going');
   const [isSaved, setIsSaved] = useState(false);
@@ -23,6 +25,7 @@ const EventDetails = () => {
   const [loading, setLoading] = useState(true);
   const [rating, setRating] = useState<number>(0);
   const [totalRatings, setTotalRatings] = useState<number>(0);
+  const [participation, setParticipation] = useState<ParticipationResponse | null>(null);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -42,6 +45,18 @@ const EventDetails = () => {
             const media = somaNotas / avaliacoes.length;
             setRating(media);
           }
+          // Buscar status de participação do usuário
+          if (user) {
+            const part = await participationApi.getParticipation(eventId, user.id);
+            setParticipation(part);
+            if (part) {
+              setAttendance(part.status === 'CONFIRMADO' ? 'confirmed' : 'maybe');
+              setIsSaved(part.status === 'SALVO');
+            } else {
+              setAttendance('not_going');
+              setIsSaved(false);
+            }
+          }
         }
       } catch (error) {
         setEvent(null);
@@ -50,7 +65,7 @@ const EventDetails = () => {
       }
     };
     fetchEvent();
-  }, [eventId]);
+  }, [eventId, user]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR', {
@@ -60,12 +75,67 @@ const EventDetails = () => {
     });
   };
 
-  const handleAttendanceChange = (status: 'not_going' | 'maybe' | 'confirmed') => {
-    setAttendance(status);
+  const handleAttendanceChange = async (status: 'not_going' | 'maybe' | 'confirmed') => {
+    if (!user || !eventId) return;
+    try {
+      if (status === 'confirmed') {
+        if (participation) {
+          // Se já existe participação, atualiza o status
+          await participationApi.updateParticipationStatus(Number(eventId), Number(user.id), 'CONFIRMADO');
+        } else {
+          // Se não existe, cria nova participação
+          await participationApi.createParticipation({ eventoId: Number(eventId), usuarioId: Number(user.id), status: 'CONFIRMADO' });
+        }
+        setAttendance('confirmed');
+        setIsSaved(false);
+        setParticipation({ id: '', eventoId: eventId, usuarioId: user.id, status: 'CONFIRMADO' });
+      } else if (status === 'maybe') {
+        if (participation) {
+          // Se já existe participação, atualiza o status
+          await participationApi.updateParticipationStatus(Number(eventId), Number(user.id), 'SALVO');
+        } else {
+          // Se não existe, cria nova participação
+          await participationApi.createParticipation({ eventoId: Number(eventId), usuarioId: Number(user.id), status: 'SALVO' });
+        }
+        setAttendance('maybe');
+        setIsSaved(true);
+        setParticipation({ id: '', eventoId: eventId, usuarioId: user.id, status: 'SALVO' });
+      } else {
+        // Não confirmado nem salvo
+        setAttendance('not_going');
+        setIsSaved(false);
+        setParticipation(null);
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar participação:', error);
+      // Aqui você pode adicionar uma notificação de erro para o usuário
+    }
   };
 
-  const handleToggleSave = () => {
-    setIsSaved(!isSaved);
+  const handleToggleSave = async () => {
+    if (!user || !eventId) return;
+    try {
+      if (!isSaved) {
+        if (participation) {
+          // Se já existe participação, atualiza o status
+          await participationApi.updateParticipationStatus(Number(eventId), Number(user.id), 'SALVO');
+        } else {
+          // Se não existe, cria nova participação
+          await participationApi.createParticipation({ eventoId: Number(eventId), usuarioId: Number(user.id), status: 'SALVO' });
+        }
+        setIsSaved(true);
+        setAttendance('maybe');
+        setParticipation({ id: '', eventoId: eventId, usuarioId: user.id, status: 'SALVO' });
+      } else {
+        // Não existe endpoint para remover, apenas simula
+        setIsSaved(false);
+        setAttendance('not_going');
+        setParticipation(null);
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar participação:', error);
+      // Aqui você pode adicionar uma notificação de erro para o usuário
+    }
   };
 
   const handleToggleFollow = () => {
@@ -202,20 +272,12 @@ const EventDetails = () => {
                     variant="outline"
                     className={cn(
                       "w-full transition-colors",
-                      attendance === 'maybe' 
+                      isSaved
                         ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600' 
                         : 'border-gray-300 text-gray-700 hover:bg-gray-50'
                     )}
-                    onClick={() => handleAttendanceChange(attendance === 'maybe' ? 'not_going' : 'maybe')}
-                  >
-                    {attendance === 'maybe' ? 'Talvez ✓' : 'Talvez'}
-                  </Button>
-                  <Button 
-                    variant="outline"
-                    className={isSaved ? 'text-red-600 border-red-200 hover:bg-red-50' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}
                     onClick={handleToggleSave}
                   >
-                    <Heart className={cn("w-4 h-4 mr-2", isSaved && "fill-current")}/>
                     {isSaved ? 'Salvo' : 'Salvar'}
                   </Button>
                 </div>
