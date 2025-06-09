@@ -20,7 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { userApi, eventApi } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
-import type { EventResponse, AvaliacaoResponse, DashboardEventResponse } from '@/services/api';
+import type { EventResponse, AvaliacaoResponse, DashboardEventResponse, UserResponse } from '@/services/api';
 import { cn } from '@/lib/utils';
 
 interface UserProfileProps {
@@ -35,6 +35,7 @@ const UserProfile = ({ userId, isOwnProfile = false }: UserProfileProps) => {
   const [reviews, setReviews] = useState<AvaliacaoResponse[]>([]);
   const [dashboardData, setDashboardData] = useState<DashboardEventResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [profileUser, setProfileUser] = useState<UserResponse | null>(null);
   const navigate = useNavigate();
   const { user } = useAuth();
   const [eventos, setEventos] = useState<Record<string, string>>({});
@@ -43,6 +44,10 @@ const UserProfile = ({ userId, isOwnProfile = false }: UserProfileProps) => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        // Buscar informações do usuário do perfil
+        const userData = await userApi.getUserById(userId);
+        setProfileUser(userData);
+
         const [eventsData, reviewsData, dashboardData] = await Promise.all([
           userApi.getOrganizerEvents(userId),
           userApi.getUserReviews(userId),
@@ -90,10 +95,10 @@ const UserProfile = ({ userId, isOwnProfile = false }: UserProfileProps) => {
 
   const handleFollowToggle = () => {
     setIsFollowing(!isFollowing);
-    if (!isFollowing) {
+    if (!isFollowing && profileUser) {
       toast({
-        title: `Você está seguindo ${user?.nome}!`,
-        description: `Você receberá notificações sobre os eventos de ${user?.nome}.`
+        title: `Você está seguindo ${profileUser.nome}!`,
+        description: `Você receberá notificações sobre os eventos de ${profileUser.nome}.`
       });
     }
   };
@@ -114,7 +119,7 @@ const UserProfile = ({ userId, isOwnProfile = false }: UserProfileProps) => {
     );
   }
 
-  if (!user) {
+  if (!profileUser) {
     return (
       <div className="max-w-4xl mx-auto p-6">
         <Card>
@@ -140,20 +145,20 @@ const UserProfile = ({ userId, isOwnProfile = false }: UserProfileProps) => {
           <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
             <Avatar className="w-24 h-24">
               <AvatarFallback className="text-2xl bg-purple-100 text-purple-600">
-                {user.nome.split(' ').map(n => n[0]).join('')}
+                {profileUser.nome.split(' ').map(n => n[0]).join('')}
               </AvatarFallback>
             </Avatar>
 
             <div className="flex-1">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">{user.nome}</h1>
-                  <p className="text-gray-600">{user.email}</p>
+                  <h1 className="text-2xl font-bold text-gray-900">{profileUser.nome}</h1>
+                  <p className="text-gray-600">{profileUser.email}</p>
                   <p className="text-sm text-gray-500">Membro desde {formatDate(new Date().toISOString())}</p>
                 </div>
 
                 <div className="flex items-center space-x-2 mt-4 md:mt-0">
-                  {!isOwnProfile && (
+                  {!isOwnProfile && user && user.id !== profileUser.id && (
                     <Button
                       onClick={handleFollowToggle}
                       className={isFollowing ? 'bg-green-600 hover:bg-green-700' : 'bg-purple-600 hover:bg-purple-700'}
@@ -213,11 +218,13 @@ const UserProfile = ({ userId, isOwnProfile = false }: UserProfileProps) => {
 
       {/* Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className={cn(
+          "grid w-full",
+          isOwnProfile ? "grid-cols-3" : "grid-cols-2"
+        )}>
           <TabsTrigger value="events">Eventos Organizados</TabsTrigger>
           <TabsTrigger value="reviews">Avaliações</TabsTrigger>
           {isOwnProfile && <TabsTrigger value="dashboard">Dashboard</TabsTrigger>}
-          {!isOwnProfile && <TabsTrigger value="following">Seguidores</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="events" className="space-y-4">
@@ -288,7 +295,7 @@ const UserProfile = ({ userId, isOwnProfile = false }: UserProfileProps) => {
                   </div>
                   <p className="text-gray-700 mb-3">{review.comentario}</p>
                   <div className="flex items-center justify-between text-sm text-gray-600">
-                    <span>Por {user.nome}</span>
+                    <span>Por {profileUser.nome}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -319,34 +326,6 @@ const UserProfile = ({ userId, isOwnProfile = false }: UserProfileProps) => {
                     <div className="text-3xl font-bold text-purple-600 mb-2">{taxaSatisfacao.toFixed(0)}%</div>
                     <div className="text-sm text-purple-700">Taxa de Satisfação</div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        )}
-
-        {!isOwnProfile && (
-          <TabsContent value="following">
-            <Card>
-              <CardHeader>
-                <CardTitle>Seguidores</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {[1, 2, 3, 4].map((id) => (
-                    <div key={id} className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
-                      <Avatar>
-                        <AvatarFallback>U{id}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <h4 className="font-medium">Usuário {id}</h4>
-                        <p className="text-sm text-gray-500">4 eventos organizados</p>
-                      </div>
-                      <Button variant="outline" size="sm">
-                        Ver Perfil
-                      </Button>
-                    </div>
-                  ))}
                 </div>
               </CardContent>
             </Card>

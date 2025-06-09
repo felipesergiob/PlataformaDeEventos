@@ -5,23 +5,25 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Calendar, MapPin, Clock, Users, DollarSign, Star, Heart, User, UserCheck, UserPlus, Calendar as CalendarIcon } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import Navbar from '@/components/Navbar';
 import EventComments from '@/components/EventComments';
 import EventPosts from '@/components/EventPosts';
 import EventEvaluation from '@/components/EventEvaluation';
-import { eventApi, EventResponse, AvaliacaoResponse, participationApi, ParticipationResponse, avaliacaoApi } from '@/services/api';
+import { eventApi, EventResponse, AvaliacaoResponse, participationApi, ParticipationResponse, avaliacaoApi, userApi, UserResponse } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 
 const EventDetails = () => {
   const { eventId } = useParams<{ eventId: string }>();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('details');
   const [attendance, setAttendance] = useState<'not_going' | 'maybe' | 'confirmed'>('not_going');
   const [isSaved, setIsSaved] = useState(false);
   const [isFollowingOrganizer, setIsFollowingOrganizer] = useState(false);
   const [event, setEvent] = useState<EventResponse | null>(null);
+  const [organizer, setOrganizer] = useState<UserResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [rating, setRating] = useState<number>(0);
   const [totalRatings, setTotalRatings] = useState<number>(0);
@@ -34,6 +36,12 @@ const EventDetails = () => {
         if (eventId) {
           const data = await eventApi.getEventById(eventId);
           setEvent(data);
+          
+          // Buscar informações do organizador
+          if (data.organizadorId) {
+            const organizerData = await userApi.getUserById(data.organizadorId);
+            setOrganizer(organizerData);
+          }
           
           // Buscar avaliações do evento
           const avaliacoes = await avaliacaoApi.listarAvaliacoesPorEvento(eventId);
@@ -282,7 +290,52 @@ const EventDetails = () => {
                   </Button>
                 </div>
               </div>
-              {/* Organizer Info e demais tabs podem ser integrados depois com dados reais */}
+
+              {/* Organizer Info */}
+              {organizer && (
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <Avatar className="w-12 h-12 cursor-pointer" onClick={() => navigate(`/user/${organizer.id}`)}>
+                        <AvatarFallback className="text-lg bg-purple-100 text-purple-600">
+                          {organizer.nome.split(' ').map(n => n[0]).join('')}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <h3 className="font-semibold text-gray-900 cursor-pointer hover:text-purple-600" onClick={() => navigate(`/user/${organizer.id}`)}>
+                          {organizer.nome}
+                        </h3>
+                        <p className="text-sm text-gray-500">Organizador do evento</p>
+                      </div>
+                    </div>
+                    {user && user.id !== organizer.id && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setIsFollowingOrganizer(!isFollowingOrganizer)}
+                        className={cn(
+                          "transition-colors",
+                          isFollowingOrganizer
+                            ? 'bg-green-600 hover:bg-green-700 text-white border-green-600'
+                            : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                        )}
+                      >
+                        {isFollowingOrganizer ? (
+                          <>
+                            <UserCheck className="w-4 h-4 mr-2" />
+                            Seguindo
+                          </>
+                        ) : (
+                          <>
+                            <UserPlus className="w-4 h-4 mr-2" />
+                            Seguir
+                          </>
+                        )}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
           {/* Event Tabs */}
