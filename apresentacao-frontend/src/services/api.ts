@@ -180,6 +180,14 @@ export const userApi = {
   getOrganizerDashboard: async (organizerId: string): Promise<DashboardEventResponse[]> => {
     const response = await api.get<DashboardEventResponse[]>(`/evento/organizador/${organizerId}/dashboard`);
     return response.data;
+  },
+
+  seguirUsuario: async (seguidorId: string, seguidoId: string): Promise<void> => {
+    await api.post('/usuario/seguir', { seguidorId, seguidoId });
+  },
+
+  deixarDeSeguirUsuario: async (seguidorId: string, seguidoId: string): Promise<void> => {
+    await api.post('/usuario/deixar-de-seguir', { seguidorId, seguidoId });
   }
 };
 

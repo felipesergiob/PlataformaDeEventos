@@ -13,6 +13,7 @@ import EventPosts from '@/components/EventPosts';
 import EventEvaluation from '@/components/EventEvaluation';
 import { eventApi, EventResponse, AvaliacaoResponse, participationApi, ParticipationResponse, avaliacaoApi, userApi, UserResponse } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from '@/components/ui/use-toast';
 
 const EventDetails = () => {
   const { eventId } = useParams<{ eventId: string }>();
@@ -153,8 +154,32 @@ const EventDetails = () => {
     }
   };
 
-  const handleToggleFollow = () => {
-    setIsFollowingOrganizer(!isFollowingOrganizer);
+  const handleToggleFollow = async () => {
+    if (!user || !organizer) return;
+    
+    try {
+      if (!isFollowingOrganizer) {
+        await userApi.seguirUsuario(user.id, organizer.id);
+        toast({
+          title: `Você está seguindo ${organizer.nome}!`,
+          description: `Você receberá notificações sobre os eventos de ${organizer.nome}.`
+        });
+      } else {
+        await userApi.deixarDeSeguirUsuario(user.id, organizer.id);
+        toast({
+          title: `Você deixou de seguir ${organizer.nome}`,
+          description: `Você não receberá mais notificações sobre os eventos de ${organizer.nome}.`
+        });
+      }
+      setIsFollowingOrganizer(!isFollowingOrganizer);
+    } catch (error) {
+      console.error('Erro ao atualizar status de seguimento:', error);
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível atualizar o status de seguimento.',
+        variant: 'destructive'
+      });
+    }
   };
 
   if (loading) {
@@ -319,7 +344,7 @@ const EventDetails = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => setIsFollowingOrganizer(!isFollowingOrganizer)}
+                        onClick={handleToggleFollow}
                         className={cn(
                           "transition-colors",
                           isFollowingOrganizer

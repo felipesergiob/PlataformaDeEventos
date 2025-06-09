@@ -102,12 +102,30 @@ const UserProfile = ({ userId, isOwnProfile = false }: UserProfileProps) => {
     });
   };
 
-  const handleFollowToggle = () => {
-    setIsFollowing(!isFollowing);
-    if (!isFollowing && profileUser) {
+  const handleFollowToggle = async () => {
+    if (!user) return;
+    
+    try {
+      if (!isFollowing) {
+        await userApi.seguirUsuario(user.id, userId);
+        toast({
+          title: `Você está seguindo ${profileUser?.nome}!`,
+          description: `Você receberá notificações sobre os eventos de ${profileUser?.nome}.`
+        });
+      } else {
+        await userApi.deixarDeSeguirUsuario(user.id, userId);
+        toast({
+          title: `Você deixou de seguir ${profileUser?.nome}`,
+          description: `Você não receberá mais notificações sobre os eventos de ${profileUser?.nome}.`
+        });
+      }
+      setIsFollowing(!isFollowing);
+    } catch (error) {
+      console.error('Erro ao atualizar status de seguimento:', error);
       toast({
-        title: `Você está seguindo ${profileUser.nome}!`,
-        description: `Você receberá notificações sobre os eventos de ${profileUser.nome}.`
+        title: 'Erro',
+        description: 'Não foi possível atualizar o status de seguimento.',
+        variant: 'destructive'
       });
     }
   };
