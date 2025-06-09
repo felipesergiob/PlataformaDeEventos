@@ -182,11 +182,16 @@ export const userApi = {
     return response.data;
   },
 
+  getFollowingUsers: async (userId: string): Promise<UserResponse[]> => {
+    const response = await api.get<UserResponse[]>(`/usuario/${userId}/seguidos`);
+    return response.data;
+  },
+
   seguirUsuario: async (seguidorId: string, seguidoId: string): Promise<void> => {
     await api.post('/usuario/seguir', { seguidorId, seguidoId });
   },
 
-  deixarDeSeguirUsuario: async (seguidorId: string, seguidoId: string): Promise<void> => {
+  deixarDeSeguir: async (seguidorId: string, seguidoId: string): Promise<void> => {
     await api.post('/usuario/deixar-de-seguir', { seguidorId, seguidoId });
   }
 };

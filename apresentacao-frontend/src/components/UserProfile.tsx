@@ -79,6 +79,12 @@ const UserProfile = ({ userId, isOwnProfile = false }: UserProfileProps) => {
           }
         }
         setEventos(eventosMap);
+
+        // Buscar lista de seguidos e definir isFollowing
+        if (user) {
+          const followingList = await userApi.getFollowingUsers(user.id);
+          setIsFollowing(followingList.some(u => u.id === userId));
+        }
       } catch (error) {
         console.error('Erro ao carregar dados do perfil:', error);
         toast({
@@ -92,7 +98,7 @@ const UserProfile = ({ userId, isOwnProfile = false }: UserProfileProps) => {
     };
 
     fetchData();
-  }, [userId]);
+  }, [userId, user]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR', {
@@ -113,7 +119,7 @@ const UserProfile = ({ userId, isOwnProfile = false }: UserProfileProps) => {
           description: `Você receberá notificações sobre os eventos de ${profileUser?.nome}.`
         });
       } else {
-        await userApi.deixarDeSeguirUsuario(user.id, userId);
+        await userApi.deixarDeSeguir(user.id, userId);
         toast({
           title: `Você deixou de seguir ${profileUser?.nome}`,
           description: `Você não receberá mais notificações sobre os eventos de ${profileUser?.nome}.`

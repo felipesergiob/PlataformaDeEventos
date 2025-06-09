@@ -13,7 +13,6 @@ import EventPosts from '@/components/EventPosts';
 import EventEvaluation from '@/components/EventEvaluation';
 import { eventApi, EventResponse, AvaliacaoResponse, participationApi, ParticipationResponse, avaliacaoApi, userApi, UserResponse } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
-import { toast } from '@/components/ui/use-toast';
 
 const EventDetails = () => {
   const { eventId } = useParams<{ eventId: string }>();
@@ -29,49 +28,45 @@ const EventDetails = () => {
   const [rating, setRating] = useState<number>(0);
   const [totalRatings, setTotalRatings] = useState<number>(0);
   const [participation, setParticipation] = useState<ParticipationResponse | null>(null);
-  const [confirmedParticipants, setConfirmedParticipants] = useState<number>(0);
 
   useEffect(() => {
-    const fetchEvent = async () => {
+    const fetchEventAndOrganizer = async () => {
       setLoading(true);
       try {
-        if (eventId) {
-          const data = await eventApi.getEventById(eventId);
-          setEvent(data);
-          
-          // Buscar informações do organizador
-          if (data.organizadorId) {
-            const organizerData = await userApi.getUserById(data.organizadorId);
-            setOrganizer(organizerData);
-          }
-          
-          // Buscar avaliações do evento
-          const avaliacoes = await avaliacaoApi.listarAvaliacoesPorEvento(eventId);
-          setTotalRatings(avaliacoes.length);
-          
-          // Calcular média das avaliações
-          if (avaliacoes.length > 0) {
-            const somaNotas = avaliacoes.reduce((acc, curr) => acc + curr.nota, 0);
-            const media = somaNotas / avaliacoes.length;
-            setRating(media);
-          }
-
-          // Buscar participações confirmadas
-          const participations = await participationApi.getEventParticipations(eventId);
-          const confirmedCount = participations.filter(p => p.status === 'CONFIRMADO').length;
-          setConfirmedParticipants(confirmedCount);
-
-          // Buscar status de participação do usuário
+        const data = await eventApi.getEventById(eventId);
+        setEvent(data);
+        
+        // Buscar informações do organizador
+        if (data.organizadorId) {
+          const organizerData = await userApi.getUserById(data.organizadorId);
+          setOrganizer(organizerData);
+          // Buscar lista de seguidos e definir isFollowingOrganizer
           if (user) {
-            const part = await participationApi.getParticipation(eventId, user.id);
-            setParticipation(part);
-            if (part) {
-              setAttendance(part.status === 'CONFIRMADO' ? 'confirmed' : 'maybe');
-              setIsSaved(part.status === 'SALVO');
-            } else {
-              setAttendance('not_going');
-              setIsSaved(false);
-            }
+            const followingList = await userApi.getFollowingUsers(user.id);
+            setIsFollowingOrganizer(followingList.some(u => u.id === organizerData.id));
+          }
+        }
+        
+        // Buscar avaliações do evento
+        const avaliacoes = await avaliacaoApi.listarAvaliacoesPorEvento(eventId);
+        setTotalRatings(avaliacoes.length);
+        
+        // Calcular média das avaliações
+        if (avaliacoes.length > 0) {
+          const somaNotas = avaliacoes.reduce((acc, curr) => acc + curr.nota, 0);
+          const media = somaNotas / avaliacoes.length;
+          setRating(media);
+        }
+        // Buscar status de participação do usuário
+        if (user) {
+          const part = await participationApi.getParticipation(eventId, user.id);
+          setParticipation(part);
+          if (part) {
+            setAttendance(part.status === 'CONFIRMADO' ? 'confirmed' : 'maybe');
+            setIsSaved(part.status === 'SALVO');
+          } else {
+            setAttendance('not_going');
+            setIsSaved(false);
           }
         }
       } catch (error) {
@@ -80,7 +75,7 @@ const EventDetails = () => {
         setLoading(false);
       }
     };
-    fetchEvent();
+    fetchEventAndOrganizer();
   }, [eventId, user]);
 
   const formatDate = (dateString: string) => {
@@ -154,32 +149,8 @@ const EventDetails = () => {
     }
   };
 
-  const handleToggleFollow = async () => {
-    if (!user || !organizer) return;
-    
-    try {
-      if (!isFollowingOrganizer) {
-        await userApi.seguirUsuario(user.id, organizer.id);
-        toast({
-          title: `Você está seguindo ${organizer.nome}!`,
-          description: `Você receberá notificações sobre os eventos de ${organizer.nome}.`
-        });
-      } else {
-        await userApi.deixarDeSeguirUsuario(user.id, organizer.id);
-        toast({
-          title: `Você deixou de seguir ${organizer.nome}`,
-          description: `Você não receberá mais notificações sobre os eventos de ${organizer.nome}.`
-        });
-      }
-      setIsFollowingOrganizer(!isFollowingOrganizer);
-    } catch (error) {
-      console.error('Erro ao atualizar status de seguimento:', error);
-      toast({
-        title: 'Erro',
-        description: 'Não foi possível atualizar o status de seguimento.',
-        variant: 'destructive'
-      });
-    }
+  const handleToggleFollow = () => {
+    setIsFollowingOrganizer(!isFollowingOrganizer);
   };
 
   if (loading) {
@@ -221,7 +192,7 @@ const EventDetails = () => {
     genre: event.genero,
     price: event.valor,
     image: event.imagem ? `/imagens/${event.imagem}` : '/placeholder.svg',
-    participants: confirmedParticipants,
+    participants: event.participantes,
     rating: rating,
     reviews: totalRatings,
     address: '',
@@ -344,7 +315,7 @@ const EventDetails = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={handleToggleFollow}
+                        onClick={() => setIsFollowingOrganizer(!isFollowingOrganizer)}
                         className={cn(
                           "transition-colors",
                           isFollowingOrganizer

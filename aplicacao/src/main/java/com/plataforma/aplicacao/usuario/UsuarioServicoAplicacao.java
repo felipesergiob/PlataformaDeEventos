@@ -80,4 +80,9 @@ public class UsuarioServicoAplicacao {
 
         repositorio.deixarDeSeguir(seguidorImpl, seguidoImpl);
     }
+
+    @Transactional(readOnly = true)
+    public java.util.List<UsuarioResumo> listarSeguidos(Integer usuarioId) {
+        return repositorio.listarSeguidos(usuarioId);
+    }
 } 

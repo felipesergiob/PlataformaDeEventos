@@ -60,5 +60,11 @@ public class UsuarioController {
         }
     }
 
+    @GetMapping("/{id}/seguidos")
+    public ResponseEntity<java.util.List<UsuarioResumo>> listarSeguidos(@PathVariable Integer id) {
+        var seguidos = usuarioServico.listarSeguidos(id);
+        return ResponseEntity.ok(seguidos);
+    }
+
     record LoginRequest(String email, String senha) {}
 } 

@@ -96,4 +96,21 @@ public class UsuarioRepositorioAplicacaoImpl implements UsuarioRepositorioAplica
 	public boolean emailJaExiste(String email) {
 		return usuarioRepository.findByEmail(email).isPresent();
 	}
+
+	@Override
+	public java.util.List<UsuarioResumo> listarSeguidos(Integer usuarioId) {
+		var seguidorJpaOpt = usuarioRepository.findById(usuarioId);
+		if (seguidorJpaOpt.isEmpty()) {
+			return java.util.Collections.emptyList();
+		}
+		var seguidorJpa = seguidorJpaOpt.get();
+		var seguidos = seguidorRepository.findBySeguidor_Id(usuarioId);
+		java.util.List<UsuarioResumo> resultado = new java.util.ArrayList<>();
+		for (SeguidorJpa seguidor : seguidos) {
+			if (seguidor.getSeguido() != null) {
+				resultado.add(toResumo(seguidor.getSeguido()));
+			}
+		}
+		return resultado;
+	}
 }
