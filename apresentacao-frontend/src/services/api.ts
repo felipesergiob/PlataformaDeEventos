@@ -7,7 +7,6 @@ const api = axios.create({
   },
 });
 
-// Types
 interface RegisterUserData {
   nome: string;
   email: string;
@@ -151,7 +150,6 @@ export type ResponderComentarioRequest = {
   eventoId: number;
 };
 
-// User related endpoints
 export const userApi = {
   register: async (userData: RegisterUserData): Promise<void> => {
     await api.post('/usuario/register', userData);
@@ -245,11 +243,10 @@ export const participationApi = {
       const response = await api.get<ParticipationResponse>(`/participante/${eventoId}/${usuarioId}`);
       return response.data;
     } catch (error) {
-      // Se for erro 500 ou 404, assume que não há participação
       if (error instanceof AxiosError && (error.response?.status === 500 || error.response?.status === 404)) {
         return null;
       }
-      // Para outros erros, propaga o erro
+
       throw error;
     }
   },
