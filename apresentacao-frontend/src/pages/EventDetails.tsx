@@ -28,6 +28,7 @@ const EventDetails = () => {
   const [rating, setRating] = useState<number>(0);
   const [totalRatings, setTotalRatings] = useState<number>(0);
   const [participation, setParticipation] = useState<ParticipationResponse | null>(null);
+  const [confirmedParticipants, setConfirmedParticipants] = useState<number>(0);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -53,6 +54,12 @@ const EventDetails = () => {
             const media = somaNotas / avaliacoes.length;
             setRating(media);
           }
+
+          // Buscar participações confirmadas
+          const participations = await participationApi.getEventParticipations(eventId);
+          const confirmedCount = participations.filter(p => p.status === 'CONFIRMADO').length;
+          setConfirmedParticipants(confirmedCount);
+
           // Buscar status de participação do usuário
           if (user) {
             const part = await participationApi.getParticipation(eventId, user.id);
@@ -189,7 +196,7 @@ const EventDetails = () => {
     genre: event.genero,
     price: event.valor,
     image: event.imagem ? `/imagens/${event.imagem}` : '/placeholder.svg',
-    participants: event.participantes,
+    participants: confirmedParticipants,
     rating: rating,
     reviews: totalRatings,
     address: '',

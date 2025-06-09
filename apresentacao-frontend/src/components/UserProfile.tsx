@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
-import { userApi, eventApi } from '@/services/api';
+import { userApi, eventApi, participationApi } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
 import type { EventResponse, AvaliacaoResponse, DashboardEventResponse, UserResponse } from '@/services/api';
 import { cn } from '@/lib/utils';
@@ -36,6 +36,7 @@ const UserProfile = ({ userId, isOwnProfile = false }: UserProfileProps) => {
   const [dashboardData, setDashboardData] = useState<DashboardEventResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [profileUser, setProfileUser] = useState<UserResponse | null>(null);
+  const [confirmedParticipants, setConfirmedParticipants] = useState<Record<string, number>>({});
   const navigate = useNavigate();
   const { user } = useAuth();
   const [eventos, setEventos] = useState<Record<string, string>>({});
@@ -57,6 +58,14 @@ const UserProfile = ({ userId, isOwnProfile = false }: UserProfileProps) => {
         setEvents(eventsData);
         setReviews(reviewsData);
         setDashboardData(dashboardData);
+
+        // Buscar contagem de participantes confirmados para cada evento
+        const confirmedCounts: Record<string, number> = {};
+        for (const event of eventsData) {
+          const participations = await participationApi.getEventParticipations(event.id!);
+          confirmedCounts[event.id!] = participations.filter(p => p.status === 'CONFIRMADO').length;
+        }
+        setConfirmedParticipants(confirmedCounts);
 
         // Buscar detalhes dos eventos
         const eventosMap: Record<string, string> = {};
@@ -133,7 +142,7 @@ const UserProfile = ({ userId, isOwnProfile = false }: UserProfileProps) => {
   }
 
   // Calcular estatísticas do dashboard
-  const totalParticipantes = dashboardData.reduce((acc, event) => acc + event.totalConfirmacoes, 0);
+  const totalParticipantes = Object.values(confirmedParticipants).reduce((acc, count) => acc + count, 0);
   const mediaAvaliacoes = dashboardData.reduce((acc, event) => acc + event.mediaNotas, 0) / (dashboardData.length || 1);
   const taxaSatisfacao = (dashboardData.filter(event => event.mediaNotas >= 4).length / (dashboardData.length || 1)) * 100;
 
@@ -250,7 +259,7 @@ const UserProfile = ({ userId, isOwnProfile = false }: UserProfileProps) => {
                       <div className="flex items-center space-x-4 mt-2">
                         <div className="flex items-center space-x-1">
                           <Users className="w-4 h-4 text-gray-500" />
-                          <span className="text-sm text-gray-600">{event.participantes} participantes</span>
+                          <span className="text-sm text-gray-600">{confirmedParticipants[event.id!] || 0} participantes</span>
                         </div>
                         <div className="flex items-center space-x-1">
                           <MessageSquare className="w-4 h-4 text-gray-500" />
