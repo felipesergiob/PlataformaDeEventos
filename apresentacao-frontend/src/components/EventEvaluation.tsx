@@ -59,33 +59,39 @@ const EventEvaluation = ({ eventId, userAttended }: EventEvaluationProps) => {
   const { toast } = useToast();
   const { user } = useAuth();
 
+  const fetchUserNames = async (avaliacoes: AvaliacaoResumo[]) => {
+    try {
+      const userIds = avaliacoes.map(av => av.usuarioId);
+      const uniqueUserIds = [...new Set(userIds)];
+      
+      const userInfoPromises = uniqueUserIds.map(async (userId) => {
+        try {
+          const userData = await userApi.getUserById(userId);
+          return { id: userId, nome: userData.nome };
+        } catch (error) {
+          console.error(`Erro ao buscar usuário ${userId}:`, error);
+          return { id: userId, nome: 'Usuário' };
+        }
+      });
+
+      const userInfos = await Promise.all(userInfoPromises);
+      const userNamesMap = userInfos.reduce((acc, user) => ({
+        ...acc,
+        [user.id]: user.nome
+      }), {} as Record<string, string>);
+
+      setUserNames(userNamesMap);
+    } catch (error) {
+      console.error('Erro ao buscar nomes dos usuários:', error);
+    }
+  };
+
   useEffect(() => {
     const fetchEvaluations = async () => {
       try {
         const avaliacoes = await avaliacaoApi.listarAvaliacoesPorEvento(eventId);
         setEvaluations(avaliacoes);
-
-        // Buscar nomes dos usuários
-        const userIds = avaliacoes.map(av => av.usuarioId);
-        const uniqueUserIds = [...new Set(userIds)];
-        
-        const userInfoPromises = uniqueUserIds.map(async (userId) => {
-          try {
-            const userData = await userApi.getUserById(userId);
-            return { id: userId, nome: userData.nome };
-          } catch (error) {
-            console.error(`Erro ao buscar usuário ${userId}:`, error);
-            return { id: userId, nome: 'Usuário' };
-          }
-        });
-
-        const userInfos = await Promise.all(userInfoPromises);
-        const userNamesMap = userInfos.reduce((acc, user) => ({
-          ...acc,
-          [user.id]: user.nome
-        }), {} as Record<string, string>);
-
-        setUserNames(userNamesMap);
+        await fetchUserNames(avaliacoes);
       } catch (error) {
         console.error('Erro ao buscar avaliações:', error);
         toast({
@@ -129,6 +135,9 @@ const EventEvaluation = ({ eventId, userAttended }: EventEvaluationProps) => {
       // Atualizar lista de avaliações
       const novasAvaliacoes = await avaliacaoApi.listarAvaliacoesPorEvento(eventId);
       setEvaluations(novasAvaliacoes);
+      
+      // Atualizar nomes dos usuários
+      await fetchUserNames(novasAvaliacoes);
 
       // Reset form
       setRating(0);

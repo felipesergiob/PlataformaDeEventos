@@ -246,6 +246,10 @@ export const participationApi = {
   getUserParticipations: async (usuarioId: string | number): Promise<ParticipationResponse[]> => {
     const response = await api.get<ParticipationResponse[]>(`/participante/usuario/${usuarioId}`);
     return response.data;
+  },
+  getEventParticipations: async (eventoId: string | number): Promise<ParticipationResponse[]> => {
+    const response = await api.get<ParticipationResponse[]>(`/participante/evento/${eventoId}`);
+    return response.data;
   }
 };
 
