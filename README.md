@@ -73,7 +73,6 @@ PlataformaDeEventos/
 ## 🚀 Como Executar
 - Consulte o arquivo [SEGUNDA_ENTREGA.md](SEGUNDA_ENTREGA.md)
 
-
 ## 📝 Documentação
 
 - [Descrição do Domínio](https://docs.google.com/document/d/1YUaVytl6GA5PXFs6PHMEqKl3QaDEjtxsSOqKD3RUcFE/edit?usp=sharing)
